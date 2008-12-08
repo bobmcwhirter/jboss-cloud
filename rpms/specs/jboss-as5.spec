@@ -24,6 +24,8 @@ The JBossAS 5 Java Application Server
 %install
 mkdir -p $RPM_BUILD_ROOT/opt
 cp -R . $RPM_BUILD_ROOT/opt/jboss-as5
+rm -Rf $RPM_BUILD_ROOT/opt/jboss-as5/server/*/deploy/ROOT.war
+
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}

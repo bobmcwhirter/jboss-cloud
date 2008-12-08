@@ -43,7 +43,7 @@ end
 
 def build_rpm(spec, topdir)
   puts "Buiding RPM from #{spec} in #{topdir}"
-  execute_command "rpmbuild --define '_topdir #{topdir}' -ba #{spec}"
+  execute_command "rpmbuild --define '_topdir #{topdir}' --target noarch -ba #{spec}"
 end
 
 def prepare_sources(spec, topdir, sources_dir)
