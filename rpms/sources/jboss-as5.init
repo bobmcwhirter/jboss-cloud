@@ -1,0 +1,467 @@
+#!/bin/sh
+#
+# JBoss Control Script
+#
+### BEGIN INIT INFO
+# Provides: jbossas
+# Required-Start: $network $syslog
+# Required-Stop: $network $syslog
+# Default-Start:
+# Default-Stop:
+# Description: JBoss J2EE Server
+# Short-Description: start and stop jbossas
+### END INIT INFO
+# chkconfig: - 98 10
+# description: JBoss J2EE Server
+# 
+
+# Source function library.
+if [ -x /etc/rc.d/init.d/functions ]; then
+   . /etc/rc.d/init.d/functions
+fi
+
+NAME=`basename $0`
+unset ISBOOT
+if [ ${NAME:0:1} = "S" -o ${NAME:0:1} = "K" ]
+then
+        NAME=${NAME:3}
+        ISBOOT=1
+fi
+
+# Source configuration.
+[ -f /etc/java/java.conf ] && . /etc/java/java.conf
+#read in system wide jboss configuration
+. /etc/jboss.conf
+#read in service-specific jboss configuration
+[ -f /etc/sysconfig/${NAME} ] && . /etc/sysconfig/${NAME}
+
+export JAVA_HOME=${JAVA_HOME:-"/usr"}
+
+#define where jboss is - this is the directory containing directories log, bin, conf etc
+#JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss/jboss-as5"}
+JBOSS_HOME=/opt/jboss/jboss-as5
+
+#make sure java is on your path
+JAVAPTH=${JAVAPTH:-"$JAVAHOME/bin"}
+
+#define the classpath for the shutdown class
+JBOSSCP=${JBOSSCP:-"$JBOSS_HOME/bin/shutdown.jar:$JBOSS_HOME/client/jbossall-client.jar"}
+
+#define jboss configuration to start
+JBOSSCONF=${JBOSSCONF:-"default"}
+
+#define the script to use to start jboss
+JBOSSSH=${JBOSSSH:-"$JBOSS_HOME/bin/run.sh -c $JBOSSCONF"}
+
+#define the user under which jboss will run, or use RUNASIS to run as the current user
+JBOSSUS=${JBOSSUS:-"jboss"}
+
+#define the group under which jboss will run
+JBOSSGR=${JBOSSGR:-"jboss"}
+
+#define the lock file for this jboss instance
+JBOSSLOCK=/var/lock/subsys/$NAME-$JBOSSCONF
+
+#define the pid file for this jboss instance
+JBOSSPID=/var/run/$NAME-$JBOSSCONF
+
+# Set the defaults.
+LOGFILE=$JBOSS_HOME/server/$JBOSSCONF/log/console.log
+
+#define what will be done with the console log
+JBOSS_CONSOLE=${JBOSS_CONSOLE:-"$JBOSS_HOME/server/$JBOSSCONF/log/console.log"}
+
+#define what IP address for running jboss
+JBOSS_IP=${JBOSS_IP:-""}
+
+#define the jgroups UDP group (multicast address) for clustering
+JBOSS_UDP_GROUP=${JBOSS_UDP_GROUP:-"228.1.2.3"}
+
+#define the Http Session Replication UDP port (multicast)
+JBOSS_UDP_PORT_WP=${JBOSS_UDP_PORT_WP:-"45577"}
+
+#define the UDP port for JBoss clustering (multicast)
+JBOSS_UDP_PORT_HA=${JBOSS_UDP_PORT_HA:-"45566"}
+
+#define the UDP port for the ejb3 entity cache cluster (multicast)
+JBOSS_UDP_PORT_EJB3=${JBOSS_UDP_PORT_EJB3:-"43333"}
+
+#define the UDP port for ejb3 sfsb cache cluster (multicast)
+JBOSS_UDP_PORT_EJB3SFSB=${JBOSS_UDP_PORT_EJB3SFSB:-"45551"}
+
+#define the timeout period for starting the server
+JBOSS_START_TIMEOUT=${JBOSS_START_TIMEOUT:-"240"}
+                                                                                
+#define the timeout period for stopping the server
+JBOSS_STOP_TIMEOUT=${JBOSS_STOP_TIMEOUT:-"180"}
+
+#default run.conf file
+RUN_CONF=$JBOSS_HOME/bin/run.conf
+
+if [ ! -z $JBOSS_IP ]; then
+   JBOSSSH="$JBOSSSH -b $JBOSS_IP"
+fi
+
+# Set the RUN_CONF to config specific, if it exists
+if [ -f $JBOSS_HOME/server/$JBOSSCONF/run.conf ]; then
+   RUN_CONF=$JBOSS_HOME/server/$JBOSSCONF/run.conf
+fi
+
+# Read in run.conf and use them
+if [ -f ${RUN_CONF} ]; then
+   . ${RUN_CONF}
+fi
+
+# Set other parameters to the VM
+[ "x$JBOSS_UDP_GROUP" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.partition.udpGroup=$JBOSS_UDP_GROUP"
+[ "x$JBOSS_UDP_PORT_WP" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.webpartition.mcast_port=$JBOSS_UDP_PORT_WP"
+[ "x$JBOSS_UDP_PORT_HA" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.hapartition.mcast_port=$JBOSS_UDP_PORT_HA"
+[ "x$JBOSS_UDP_PORT_EJB3" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3entitypartition.mcast_port=$JBOSS_UDP_PORT_EJB3"
+[ "x$JBOSS_UDP_PORT_EJB3SFSB" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3sfsbpartition.mcast_port=$JBOSS_UDP_PORT_EJB3SFSB"
+
+# Set the awt.headless option
+JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"
+export JAVA_OPTS
+
+CMD_START="cd $JBOSS_HOME/bin; $JBOSSSH"
+
+# For SELinux we need to use 'runuser' not 'su'
+if [ -x /sbin/runuser ]
+then
+	SU=runuser
+else
+	SU=su
+fi
+
+if [ "$JBOSSUS" = "RUNASIS" ]; then
+  SUBIT=""
+else
+  SUBIT="$SU - $JBOSSUS -s /bin/sh -c "
+fi
+
+if [ -z "`echo $PATH | grep $JAVAPTH`" ]; then
+  export PATH=$PATH:$JAVAPTH
+fi
+
+mkdir -p $JBOSS_HOME/server/$JBOSSCONF/log/
+if [ "$JBOSSUS" != "RUNASIS" ]; then
+    chown $JBOSSUS:$JBOSSGR $JBOSS_HOME/server/$JBOSSCONF/log/
+fi
+
+if [ -a $JBOSS_HOME ] && [ ! -d "$JBOSS_HOME" ]; then
+  echo JBOSS_HOME does not exist as a valid directory : $JBOSS_HOME >> $LOGFILE
+  if [ "$JBOSSUS" != "RUNASIS" ]; then
+      chown $JBOSSUS:$JBOSSGR $LOGFILE
+  fi
+  exit 1
+fi
+
+
+RETVAL=0
+
+function procrunning() {
+   procid=0
+   JBOSSSCRIPT=$(echo $JBOSS_HOME/bin/run.sh|sed 's/\//\\\//g')
+   for procid in `pidof -x "$JBOSSSCRIPT"`; do
+       if [ ! -z $JBOSS_IP ]; then
+          ps -fp $procid | grep $JBOSSCONF | grep $JBOSS_IP  > /dev/null && pid=$procid
+       else
+          ps -fp $procid | grep $JBOSSCONF > /dev/null && pid=$procid
+       fi
+   done
+}
+
+start() {
+    echo -n $"Starting ${NAME}: "
+
+    # if lock file exists
+    if [ -f $JBOSSLOCK ]; then
+        procrunning
+        if [ ! $pid = '0' ]; then
+           failure $"${NAME} startup"
+	   echo -n -e "\nProcess already running"
+	   echo -n -e "\n"
+	   return 2
+        fi
+    fi
+
+    # check if port 8080 is being used
+    if [ -z $JBOSS_IP ] && [ $JBOSSCONF != "ports-01" ] && [ $JBOSSCONF != "ports-02" ] && [ $JBOSSCONF != "ports-03" ] && [ $JBOSSCONF != "minimal" ]; then
+        portbusy=`netstat -apntl|grep ":8080"`
+        if test "x$portbusy" != x; then
+            failure $"${NAME} startup"
+            echo -n -e "\nPort 8080 is busy, is there a Tomcat running?"
+	    echo -n -e "\n"
+            return 1
+        fi
+    fi
+
+    if [ "$JBOSSUS" != "RUNASIS" ]; then
+        if [ -z "`id $JBOSSUS 2>/dev/null |grep uid`" ]; then
+            failure $"${NAME} startup"
+            echo -n -e "\nUser $JBOSSUS does not exist. Create user first."
+	    echo -n -e "\n"
+            return 2
+        fi
+        if [ -z "`grep "$JBOSSGR:" /etc/group`" ]; then
+            failure $"${NAME} startup"
+            echo -n -e "\nGroup $JBOSSGR does not exist. Create group first."
+	    echo -n -e "\n"
+            return 3
+        fi
+    fi
+
+    touch $JBOSS_HOME/server/$JBOSSCONF/log/temp.file
+
+    # check if JBOSS_HOME directory exists, create it if it does not
+    if [ ! -d $JBOSS_HOME ]; then
+       #check permission
+       p=$JBOSS_HOME
+       while [ $p != "/" ]; do
+           p=`dirname $p`
+           # if it's a directory but not writable
+           if  [ -d $p ] && [ ! -w $p ]; then
+               echo -n -e "\nDirectory $p is not writable, cannot create $JBOSS_HOME."
+               echo -n -e "\n"
+               return 4
+           fi
+       done
+       mkdir -p $JBOSS_HOME
+    fi
+
+    #clone the directory if it doesn't exist
+    if [ $JBOSS_HOME != "/var/lib/jbossas" ] && [ ! -d $JBOSS_HOME ]; then
+        for dirname in `ls /var/lib/jbossas`; do
+           if [ ! $dirname = "server" ]; then
+              cp -pL -R /var/lib/jbossas/$dirname $JBOSS_HOME
+           else
+              for i in all default minimal; do
+                  mkdir -p $JBOSS_HOME/$dirname/$i
+                  for j in `ls /var/lib/jbossas/$dirname/$i` ; do
+                      if [ ! $j = "log" ]; then
+                          cp -pL -R /var/lib/jbossas/$dirname/$i/$j $JBOSS_HOME/$dirname/$i/$j
+                      fi
+                  done
+              done
+           fi
+        done
+    fi
+
+    if [ ! -d $JBOSS_HOME/server/$JBOSSCONF/conf ]; then
+        for i in `ls /var/lib/jbossas/server/all` ; do
+            if [ ! $i == "log" ]; then
+                cp -pL -R /var/lib/jbossas/server/all/$i $JBOSS_HOME/server/$JBOSSCONF/
+            fi
+        done
+    fi
+
+    #make JBOSS_HOME owned by $JBOSSUS:$JBOSSGR
+    if [ "$JBOSSUS" != "RUNASIS" ]; then
+        chown -R $JBOSSUS:$JBOSSGR $JBOSS_HOME
+    fi
+
+    echo CMD_START = $CMD_START > $LOGFILE
+
+    if [ "$JBOSSUS" != "RUNASIS" ]; then
+        chown $JBOSSUS:$JBOSSGR $LOGFILE
+    fi
+
+    if [ $JBOSSCONF == "ports-01" ] || [ $JBOSSCONF == "ports-02" ] || [ $JBOSSCONF == "ports-03" ] ; then
+        # update config file for the configuration
+        cp $JBOSS_HOME/server/$JBOSSCONF/conf/jboss-service.xml $JBOSS_HOME/server/$JBOSSCONF/conf/jboss-service.xml.orig
+        sedcom=s\/ports\-01\/$JBOSSCONF\/g
+        sed -e 's/implementation to create to obtain the ServicesStore instance./implementation to create to obtain the ServicesStore instance. \-\-\>/g' -e $sedcom -e '195,195s/-->//' $JBOSS_HOME/server/$JBOSSCONF/conf/jboss-service.xml.orig > $JBOSS_HOME/server/$JBOSSCONF/conf/jboss-service.xml
+    fi
+
+    cd $JBOSS_HOME/bin
+
+    # determine userid to start jboss
+    if [ -z "$SUBIT" ]; then
+        eval $CMD_START >>${JBOSS_CONSOLE} 2>&1 &
+    else
+        $SUBIT "export JAVA_HOME=$JAVA_HOME; export JAVA_OPTS=\"$JAVA_OPTS\";$CMD_START >> $JBOSS_HOME/server/$JBOSSCONF/log/jboss-boot.log 2>&1 &"
+    fi
+
+    sleep=0
+    RETVAL=1
+    while [ $sleep -lt $JBOSS_START_TIMEOUT -a $RETVAL -eq 1 ]; do
+        #echo -n -e "\nwaiting for processes to start";
+        sleep 10
+        sleep=`expr $sleep + 10`
+        # if server.log has been updated
+        if [ $JBOSS_HOME/server/$JBOSSCONF/log/temp.file -ot $JBOSS_HOME/server/$JBOSSCONF/log/server.log ]; then
+            #grep -q MicroKernel $JBOSS_HOME/server/$JBOSSCONF/log/server.log > /dev/null 2>&1
+            grep -q Microcontainer $JBOSS_HOME/server/$JBOSSCONF/log/server.log > /dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                RETVAL=0
+            fi
+        fi
+        pid=0
+        procrunning
+        if [ $pid == '0' ]; then
+            failure $"${NAME} startup"
+            echo -n -e "\nProcess crashed on startup"
+            echo
+            RETVAL=2
+        fi
+    done
+    rm $JBOSS_HOME/server/$JBOSSCONF/log/temp.file
+
+    if [ -x /etc/rc.d/init.d/functions ]; then
+        if [ $RETVAL -eq 0 ]; then
+            success $"${NAME} startup"
+        else
+            # check if the process is still running
+            pid=0
+            procrunning
+            if [ ! $pid = '0' ]; then
+                echo -n -e "\n${NAME} startup has timed out, process still running. \n"
+                echo
+            else
+                failure $"${NAME} startup"
+            fi
+        fi
+    fi
+
+    echo
+    [ $RETVAL = 0 ] && touch $JBOSSLOCK
+    pid=0
+    procrunning
+    if [ ! $pid = '0' ]; then
+        echo $pid > $JBOSSPID
+        if [ "$JBOSSUS" != "RUNASIS" ]; then
+            chown $JBOSSUS:$JBOSSGR $JBOSSPID
+        fi
+    fi
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping ${NAME}: "
+    pid=0
+    procrunning
+    if [ $pid = '0' ]; then
+        failure $"${NAME} shutdown"
+        echo -n -e "\nNo JBossas is currently running\n"
+        if [ -f $JBOSSLOCK ]; then 
+            rm -f $JBOSSLOCK
+        fi
+        if [ -f $JBOSSPID ]; then 
+            rm -f $JBOSSPID
+        fi
+        return 1
+    fi
+
+    pid=0
+    RETVAL=1
+    procrunning
+
+    # If process is still running
+
+    # First, try to kill it nicely
+    if [ $RETVAL != 0 ] ; then
+        for id in `ps --ppid $pid | awk '{print $1}' | grep -v "^PID$"`; do
+           $SUBIT "kill -15 $id" 2>/dev/null
+        done
+    
+        sleep=0
+        while [ $sleep -lt $JBOSS_STOP_TIMEOUT -a $RETVAL -eq 1 ]; do
+            echo -n -e "\nwaiting for processes to stop";
+            sleep 10
+            sleep=`expr $sleep + 10`
+            grep -q "Shutdown complete" $JBOSS_HOME/server/$JBOSSCONF/log/server.log > /dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                RETVAL=0
+            fi
+            pid=0
+            procrunning
+            if [ $pid == '0' ]; then
+                RETVAL=0
+            fi
+        done
+    fi
+
+    # Still not dead... notify user
+
+    count=0
+    pid=0
+    procrunning
+
+    if [ $pid != '0' ] ; then
+        jboss_java_pid=`ps --ppid $pid | grep java | awk '{print $1}'`
+        echo -e "\nTimeout: Shutdown command was sent, but process is still running with PID $jboss_java_pid"
+        failure $"${NAME} shutdown"
+    else
+        if [ -x /etc/rc.d/init.d/functions ]; then
+                success $"${NAME} shutdown"
+        fi
+     fi
+
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $JBOSSLOCK $JBOSSPID
+    return $RETVAL
+}
+
+status() {
+    pid=0
+    procrunning
+    if [ $pid == 0 ]; then
+        if [ -f $JBOSSLOCK ]; then
+            echo "${NAME} is dead but subsys locked";
+            return 2
+        fi
+        if [ -f $JBOSSPID ]; then
+            echo "${NAME} is dead but pid file exists";
+            return 3
+        fi
+        echo "${NAME} is stopped";
+        return 0
+    else
+        echo "${NAME} (pid $pid) is running";
+        return 0
+    fi
+}
+                                                                                
+# Restart only if process is already running
+condrestart() {
+	pid=0
+	procrunning
+	if [ $pid != 0 ]; then
+	   stop
+	   sleep 3
+	   start
+	fi
+}
+
+case "$1" in
+start)
+    start
+    ;;
+stop)
+    stop
+    ;;
+restart|reload)
+    stop
+    sleep 3
+    start
+    ;;
+condrestart)
+    condrestart
+    ;;
+status)
+    status
+    ;;
+help)
+    echo "usage: ${NAME} (start|stop|status|restart|help)"
+    ;;
+*)
+    echo "usage: ${NAME} (start|stop|status|restart|help)"
+    exit 1
+esac
+
+exit $RETVAL
