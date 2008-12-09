@@ -1,9 +1,13 @@
 
 
-task :default=>[ :appliance ]
+#task :default=>[ :appliance ]
 
-task :appliance do 
-  puts "Building appliance"
-end
+#task :appliance do 
+  #puts "Building appliance"
+#end
+#
 
-require "./rpms/Rakefile.rb"
+$: << File.dirname( __FILE__ ) + '/lib'
+
+require "rpms/Rakefile.rb"
+require "appliances/Rakefile.rb"
