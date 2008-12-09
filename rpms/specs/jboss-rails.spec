@@ -1,12 +1,16 @@
+%define version 1.0.Beta2
+
 Summary: JBoss Rails
 Name: jboss-rails
-Version: 1.0.Beta3
+Version: %{version}
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: jboss-rails-deployer.jar
-BuildRoot: /tmp/%{name}-root
+Source0: http://repo.oddthesis.org/jboss-rails-deployer-1.0.0-beta-2.zip
+BuildRoot: /tmp/%{name}
+
+%define __jar_repack %{nil}
 
 %description
 The JBoss Rails deployer for AS5
@@ -15,16 +19,19 @@ The JBoss Rails deployer for AS5
 %setup -c jboss-rails.deployer 
 
 %install
-echo "install in $PWD"
+## every config but minimal
+configs=( all  default  standard  web )
 
-install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/default/deployers/jboss-rails.deployer
-cp -R . $RPM_BUILD_ROOT/opt/jboss-as5/server/default/deployers/jboss-rails.deployer
+for config in ${configs[@]} ; do
+  install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deployers/jboss-rails.deployer
+  cp -R ./jboss-rails.deployer $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deployers/
+done
 
-install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/web/deployers/jboss-rails.deployer
-cp -R . $RPM_BUILD_ROOT/opt/jboss-as5/server/web/deployers/jboss-rails.deployer
+#install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/default/deployers/jboss-rails.deployer
+#cp -R ./jboss-rails.deployer $RPM_BUILD_ROOT/opt/jboss-as5/server/default/deployers/
 
-install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/all/deployers/jboss-rails.deployer
-cp -R . $RPM_BUILD_ROOT/opt/jboss-as5/server/all/deployers/jboss-rails.deployer
+#install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/web/deployers/jboss-rails.deployer
+#cp -R ./jboss-rails.deployer $RPM_BUILD_ROOT/opt/jboss-as5/server/web/deployers/
 
 %clean
 rm -Rf $RPM_BUILD_ROOT

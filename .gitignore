@@ -1,1 +1,4 @@
-yum-topdir
+build-topdir
+tmp
+*.swp
+

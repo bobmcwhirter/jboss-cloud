@@ -1,34 +1,39 @@
 require 'open3'
+require 'find'
 
 root = File.expand_path( File.dirname( __FILE__ ) + '/..' )
 
 rpms_dir    = root + "/rpms"
+tmp_dir     = root + "/tmp"
 specs_dir   = rpms_dir + "/specs"
 sources_dir = rpms_dir + "/sources"
 
-topdir = root + "/yum-topdir"
+topdir = root + "/build-topdir"
 
 target = root + "/target"
 
 #task :default=>[ :rpm, :createrepo ]
-
-task :create_topdir do
-  puts "creating topdir #{topdir}"
-  FileUtils.mkdir_p( topdir )
-  FileUtils.mkdir_p( topdir + '/SOURCES' )
-  FileUtils.mkdir_p( topdir + '/SRPMS' )
-  FileUtils.mkdir_p( topdir + '/RPMS' )
-  FileUtils.mkdir_p( topdir + '/SPECS' )
-  FileUtils.mkdir_p( topdir + '/BUILD' )
-end
-
-task :copy_sources do 
-  FileUtils.cp( Dir[ sources_dir + '/*' ], topdir + '/SOURCES/' )
-end
-
+  
 specs = Dir[ specs_dir + '/*.spec' ]
 
 namespace :rpm do
+  task :create_topdir do
+    puts "creating topdir #{topdir}"
+    FileUtils.mkdir_p( topdir )
+    FileUtils.mkdir_p( topdir + '/SOURCES' )
+    FileUtils.mkdir_p( topdir + '/SRPMS' )
+    FileUtils.mkdir_p( topdir + '/RPMS' )
+    FileUtils.mkdir_p( topdir + '/SPECS' )
+    FileUtils.mkdir_p( topdir + '/BUILD' )
+  end
+  
+  task :copy_sources do 
+    FileUtils.cp( Dir[ sources_dir + '/*' ], topdir + '/SOURCES/' )
+  end
+
+  desc "Install RPMs under tmp/"
+  task "tmp-install".to_sym
+
   specs.each do |spec|
     simple_name = File.basename( spec, ".spec" )
     desc "Build #{simple_name}"
@@ -37,6 +42,30 @@ namespace :rpm do
     end
     task "prepare_#{simple_name}_sources".to_sym do 
       prepare_sources(spec, topdir, sources_dir)
+    end
+
+    desc "Install #{simple_name} under tmp/"
+    task "tmp-install-#{simple_name}".to_sym do
+      tmp_install( simple_name, topdir, tmp_dir )
+    end
+    task "tmp-install".to_sym=>[ "rpm:tmp-install-#{simple_name}".to_sym ]
+  end
+end
+
+specs.each do |spec|
+  simple_name = File.basename( spec, ".spec" )
+  task :rpm=>[ "rpm:#{simple_name}".to_sym ]
+end
+
+
+def tmp_install(simple_name, topdir, tmp_dir)
+  simple_name_regexp = Regexp.new( Regexp.escape( simple_name ) )
+  Find.find( topdir + "/RPMS/noarch" ) do |f|
+    if ( f =~ simple_name_regexp )
+      FileUtils.mkdir_p( "#{tmp_dir}/rpm-install" )
+      Dir.chdir( "#{tmp_dir}/rpm-install" ) do 
+        execute_command( "rpm2cpio #{f} | cpio -iv" )
+      end
     end
   end
 end
@@ -56,7 +85,7 @@ def prepare_sources(spec, topdir, sources_dir)
       elsif ( line =~ /^Source([0-9]*):(.*)$/ )
         source = $2.strip
         puts "source -> [#{source}]"
-        source.gsub!( /%{version}/, version )
+        source.gsub!( /%\{version\}/, version )
         if ( source =~ %r{^http://} ) 
           fetch_source( source, topdir )
         else

@@ -9,9 +9,9 @@
 # Default-Start:
 # Default-Stop:
 # Description: JBoss J2EE Server
-# Short-Description: start and stop jbossas
+# Short-Description: start and stop JBoss AS5
 ### END INIT INFO
-# chkconfig: - 98 10
+# chkconfig: 345 98 10
 # description: JBoss J2EE Server
 # 
 
