@@ -21,7 +21,7 @@ def tmp_install(simple_name, topdir, tmp_dir)
     if ( f =~ simple_name_regexp )
       FileUtils.mkdir_p( "#{tmp_dir}/rpm-install" )
       Dir.chdir( "#{tmp_dir}/rpm-install" ) do 
-        execute_command( "rpm2cpio #{f} | cpio -iv" )
+        execute_command( "rpm2cpio #{f} | cpio -iv --make-directories" )
       end
     end
   end

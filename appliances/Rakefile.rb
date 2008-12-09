@@ -51,6 +51,12 @@ namespace :appliance do
         pkg.need_tar_gz = true
         pkg.package_files.include(file_list)
     end 
+
+    desc "Install #{simple_name} under tmp/"
+    task "tmp-install-#{simple_name}".to_sym do
+      tmp_install( "#{simple_name}-appliance", CONFIG.topdir, CONFIG.tmp_dir )
+    end
+    task "tmp-install".to_sym=>[ "rpm:tmp-install-#{simple_name}".to_sym ]
   end
 end
 
