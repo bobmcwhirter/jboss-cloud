@@ -31,7 +31,7 @@ fi
 # Source configuration.
 [ -f /etc/java/java.conf ] && . /etc/java/java.conf
 #read in system wide jboss configuration
-. /etc/jboss.conf
+. /etc/jboss-as5.conf
 #read in service-specific jboss configuration
 [ -f /etc/sysconfig/${NAME} ] && . /etc/sysconfig/${NAME}
 
@@ -39,16 +39,16 @@ export JAVA_HOME=${JAVA_HOME:-"/usr"}
 
 #define where jboss is - this is the directory containing directories log, bin, conf etc
 #JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss/jboss-as5"}
-JBOSS_HOME=/opt/jboss/jboss-as5
+JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss/jboss-as5"}
 
 #make sure java is on your path
-JAVAPTH=${JAVAPTH:-"$JAVAHOME/bin"}
+JAVAPTH=${JAVAPTH:-"$JAVA_HOME/bin"}
 
 #define the classpath for the shutdown class
 JBOSSCP=${JBOSSCP:-"$JBOSS_HOME/bin/shutdown.jar:$JBOSS_HOME/client/jbossall-client.jar"}
 
 #define jboss configuration to start
-JBOSSCONF=${JBOSSCONF:-"default"}
+JBOSSCONF=${JBOSSCONF:-"all"}
 
 #define the script to use to start jboss
 JBOSSSH=${JBOSSSH:-"$JBOSS_HOME/bin/run.sh -c $JBOSSCONF"}
