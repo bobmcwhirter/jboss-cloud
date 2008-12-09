@@ -19,10 +19,11 @@ end
 
 directory JBOSS_CLOUD.topdir
 
+RPM_EXTRAS = []
+
 namespace :rpm do
 
   desc "Build all extras RPMs"
-  task :extras 
 
   namespace :extras do
     Dir[ JBOSS_CLOUD.root + '/specs/extras/*.yml' ].each do |yml|
@@ -43,7 +44,7 @@ namespace :rpm do
         end
         CLEAN << rpm_file
 
-        task :extras => [ rpm_file ]
+        RPM_EXTRAS << rpm_file
 
         desc "Fetch sources for #{simple_name}"
         task "fetch-source" do
@@ -70,6 +71,8 @@ namespace :rpm do
       end # namespace <rpm>
     end # Dir[...]
   end # :extras
+
+  task :extras=>RPM_EXTRAS
 
   namespace :appliance do
   end
