@@ -3,13 +3,13 @@ $: << File.dirname( __FILE__ ) + '/../lib'
 require 'build_tools.rb'
 require 'rake/packagetask'
 
-LOCAL_CONFIG = OpenStruct.new( {
+APPLIANCE_CONFIG = OpenStruct.new( {
   :specs_dir      => CONFIG.appliances_dir + "/specs",
   :sources_dir    => CONFIG.appliances_dir + "/appliances",
   :kickstarts_dir => CONFIG.appliances_dir + "/kickstarts",
 })
 
-specs = Dir[ LOCAL_CONFIG.specs_dir + '/*.spec' ]
+specs = Dir[ APPLIANCE_CONFIG.specs_dir + '/*.spec' ]
 
 namespace :appliance do
   task :create_topdir do
@@ -45,12 +45,17 @@ namespace :appliance do
     end
 
     desc "Package sources for #{simple_name}"
-    Rake::PackageTask.new( simple_name + "-appliance", "tmp") do |pkg|
-        file_list = ["appliances/#{simple_name}-appliance/**/*" ]
-        pkg.package_dir = CONFIG.target_dir + "/pkg"
-        pkg.need_tar_gz = true
-        pkg.package_files.include(file_list)
-    end 
+    task "package_#{simple_name}_sources".to_sym do
+      FileUtils.mkdir_p CONFIG.target_dir + "/pkg/#{simple_name}-appliance-tmp"
+    end
+
+    #Rake::PackageTask.new( simple_name + "-appliance", "tmp") do |pkg|
+        #file_list = ["appliances/#{simple_name}-appliance/**/*" ]
+        #pkg.package_dir = CONFIG.target_dir + "/pkg"
+        #pkg.need_tar_gz = true
+        #pkg.package_files.include(file_list)
+    #end 
+    #  
 
     desc "Install #{simple_name} under tmp/"
     task "tmp-install-#{simple_name}".to_sym do

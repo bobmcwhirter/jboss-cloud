@@ -1,4 +1,3 @@
-%define version 1.0.Beta2
 
 Summary: JBoss Rails
 Name: jboss-rails
@@ -7,7 +6,7 @@ Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://repo.oddthesis.org/jboss-rails-deployer-1.0.0-beta-2.zip
+Source0: http://repo.oddthesis.org/jboss-rails-deployer-%{version}.zip
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}

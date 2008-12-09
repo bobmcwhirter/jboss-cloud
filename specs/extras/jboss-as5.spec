@@ -1,5 +1,5 @@
 
-%define version 5.0.0.GA
+#%define version 5.0.0.GA
 
 Summary: JBoss 
 Name: jboss-as5

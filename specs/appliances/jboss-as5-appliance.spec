@@ -1,12 +1,14 @@
+
 %define name    jboss-as5-appliance
-%define version 1.0.0.Beta1
+#%define version 1.0.0.Beta1
+
 %define aceHome /usr/share/ace
 %define pbuild %{_builddir}/%{name}-tmp
 
 Summary: 	JBoss AS5 Appliance
 Name:  		%{name}
 Version: 	%{version}
-Release: 	1%{?dist}
+Release: 	1
 
 Group:  	Applications/Internet
 License: 	LGPLv2+
