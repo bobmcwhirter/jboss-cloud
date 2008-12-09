@@ -61,7 +61,7 @@ namespace :appliance do
 end
 
 specs.each do |spec|
-  simple_name = File.basename( spec, ".spec" )
-  task :rpm=>[ "rpm:#{simple_name}".to_sym ]
+  simple_name = File.basename( spec, "-appliance.spec" )
+  task :appliance=>[ "appliance:#{simple_name}".to_sym ]
 end
 
