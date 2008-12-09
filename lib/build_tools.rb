@@ -46,8 +46,8 @@ def prepare_sources(spec, topdir, sources_dir)
       elsif ( line =~ /^Source([0-9]*):(.*)$/ )
         source = $2.strip
         puts "source -> [#{source}]"
-        source.gsub!( /%\{version\}/, version )
-        source.gsub!( /%\{name\}/, name )
+        source.gsub!( /%\{version\}/, version ) if version
+        source.gsub!( /%\{name\}/, name ) if name
         if ( source =~ %r{^http://} ) 
           fetch_source( source, topdir )
         else
