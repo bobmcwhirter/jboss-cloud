@@ -95,7 +95,7 @@ namespace :rpm do
       rpm_file = "topdir/RPMS/noarch/#{simple_name}-#{version}-#{release}.noarch.rpm"
       PROVIDES_LOCALLY[simple_name] = "#{simple_name}-#{version}-#{release}"
 
-      desc "Build #{simple_name} RPM"
+      desc "Build #{simple_name} RPM."
       task simple_name=>[ rpm_file ]
 
       namespace simple_name.to_sym do
@@ -113,7 +113,7 @@ namespace :rpm do
     end # Dir[...]
   end # :extras
 
-  desc "Build all RPMs from extras"
+  desc "Build all RPMs from extras."
   task :extras=>RPM_EXTRAS
 
   namespace :appliance do
@@ -122,7 +122,7 @@ namespace :rpm do
 
       rpm_file = "topdir/RPMS/noarch/#{simple_name}-appliance-#{JBOSS_CLOUD.version}-#{JBOSS_CLOUD.release}.noarch.rpm"
 
-      desc "Build #{simple_name} appliance RPM"
+      desc "Build #{simple_name} appliance RPM."
       task simple_name=>[ rpm_file ]
 
       namespace simple_name.to_sym do
@@ -152,7 +152,7 @@ namespace :appliance do
     end
   end
 
-  desc "Create the source for appliances"
+  desc "Create the source tarball for appliances."
   task :source=>[ APPLIANCE_SOURCE_FILE ]
 end
 
