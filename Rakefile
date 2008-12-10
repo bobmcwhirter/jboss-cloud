@@ -72,7 +72,6 @@ directory 'tmp/'
 CLEAN << 'tmp/'
 
 namespace :base do
-  desc "Create topdir structure"
   task :topdir=>[ 'topdir/SPECS',
                   'topdir/SOURCES',
                   'topdir/BUILD',
