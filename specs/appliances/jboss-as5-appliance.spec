@@ -1,26 +1,25 @@
 
 %define name    jboss-as5-appliance
-#%define version 1.0.0.Beta1
 
 %define aceHome /usr/share/ace
-%define pbuild %{_builddir}/%{name}-tmp
 
 Summary: 	JBoss AS5 Appliance
 Name:  		%{name}
 Version: 	%{version}
-Release: 	1
+Release: 	%{release}
 
 Group:  	Applications/Internet
 License: 	LGPLv2+
 URL: 		http://oddthesis.org/
-Source0: 	%{name}-tmp.tar.gz
-BuildRoot: 	%{_tmppath}/%{name}-%{version}
+Source0: 	jboss-cloud-%{version}-%{release}.tar.gz
+#BuildRoot: 	%{_tmppath}/%{name}-%{version}
 BuildArch: 	noarch
 Requires: 	ace-banners
 Requires: 	ace-console
 Requires: 	ace-ssh
 Requires: 	java-1.6.0-openjdk-devel
-Requires: 	jboss-as5-appliance
+Requires: 	jboss-as5
+Requires: 	jboss-rails
 # The following are required to run within EC2
 Requires: 	curl
 Requires: 	rsync
@@ -30,7 +29,7 @@ JBoss AS5 Appliance
 
 %prep
 #%setup -q
-%setup -n %{name}-tmp
+%setup -n jboss-cloud-%{version}
 
 
 %build 
@@ -39,7 +38,7 @@ JBoss AS5 Appliance
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/%{aceHome}
 mkdir -p %{buildroot}/%{aceHome}/lenses
-cp -R %{pbuild}/* %{buildroot}/%{aceHome}
+cp -R * %{buildroot}/%{aceHome}
 mv %{buildroot}/%{aceHome}/appliances/%{name}/lenses/* %{buildroot}/%{aceHome}/lenses
 
 %clean
