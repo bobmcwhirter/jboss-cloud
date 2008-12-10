@@ -35,23 +35,23 @@ namespace :rpm do
       namespace simple_name.to_sym do
 
         rpm_file = "topdir/RPMS/noarch/#{simple_name}-#{version}-#{release}.noarch.rpm"
+        RPM_EXTRAS << rpm_file
 
         desc "Build #{simple_name} RPM"
         file rpm_file => [ JBOSS_CLOUD.topdir, spec_file ] do
           Rake::Task["rpm:extras:#{simple_name}:fetch-source"].invoke
-          puts "building #{rpm_file}"
+          puts "** Building #{rpm_file}"
           execute_command "rpmbuild --define 'version #{version}' --define '_topdir #{JBOSS_CLOUD.topdir}' --target noarch -ba #{spec_file}"
         end
-        CLEAN << rpm_file
 
-        RPM_EXTRAS << rpm_file
+        CLOBBER << rpm_file
+
 
         desc "Fetch sources for #{simple_name}"
         task "fetch-source" do
           File.open( spec_file).each_line do |line|
             if ( line =~ /Source[0-9]+: (.*)/ )
               source = $1
-              puts "SOURCE #{source}"
               if ( source =~ %r{http://} )
                 source.gsub!( /%\{version\}/, version )
                 source_basename = File.basename( source )
@@ -59,7 +59,6 @@ namespace :rpm do
                   execute_command( "wget #{source} -O #{JBOSS_CLOUD.topdir}/sources/#{source_basename}" )
                 end
               else
-                puts "looking to copy source locally"  
                 if ( File.exist?( JBOSS_CLOUD.root + "/src/#{source}" ) )
                   FileUtils.cp( JBOSS_CLOUD.root + "/src/#{source}", JBOSS_CLOUD.topdir + "/sources/#{source}" )
                 end
@@ -82,13 +81,6 @@ end
 
 namespace :kickstart do
 end
-
-
-def build_rpm(spec)
-  puts "Buiding RPM from #{spec} in #{JBOSS_CLOUD.topdir}"
-  execute_command "rpmbuild --define '_topdir #{JBOSS_CLOUD.topdir}' --target noarch -ba #{spec}"
-end
-
 
 def execute_command(cmd)
   puts "CMD [\n\t#{cmd}\n]"
