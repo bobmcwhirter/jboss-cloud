@@ -17,13 +17,27 @@ task :info do
   puts "root: #{JBOSS_CLOUD.root}"
 end
 
-directory JBOSS_CLOUD.topdir
+#directory 'topdir'
+directory 'topdir/SPECS'
+directory 'topdir/SOURCES'
+directory 'topdir/BUILD'
+directory 'topdir/RPMS'
+directory 'topdir/SRPMS'
+
+namespace :base do
+  desc "Create topdir structure"
+  task :topdir=>[ 'topdir/SPECS',
+                  'topdir/SOURCES',
+                  'topdir/BUILD',
+                  'topdir/RPMS',
+                  'topdir/SRPMS' ]
+  CLOBBER << 'topdir'
+
+end
 
 RPM_EXTRAS = []
 
 namespace :rpm do
-
-  desc "Build all extras RPMs"
 
   namespace :extras do
     Dir[ JBOSS_CLOUD.root + '/specs/extras/*.yml' ].each do |yml|
@@ -32,36 +46,47 @@ namespace :rpm do
       simple_name = File.basename( yml, ".yml" )
       version = config['version']
       release = `rpm --define 'version #{version}' --specfile #{spec_file} -q --qf '%{Release}'`
+      rpm_file = "topdir/RPMS/noarch/#{simple_name}-#{version}-#{release}.noarch.rpm"
+
+      desc "Build #{simple_name} RPM"
+      task simple_name=>[ rpm_file ]
+
       namespace simple_name.to_sym do
 
-        rpm_file = "topdir/RPMS/noarch/#{simple_name}-#{version}-#{release}.noarch.rpm"
         RPM_EXTRAS << rpm_file
 
-        desc "Build #{simple_name} RPM"
-        file rpm_file => [ JBOSS_CLOUD.topdir, spec_file ] do
-          Rake::Task["rpm:extras:#{simple_name}:fetch-source"].invoke
+        file rpm_file => [ 'base:topdir', spec_file ] do
+          #Rake::Task["rpm:extras:#{simple_name}:fetch-source"].invoke
           puts "** Building #{rpm_file}"
           execute_command "rpmbuild --define 'version #{version}' --define '_topdir #{JBOSS_CLOUD.topdir}' --target noarch -ba #{spec_file}"
         end
 
         CLOBBER << rpm_file
 
+        File.open( spec_file).each_line do |line|
+          line.gsub!( /#.*$/, '' )
+          if ( line =~ /Source[0-9]+: (.*)/ )
+            source = $1
+            puts "SOURCE #{source}"
+            if ( source =~ %r{http://} )
+              source.gsub!( /%\{version\}/, version )
+              source_basename = File.basename( source )
 
-        desc "Fetch sources for #{simple_name}"
-        task "fetch-source" do
-          File.open( spec_file).each_line do |line|
-            if ( line =~ /Source[0-9]+: (.*)/ )
-              source = $1
-              if ( source =~ %r{http://} )
-                source.gsub!( /%\{version\}/, version )
-                source_basename = File.basename( source )
-                if ( ! File.exist?( JBOSS_CLOUD.topdir + "/SOURCES/#{source_basename}" ) )
-                  execute_command( "wget #{source} -O #{JBOSS_CLOUD.topdir}/sources/#{source_basename}" )
-                end
-              else
-                if ( File.exist?( JBOSS_CLOUD.root + "/src/#{source}" ) )
-                  FileUtils.cp( JBOSS_CLOUD.root + "/src/#{source}", JBOSS_CLOUD.topdir + "/sources/#{source}" )
-                end
+              source_file = "topdir/SOURCES/#{source_basename}"
+              file rpm_file => [ source_file ]
+
+              #desc "Grab #{source_basename}"
+              file source_file do
+                execute_command( "wget #{source} -O #{JBOSS_CLOUD.topdir}/SOURCES/#{source_basename} --progress=bar:mega" )
+              end
+            else
+              source.gsub!( /%\{version\}/, version )
+              source_basename = File.basename( source )
+              source_file = "topdir/SOURCES/#{source_basename}"
+              file rpm_file => [ source_file ]
+              puts "COPY SOURCE #{source_file}"
+              file source_file=>[ "src/#{source_basename}" ] do
+                FileUtils.cp( JBOSS_CLOUD.root + "/src/#{source}", JBOSS_CLOUD.topdir + "/SOURCES/#{source}" )
               end
             end
           end
@@ -71,9 +96,15 @@ namespace :rpm do
     end # Dir[...]
   end # :extras
 
+  desc "Build all RPMs from extras"
   task :extras=>RPM_EXTRAS
 
   namespace :appliance do
+    appliance_source_file = "topdir/SOURCES/#{JBOSS_CLOUD.name}-#{JBOSS_CLOUD.version}-#{JBOSS_CLOUD.release}.tar.gz" 
+    desc "Create the source for appliances"
+    file appliance_source_file do
+      execute_command( "tar zcvf #{appliance_source_file} ./appliances" )
+    end
   end
 
 end
@@ -81,6 +112,13 @@ end
 
 namespace :kickstart do
 end
+
+## -- 
+## -- 
+## -- 
+## -- 
+## -- 
+## -- 
 
 def execute_command(cmd)
   puts "CMD [\n\t#{cmd}\n]"

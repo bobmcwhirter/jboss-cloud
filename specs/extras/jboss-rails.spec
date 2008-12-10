@@ -6,7 +6,8 @@ Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://repo.oddthesis.org/jboss-rails-deployer-%{version}.zip
+#Source0: http://repo.oddthesis.org/jboss-rails-deployer-%{version}.zip
+Source0: jboss-rails-deployer-%{version}.zip
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
