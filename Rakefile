@@ -55,9 +55,18 @@ def build_source_dependencies( spec_file, rpm_file, version=nil, release=nil )
   end
 end
 
+desc "Get information on the build"
 task :info do 
   puts "#{JBOSS_CLOUD.name} version #{JBOSS_CLOUD.version}"
   puts "root: #{JBOSS_CLOUD.root}"
+  puts ""
+  puts "Appliances"
+  puts ""
+  puts "Extra RPMs"
+  PROVIDES_LOCALLY.keys.each do |name|
+    puts " * #{name}"
+  end
+  puts ""
 end
 
 #directory 'topdir'
@@ -84,6 +93,13 @@ RPM_EXTRAS = []
 PROVIDES_LOCALLY = {}
 
 namespace :rpm do
+
+  desc "Create the repository metadata"
+  task :repodata => 'topdir/RPMS/noarch/repodata' 
+
+  file 'topdir/RPMS/noarch/repodata'=>FileList.new( 'topdir/RPMS/noarch/*.rpm' ) do
+    execute_command( "createrepo topdir/RPMS/noarch/repodata" )
+  end
 
   namespace :extras do
     Dir[ JBOSS_CLOUD.root + '/specs/extras/*.yml' ].each do |yml|
