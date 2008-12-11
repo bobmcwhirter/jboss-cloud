@@ -1,5 +1,6 @@
 tmp
 *.swp
+rpms-cache
 sources-cache
 build
 

@@ -1,0 +1,2 @@
+post: |
+  /sbin/chkconfig --level 345 jboss-as5 on

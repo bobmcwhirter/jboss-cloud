@@ -3,6 +3,7 @@ require 'rake/clean'
 require 'ostruct'
 require 'open3'
 require 'yaml'
+require 'erb'
 
 PROJECT = OpenStruct.new( {
   :name=>'jboss-cloud',
@@ -13,6 +14,7 @@ PROJECT = OpenStruct.new( {
   :build_dir=>'build',
   :topdir=>'build/topdir',
   :sources_cache_dir=>'sources-cache',
+  :rpms_cache_dir=>'rpms-cache',
 } )
 
 CLEAN << PROJECT.build_dir
@@ -174,7 +176,53 @@ namespace :appliance do
   end
 
   desc "Create the source tarball for appliances."
-  task :source=>[ APPLIANCE_SOURCE_FILE ]
+  task 'common-source'=>[ APPLIANCE_SOURCE_FILE ]
+
+  directory "#{PROJECT.build_dir}/appliances"
+
+  Dir[ PROJECT.root + '/specs/appliances/*.spec' ].each do |spec_file|
+    simple_name = File.basename( spec_file, ".spec" )
+    super_simple_name = File.basename( simple_name, "-appliance" )
+    
+    appliance_build_dir = "#{PROJECT.build_dir}/appliances/#{simple_name}"
+    appliance_xml_file  = "#{appliance_build_dir}/#{simple_name}.xml"
+    appliance_ks_file   = "#{appliance_build_dir}/#{simple_name}.ks"
+    appliance_yml_file  = "kickstarts/#{simple_name}.yml"
+
+    namespace simple_name do
+      directory appliance_build_dir
+      if ( File.exist?( appliance_yml_file ) )
+        file appliance_ks_file => [ appliance_yml_file ]
+      end
+      file appliance_ks_file => [ appliance_build_dir, "#{appliance_build_dir}/base-pkgs.ks" ] do
+        puts "Creating kickstart for #{simple_name}"
+        ks_gen = KickstartGenerator.new( "kickstarts/appliance.ks.erb", appliance_ks_file )
+        ks_gen.local_repository_url = "file://#{PROJECT.root}/#{PROJECT.topdir}/RPMS/noarch"
+        ks_gen.appliance_name = simple_name
+        ks_gen.appliance_rpm = simple_name
+
+        if ( File.exist?( appliance_yml_file ) ) 
+          r = YAML.load_file( appliance_yml_file ) 
+          ks_gen.post_script = r['post'] 
+        end
+
+        ks_gen.generate
+      end
+      file "#{appliance_build_dir}/base-pkgs.ks" => [ appliance_build_dir, "#{PROJECT.root}/kickstarts/base-pkgs.ks" ] do
+        FileUtils.cp( "#{PROJECT.root}/kickstarts/base-pkgs.ks", "#{appliance_build_dir}/base-pkgs.ks" )
+      end
+
+      directory "#{PROJECT.build_dir}/tmp"
+      file appliance_xml_file=>[ appliance_ks_file, "#{PROJECT.build_dir}/appliances", "rpm:appliance:#{super_simple_name}", 'rpm:repodata', "#{PROJECT.build_dir}/tmp" ] do
+        execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -v -t #{PROJECT.root}/#{PROJECT.build_dir}/tmp --cache=#{PROJECT.rpms_cache_dir} --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances" )
+      end
+    end
+
+    desc "Build #{super_simple_name} appliance image"
+    task simple_name=>[ appliance_xml_file ]
+  end
+
+  
 end
 
 namespace :kickstart do
@@ -188,11 +236,11 @@ end
 ## -- 
 
 def execute_command(cmd)
-  #puts "CMD [\n\t#{cmd}\n]"
+  puts "CMD [\n\t#{cmd}\n]"
   old_trap = trap("INT") do
     puts "caught SIGINT, shutting down"
   end
-  pid = Open3.popen3( cmd ) do |stdin, stdout, stderr|
+  Open3.popen3( cmd ) do |stdin, stdout, stderr|
     #stdin.close
     threads = []
     threads << Thread.new(stdout) do |input_str|
@@ -210,3 +258,24 @@ def execute_command(cmd)
   trap("INT", old_trap )
 end
 
+
+class KickstartGenerator
+
+  attr_accessor :local_repository_url
+  attr_accessor :appliance_name
+  attr_accessor :appliance_rpm
+
+  attr_accessor :post_script
+
+  def initialize(template_path, output_path)
+    @template_path = template_path
+    @output_path = output_path
+  end
+
+  def generate()
+    erb = ERB.new( File.read( @template_path ) )
+    b = binding
+    File.open( @output_path, 'w' ) {|f| f.write( erb.result(b) ) }
+  end
+
+end

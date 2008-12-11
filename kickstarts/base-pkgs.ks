@@ -1,3 +1,6 @@
+#needed to disable selinux
+lokkit
+
 #%packages --excludedocs --nobase
 bash
 kernel
@@ -10,8 +13,6 @@ rootfiles
 yum
 vim-minimal
 acpid
-#needed to disable selinux
-lokkit
 
 #Allow for dhcp access
 dhclient
