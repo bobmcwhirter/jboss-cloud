@@ -1,36 +1,31 @@
 
-Summary: JBoss Rails
-Name: jboss-rails
+Summary: JBoss JGroups
+Name: jboss-jgroups
 Version: %{version}
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://superb-east.dl.sourceforge.net/sourceforge/javagroups/JGroups-#{version}.bin.zip
+Source0: http://superb-east.dl.sourceforge.net/sourceforge/javagroups/JGroups-%{version}.bin.zip
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
 
 %description
-The JBoss Rails deployer for AS5
+JBoss JGroups
 
 %prep
-%setup 
+%setup -n JGroups-%{version}.bin
 
 %install
-## every config but minimal
-#configs=( all  default  standard  web )
+mkdir -p $RPM_BUILD_ROOT/opt
+cp -R . $RPM_BUILD_ROOT/opt/jboss-jgroups
 
-#for config in ${configs[@]} ; do
-  #install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deployers/jboss-rails.deployer
-  #cp -R ./jboss-rails.deployer $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deployers/
-#done
 
-#install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/default/deployers/jboss-rails.deployer
-#cp -R ./jboss-rails.deployer $RPM_BUILD_ROOT/opt/jboss-as5/server/default/deployers/
+#install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
+#install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}
 
-#install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/web/deployers/jboss-rails.deployer
-#cp -R ./jboss-rails.deployer $RPM_BUILD_ROOT/opt/jboss-as5/server/web/deployers/
+#touch $RPM_BUILD_ROOT/etc/jboss-as5.conf
 
 %clean
 rm -Rf $RPM_BUILD_ROOT

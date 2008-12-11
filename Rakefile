@@ -183,6 +183,7 @@ namespace :appliance do
   Dir[ PROJECT.root + '/specs/appliances/*.spec' ].each do |spec_file|
     simple_name = File.basename( spec_file, ".spec" )
     super_simple_name = File.basename( simple_name, "-appliance" )
+    puts "SUPER #{super_simple_name}"
     
     appliance_build_dir = "#{PROJECT.build_dir}/appliances/#{simple_name}"
     appliance_xml_file  = "#{appliance_build_dir}/#{simple_name}.xml"
@@ -214,12 +215,13 @@ namespace :appliance do
 
       directory "#{PROJECT.build_dir}/tmp"
       file appliance_xml_file=>[ appliance_ks_file, "#{PROJECT.build_dir}/appliances", "rpm:appliance:#{super_simple_name}", 'rpm:repodata', "#{PROJECT.build_dir}/tmp" ] do
-        execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -v -t #{PROJECT.root}/#{PROJECT.build_dir}/tmp --cache=#{PROJECT.rpms_cache_dir} --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances" )
+        # execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{PROJECT.root}/#{PROJECT.build_dir}/tmp --cache=#{PROJECT.rpms_cache_dir} --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances" )
+        execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v --cache=#{PROJECT.rpms_cache_dir}-2 --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances" )
       end
     end
 
     desc "Build #{super_simple_name} appliance image"
-    task simple_name=>[ appliance_xml_file ]
+    task super_simple_name=>[ appliance_xml_file ]
   end
 
   
