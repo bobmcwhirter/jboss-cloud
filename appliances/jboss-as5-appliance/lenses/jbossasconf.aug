@@ -1,4 +1,4 @@
-module JBossAS5Conf =
+module JBossASConf =
   autoload xfm
   let xfm = transform Shellvars.lns (incl "/etc/jboss-as5.conf")
 
