@@ -4,6 +4,7 @@ require 'ostruct'
 require 'open3'
 require 'yaml'
 require 'erb'
+require 'rexml/document'
 
 PROJECT = OpenStruct.new( {
   :name=>'jboss-cloud',
@@ -183,12 +184,13 @@ namespace :appliance do
   Dir[ PROJECT.root + '/specs/appliances/*.spec' ].each do |spec_file|
     simple_name = File.basename( spec_file, ".spec" )
     super_simple_name = File.basename( simple_name, "-appliance" )
-    puts "SUPER #{super_simple_name}"
     
     appliance_build_dir = "#{PROJECT.build_dir}/appliances/#{simple_name}"
     appliance_xml_file  = "#{appliance_build_dir}/#{simple_name}.xml"
     appliance_ks_file   = "#{appliance_build_dir}/#{simple_name}.ks"
     appliance_yml_file  = "kickstarts/#{simple_name}.yml"
+
+    appliance_vmx_package  = "#{PROJECT.build_dir}/appliances/#{simple_name}-#{PROJECT.version}-#{PROJECT.release}.tgz"
 
     namespace simple_name do
       directory appliance_build_dir
@@ -215,13 +217,35 @@ namespace :appliance do
 
       directory "#{PROJECT.build_dir}/tmp"
       file appliance_xml_file=>[ appliance_ks_file, "#{PROJECT.build_dir}/appliances", "rpm:appliance:#{super_simple_name}", 'rpm:repodata', "#{PROJECT.build_dir}/tmp" ] do
-        # execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{PROJECT.root}/#{PROJECT.build_dir}/tmp --cache=#{PROJECT.rpms_cache_dir} --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances" )
-        execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v --cache=#{PROJECT.rpms_cache_dir}-2 --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances" )
+        execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{PROJECT.root}/#{PROJECT.build_dir}/tmp --cache=#{PROJECT.rpms_cache_dir} --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances --name #{simple_name} --vmem 1024 --vcpu 1" )
       end
+
+      file "#{appliance_xml_file}.vmx-input"=>[ appliance_xml_file ] do
+        doc = REXML::Document.new( File.read( appliance_xml_file ) )
+        name_elem = doc.root.elements['name']
+        name_elem.attributes[ 'version' ] = "#{PROJECT.version}-#{PROJECT.release}"
+        description_elem = doc.root.elements['description']
+        if ( description_elem.nil? )
+          description_elem = REXML::Element.new( "description" )
+          description_elem.text = "#{simple_name} Appliance\n Version: #{PROJECT.version}-#{PROJECT.release}"
+          doc.root.insert_after( name_elem, description_elem )
+        end
+        File.open( "#{appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
+      end
+
+      file appliance_vmx_package => [ "#{appliance_xml_file}.vmx-input" ] do
+        execute_command( "virt-pack -o #{PROJECT.root}/#{PROJECT.build_dir}/appliances #{appliance_xml_file}.vmx-input" )
+      end
+
     end
 
     desc "Build #{super_simple_name} appliance image"
     task super_simple_name=>[ appliance_xml_file ]
+
+    namespace super_simple_name do
+      desc "Build #{super_simple_name} appliance image for VMWare"
+      task "vmx"=> [ appliance_vmx_package ] 
+    end
   end
 
   

@@ -39,7 +39,7 @@ export JAVA_HOME=${JAVA_HOME:-"/usr"}
 
 #define where jboss is - this is the directory containing directories log, bin, conf etc
 #JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss/jboss-as5"}
-JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss/jboss-as5"}
+JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss-as5"}
 
 #make sure java is on your path
 JAVAPTH=${JAVAPTH:-"$JAVA_HOME/bin"}
