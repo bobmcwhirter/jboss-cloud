@@ -30,7 +30,7 @@ import "console"
 import "ssh"
 
 # Information about our appliance
-$appliance_name = "Jboxx Appliance"
+$appliance_name = "JBoss AS5 Appliance"
 $appliance_version = "0.0.1"
 
 # Configuration
@@ -52,12 +52,12 @@ user {"jboss":
 }
 
 file {"/etc/gshadow":
-	source => "puppet:///jboxx/gshadow",
+	source => "puppet:///jbossas5/gshadow",
 }
 
 firewall_rule{"jboss": destination_port=>"8080"}
 
-augeas{"jboss_as5_config":
+augeas{"jbossasconf":
     context => "/files",
     changes => [
         "set /etc/jboss-as5.conf/JBOSS_IP $ipaddress",
@@ -70,5 +70,5 @@ service {"jboss-as5":
     ensure => running,
     enable => true,
     hasstatus => false,
-    require => Augeas["jboss_as5_config"]
+    require => Augeas["jbossasconf"]
 }
