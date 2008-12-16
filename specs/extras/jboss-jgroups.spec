@@ -1,12 +1,13 @@
 
 Summary: JBoss JGroups
 Name: jboss-jgroups
-Version: %{version}
+Version: 2.6.7.GA
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
 Source0: http://superb-east.dl.sourceforge.net/sourceforge/javagroups/JGroups-%{version}.bin.zip
+Source1: jgroups-gossip.init
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
@@ -22,11 +23,12 @@ mkdir -p $RPM_BUILD_ROOT/opt
 cp -R . $RPM_BUILD_ROOT/opt/jboss-jgroups
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/jgroups-gossip
+
 touch $RPM_BUILD_ROOT/etc/jboss-jgroups.conf
 
 
 #install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
-#install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}
 
 %clean
 rm -Rf $RPM_BUILD_ROOT

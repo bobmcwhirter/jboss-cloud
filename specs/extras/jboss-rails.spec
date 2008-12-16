@@ -1,7 +1,7 @@
 
 Summary: JBoss Rails
 Name: jboss-rails
-Version: %{version}
+Version: 1.0.0.Beta3
 Release: 1
 License: LGPL
 BuildArch: noarch

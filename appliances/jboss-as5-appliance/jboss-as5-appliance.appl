@@ -1,0 +1,8 @@
+
+summary: JBoss AS5 
+
+packages:
+  - jboss-as5
+  - jboss-rails
+  - jboss-rails
+  - java-1.6.0-openjdk-devel

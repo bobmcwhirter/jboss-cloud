@@ -1,35 +1,34 @@
-
-%define name    jboss-jgroups-appliance
+#
+# This is a generated file, do no edit
+#
 
 %define aceHome /usr/share/ace
 
-Summary: 	JBoss JGoups Appliance
-Name:  		%{name}
-Version: 	%{version}
-Release: 	%{release}
+Summary: 	<%= summary %>
+Name:  		<%= name %>
+Version: 	<%= version %>
+Release: 	<%= release %>
 
 Group:  	Applications/Internet
 License: 	LGPLv2+
 URL: 		http://oddthesis.org/
-Source0: 	jboss-cloud-%{version}-%{release}.tar.gz
-#BuildRoot: 	%{_tmppath}/%{name}-%{version}
+Source0: 	<%= name %>-<%= version %>.tar.gz
 BuildArch: 	noarch
 Requires: 	ace-banners
 Requires: 	ace-console
 Requires: 	ace-ssh
-Requires: 	java-1.6.0-openjdk-devel
-Requires: 	jboss-jgroups
+<% for package in packages %>
+Requires: <%= package %>
+<% end %>
 # The following are required to run within EC2
 Requires: 	curl
 Requires: 	rsync
 
 %description
-JBoss JGroups Appliance
+<%= summary %>
 
 %prep
-#%setup -q
-%setup -n jboss-cloud-%{version}
-
+%setup 
 
 %build 
 
@@ -38,7 +37,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/%{aceHome}
 mkdir -p %{buildroot}/%{aceHome}/lenses
 cp -R * %{buildroot}/%{aceHome}
-mv %{buildroot}/%{aceHome}/appliances/%{name}/lenses/* %{buildroot}/%{aceHome}/lenses
+mv %{buildroot}%{aceHome}/appliances/%{name}/lenses/* %{buildroot}/%{aceHome}/lenses
 
 %clean
 rm -rf %{buildroot}

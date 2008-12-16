@@ -33,7 +33,9 @@ repo --name=f10-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist
 #
 %packages --excludedocs --nobase
     %include base-pkgs.ks
-    <%= appliance_rpm %>
+    <% for appliance_name in appliance_names %>
+      <%= appliance_name %>
+    <% end %>
 %end
 
 #

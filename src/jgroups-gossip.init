@@ -93,7 +93,7 @@ JGROUPS_STOP_TIMEOUT=${JBOSS_STOP_TIMEOUT:-"180"}
 JGROUPSSH=${JGROUPSSH:-"java -classpath $JGROUPSCP org.jgroups.stack.GossipRouter"}
 
 if [ ! -z $JGROUPS_IP ]; then
-   JGROUPS_IP="$JGROUPSSH -bind_addr $JGROUPS_IP"
+   JGROUPSSH="$JGROUPSSH -bind_addr $JGROUPS_IP"
 fi
 
 
@@ -153,7 +153,7 @@ function procrunning() {
    procid=0
    JBOSSSCRIPT="java"
    for procid in `pidof -x "$JBOSSSCRIPT"`; do
-       if [ ! -z $JBOSS_IP ]; then
+       if [ ! -z $JGROUPS_IP ]; then
           ps -fwwwp $procid | grep 'GossipRouter' | grep $JGROUPS_IP  > /dev/null && pid=$procid
        else
           ps -fwwwp $procid | grep 'GossipRouter'> /dev/null && pid=$procid
@@ -176,7 +176,7 @@ start() {
     fi
 
     # check if port 8080 is being used
-    #if [ -z $JBOSS_IP ] && [ $JBOSSCONF != "ports-01" ] && [ $JBOSSCONF != "ports-02" ] && [ $JBOSSCONF != "ports-03" ] && [ $JBOSSCONF != "minimal" ]; then
+    #if [ -z $JGROUPS_IP ] && [ $JBOSSCONF != "ports-01" ] && [ $JBOSSCONF != "ports-02" ] && [ $JBOSSCONF != "ports-03" ] && [ $JBOSSCONF != "minimal" ]; then
         #portbusy=`netstat -apntl|grep ":8080"`
         #if test "x$portbusy" != x; then
             #failure $"${NAME} startup"
@@ -243,7 +243,7 @@ start() {
         pid=0
         procrunning
         if [ $pid == '0' ]; then
-            failure $"${NAME} startup"
+            #failure $"${NAME} startup"
             echo -n -e "\nProcess crashed on startup"
             echo
             RETVAL=2

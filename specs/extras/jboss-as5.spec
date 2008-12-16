@@ -3,7 +3,7 @@
 
 Summary: JBoss 
 Name: jboss-as5
-Version: %{version}
+Version: 5.0.0.GA
 Release: 1
 License: LGPL
 BuildArch: noarch

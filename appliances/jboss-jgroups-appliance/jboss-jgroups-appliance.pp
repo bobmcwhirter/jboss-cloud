@@ -57,18 +57,18 @@ file {"/etc/gshadow":
 
 firewall_rule{"jboss": destination_port=>"8080"}
 
-augeas{"jbossasconf":
+augeas{"jbossjgroupsconf":
     context => "/files",
     changes => [
-        "set /etc/jboss-jgroups.conf/JBOSS_IP $ipaddress",
+        "set /etc/jboss-jgroups.conf/JGROUPS_IP $ipaddress",
         "set /etc/jboss-jgroups.conf/JAVA_HOME /usr"        
     ],
     load_path => "${ace_home}lenses",
 }
-#
-#service {"jboss-as5":
-    #ensure => running,
-    #enable => true,
-    #hasstatus => false,
-    #require => Augeas["jbossasconf"]
-##}
+
+service {"jgroups-gossip":
+    ensure => running,
+    enable => true,
+    hasstatus => false,
+    require => Augeas["jbossjgroupsconf"]
+}
