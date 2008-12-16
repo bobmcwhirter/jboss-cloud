@@ -104,10 +104,16 @@ PROVIDES_LOCALLY = {}
 namespace :rpm do
 
   desc "Create the repository metadata"
-  task :repodata => "#{PROJECT.topdir}/RPMS/noarch/repodata" 
+  task :repodata => "#{PROJECT.topdir}/RPMS/noarch/repodata/repomd.xml" 
 
-  file "#{PROJECT.topdir}/RPMS/noarch/repodata"=>FileList.new( "#{PROJECT.topdir}/RPMS/noarch/*.rpm" ) do
-    execute_command( "createrepo #{PROJECT.topdir}/RPMS/noarch" )
+  namespace :repodata do
+    task :force do
+      execute_command( "createrepo #{PROJECT.topdir}/RPMS/noarch" )
+    end
+
+    file "#{PROJECT.topdir}/RPMS/noarch/repodata/repomd.xml"=>FileList.new( "#{PROJECT.topdir}/RPMS/noarch/*.rpm" ) do
+      execute_command( "createrepo #{PROJECT.topdir}/RPMS/noarch" )
+    end
   end
 
   namespace :extras do
@@ -116,7 +122,10 @@ namespace :rpm do
       spec_file = yml.gsub( /\.yml$/, '.spec' )
       simple_name = File.basename( yml, ".yml" )
       version = config['version']
-      release = `rpm --define 'version #{version}' --specfile #{spec_file} -q --qf '%{Release}'`
+      release = nil
+      Dir.chdir( "specs/extras/" ) do
+        release = `rpm --define 'version #{version}' --specfile #{spec_file} -q --qf '%{Release}'`
+      end
       rpm_file = "#{PROJECT.topdir}/RPMS/noarch/#{simple_name}-#{version}-#{release}.noarch.rpm"
       PROVIDES_LOCALLY[simple_name] = "#{simple_name}-#{version}-#{release}"
 
@@ -128,7 +137,9 @@ namespace :rpm do
         RPM_EXTRAS << rpm_file
 
         file rpm_file => [ 'base:topdir', spec_file ] do
-          execute_command "rpmbuild --define 'version #{version}' --define '_topdir #{PROJECT.root}/#{PROJECT.topdir}' --target noarch -ba #{spec_file}"
+          Dir.chdir( "specs/extras/" ) do
+            execute_command "rpmbuild --define 'version #{version}' --define '_topdir #{PROJECT.root}/#{PROJECT.topdir}' --target noarch -ba #{simple_name}.spec"
+          end
         end
 
         build_source_dependencies( spec_file, rpm_file, version )
@@ -197,7 +208,7 @@ namespace :appliance do
       if ( File.exist?( appliance_yml_file ) )
         file appliance_ks_file => [ appliance_yml_file ]
       end
-      file appliance_ks_file => [ appliance_build_dir, "#{appliance_build_dir}/base-pkgs.ks" ] do
+      file appliance_ks_file => [ appliance_build_dir, "#{appliance_build_dir}/base-pkgs.ks", "kickstarts/appliance.ks.erb" ] do
         puts "Creating kickstart for #{simple_name}"
         ks_gen = KickstartGenerator.new( "kickstarts/appliance.ks.erb", appliance_ks_file )
         ks_gen.local_repository_url = "file://#{PROJECT.root}/#{PROJECT.topdir}/RPMS/noarch"
@@ -216,7 +227,8 @@ namespace :appliance do
       end
 
       directory "#{PROJECT.build_dir}/tmp"
-      file appliance_xml_file=>[ appliance_ks_file, "#{PROJECT.build_dir}/appliances", "rpm:appliance:#{super_simple_name}", 'rpm:repodata', "#{PROJECT.build_dir}/tmp" ] do
+      file appliance_xml_file=>[ appliance_ks_file, "#{PROJECT.build_dir}/appliances", "rpm:appliance:#{super_simple_name}", "#{PROJECT.build_dir}/tmp" ] do
+        Rake::Task[ 'rpm:repodata:force' ].invoke
         execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{PROJECT.root}/#{PROJECT.build_dir}/tmp --cache=#{PROJECT.rpms_cache_dir} --config #{appliance_ks_file} -o #{PROJECT.build_dir}/appliances --name #{simple_name} --vmem 1024 --vcpu 1" )
       end
 

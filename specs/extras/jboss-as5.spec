@@ -40,10 +40,6 @@ rm -Rf $RPM_BUILD_ROOT
 JBOSS_SHELL=/bin/bash
 /usr/sbin/groupadd -r jboss 2>/dev/null || :
 /usr/sbin/useradd -c JBossAS -r -s $JBOSS_SHELL -d /opt/jboss-as5 -g jboss jboss 2>/dev/null || :
-#if [ "$1" = 2 ]; then
-  # stop server before upgrade
-  #%{_initrddir}/%{name} stop >/dev/null 2>&1 || :
-#fi
 
 %files
 %defattr(-,jboss,jboss)

@@ -38,7 +38,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/%{aceHome}
 mkdir -p %{buildroot}/%{aceHome}/lenses
 cp -R * %{buildroot}/%{aceHome}
-#mv %{buildroot}/%{aceHome}/appliances/%{name}/lenses/* %{buildroot}/%{aceHome}/lenses
+mv %{buildroot}/%{aceHome}/appliances/%{name}/lenses/* %{buildroot}/%{aceHome}/lenses
 
 %clean
 rm -rf %{buildroot}
