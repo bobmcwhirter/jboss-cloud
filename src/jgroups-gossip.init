@@ -1,0 +1,404 @@
+#!/bin/sh
+#
+# JBoss Control Script
+#
+### BEGIN INIT INFO
+# Provides: jgroups-gossip
+# Required-Start: $network $syslog
+# Required-Stop: $network $syslog
+# Default-Start:
+# Default-Stop:
+# Description: JGroups Gossip Router
+# Short-Description: start and stop JGroups Gossip router
+### END INIT INFO
+# chkconfig: 345 98 10
+# description: JGroups Gossip router
+# 
+
+# Source function library.
+if [ -x /etc/rc.d/init.d/functions ]; then
+   . /etc/rc.d/init.d/functions
+fi
+
+NAME=`basename $0`
+unset ISBOOT
+if [ ${NAME:0:1} = "S" -o ${NAME:0:1} = "K" ]
+then
+        NAME=${NAME:3}
+        ISBOOT=1
+fi
+
+# Source configuration.
+[ -f /etc/java/java.conf ] && . /etc/java/java.conf
+#read in system wide jboss configuration
+. /etc/jboss-jgroups.conf
+#read in service-specific jboss configuration
+[ -f /etc/sysconfig/${NAME} ] && . /etc/sysconfig/${NAME}
+
+export JAVA_HOME=${JAVA_HOME:-"/usr"}
+
+#define where jboss is - this is the directory containing directories log, bin, conf etc
+JGROUPS_HOME=${JGROUPS_HOME:-"/opt/jboss-jgroups"}
+
+# Set the defaults.
+LOGFILE=$JGROUPS_HOME/log/console.log
+
+#define what will be done with the console log
+JGROUPS_CONSOLE=${JGROUPS_CONSOLE:-"$JGROUPS_CONSOLE/log/console.log"}
+
+
+#make sure java is on your path
+JAVAPTH=${JAVAPTH:-"$JAVA_HOME/bin"}
+
+#define the classpath for the shutdown class
+#JBOSSCP=${JBOSSCP:-"$JGROUPS_HOME/bin/shutdown.jar:$JBOSS_HOME/client/jbossall-client.jar"}
+JGROUPSCP=${JGROUPSCP:-"$JGROUPS_HOME/jgroups-all.jar:$JGROUPS_HOME/commons-logging.jar:$JGROUPS_HOME/log4j.jar"}
+
+#define the user under which JGroups will run, or use RUNASIS to run as the current user
+JGROUPSUS=${JGROUPSUS:-"jgroups"}
+
+#define the group under which JGroups will run
+JBOSSGR=${JBOSSGR:-"jgroups"}
+
+#define the lock file for this jboss instance
+JGROUPSLOCK=/var/lock/subsys/$NAME
+
+#define the pid file for this jboss instance
+JBOSSPID=/var/run/$NAME
+
+#define what IP address for running jboss
+JGROUPS_IP=${JGROUPS_IP:-""}
+
+#define the jgroups UDP group (multicast address) for clustering
+JBOSS_UDP_GROUP=${JBOSS_UDP_GROUP:-"228.1.2.3"}
+
+#define the Http Session Replication UDP port (multicast)
+JBOSS_UDP_PORT_WP=${JBOSS_UDP_PORT_WP:-"45577"}
+
+#define the UDP port for JBoss clustering (multicast)
+JBOSS_UDP_PORT_HA=${JBOSS_UDP_PORT_HA:-"45566"}
+
+#define the UDP port for the ejb3 entity cache cluster (multicast)
+JBOSS_UDP_PORT_EJB3=${JBOSS_UDP_PORT_EJB3:-"43333"}
+
+#define the UDP port for ejb3 sfsb cache cluster (multicast)
+JBOSS_UDP_PORT_EJB3SFSB=${JBOSS_UDP_PORT_EJB3SFSB:-"45551"}
+
+#define the timeout period for starting the server
+JGROUPS_START_TIMEOUT=${JBOSS_START_TIMEOUT:-"240"}
+                                                                                
+#define the timeout period for stopping the server
+JGROUPS_STOP_TIMEOUT=${JBOSS_STOP_TIMEOUT:-"180"}
+
+JGROUPSSH=${JGROUPSSH:-"java -classpath $JGROUPSCP org.jgroups.stack.GossipRouter"}
+
+if [ ! -z $JGROUPS_IP ]; then
+   JGROUPS_IP="$JGROUPSSH -bind_addr $JGROUPS_IP"
+fi
+
+
+# Set other parameters to the VM
+#[ "x$JBOSS_UDP_GROUP" != "x" ] && \
+#JAVA_OPTS="$JAVA_OPTS -Djboss.partition.udpGroup=$JBOSS_UDP_GROUP"
+#[ "x$JBOSS_UDP_PORT_WP" != "x" ] && \
+#JAVA_OPTS="$JAVA_OPTS -Djboss.webpartition.mcast_port=$JBOSS_UDP_PORT_WP"
+#[ "x$JBOSS_UDP_PORT_HA" != "x" ] && \
+#JAVA_OPTS="$JAVA_OPTS -Djboss.hapartition.mcast_port=$JBOSS_UDP_PORT_HA"
+#[ "x$JBOSS_UDP_PORT_EJB3" != "x" ] && \
+#JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3entitypartition.mcast_port=$JBOSS_UDP_PORT_EJB3"
+#[ "x$JBOSS_UDP_PORT_EJB3SFSB" != "x" ] && \
+#JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3sfsbpartition.mcast_port=$JBOSS_UDP_PORT_EJB3SFSB"
+
+# Set the awt.headless option
+#JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"
+#export JAVA_OPTS
+
+CMD_START="cd $JGROUPS_HOME; $JGROUPSSH"
+
+## For SELinux we need to use 'runuser' not 'su'
+if [ -x /sbin/runuser ]
+then
+	SU=runuser
+else
+	SU=su
+fi
+
+if [ "$JGROUPSUS" = "RUNASIS" ]; then
+  SUBIT=""
+else
+  SUBIT="$SU - $JGROUPSUS -s /bin/sh -c "
+fi
+
+if [ -z "`echo $PATH | grep $JAVAPTH`" ]; then
+  export PATH=$PATH:$JAVAPTH
+fi
+
+mkdir -p $JGROUPS_HOME/log/
+if [ "$JBOSSUS" != "RUNASIS" ]; then
+    chown $JGROUPSUS:$JGROUPSGR $JGROUPS_HOME/log/
+fi
+
+if [ -a $JGROUPS_HOME ] && [ ! -d "$JGROUPS_HOME" ]; then
+  echo JGROUPS_HOME does not exist as a valid directory : $JGROUPS_HOME >> $LOGFILE
+  if [ "$JGROUPSUS" != "RUNASIS" ]; then
+      chown $JGROUPSUS:$JBOSSGR $LOGFILE
+  fi
+  exit 1
+fi
+
+
+#RETVAL=0
+
+function procrunning() {
+   procid=0
+   JBOSSSCRIPT="java"
+   for procid in `pidof -x "$JBOSSSCRIPT"`; do
+       if [ ! -z $JBOSS_IP ]; then
+          ps -fwwwp $procid | grep 'GossipRouter' | grep $JGROUPS_IP  > /dev/null && pid=$procid
+       else
+          ps -fwwwp $procid | grep 'GossipRouter'> /dev/null && pid=$procid
+       fi
+   done
+}
+
+start() {
+    echo -n $"Starting ${NAME}: "
+
+    # if lock file exists
+    if [ -f $JGROUPSLOCK ]; then
+        procrunning
+        if [ ! $pid = '0' ]; then
+           failure $"${NAME} startup"
+	   echo -n -e "\nProcess already running"
+	   echo -n -e "\n"
+	   return 2
+        fi
+    fi
+
+    # check if port 8080 is being used
+    #if [ -z $JBOSS_IP ] && [ $JBOSSCONF != "ports-01" ] && [ $JBOSSCONF != "ports-02" ] && [ $JBOSSCONF != "ports-03" ] && [ $JBOSSCONF != "minimal" ]; then
+        #portbusy=`netstat -apntl|grep ":8080"`
+        #if test "x$portbusy" != x; then
+            #failure $"${NAME} startup"
+            #echo -n -e "\nPort 8080 is busy, is there a Tomcat running?"
+	    #echo -n -e "\n"
+            #return 1
+        #fi
+    #fi
+
+    if [ "$JGROUPSUS" != "RUNASIS" ]; then
+        if [ -z "`id $JGROUPSUS 2>/dev/null |grep uid`" ]; then
+            failure $"${NAME} startup"
+            echo -n -e "\nUser $JGROUPSUS does not exist. Create user first."
+	    echo -n -e "\n"
+            return 2
+        fi
+        if [ -z "`grep "$JBOSSGR:" /etc/group`" ]; then
+            failure $"${NAME} startup"
+            echo -n -e "\nGroup $JBOSSGR does not exist. Create group first."
+	    echo -n -e "\n"
+            return 3
+        fi
+    fi
+
+    touch $JGROUPS_HOME/log/temp.file
+    sleep 1
+
+    #make JGROUPS_HOME owned by $JGROUPSUS:$JBOSSGR
+    if [ "$JGROUPSUS" != "RUNASIS" ]; then
+        chown -R $JGROUPSUS:$JBOSSGR $JGROUPS_HOME
+    fi
+
+    echo CMD_START = $CMD_START > $LOGFILE
+
+    if [ "$JGROUPSUS" != "RUNASIS" ]; then
+        chown $JGROUPSUS:$JBOSSGR $LOGFILE
+    fi
+
+    cd $JGROUPS_HOME
+
+    # determine userid to start jboss
+    if [ -z "$SUBIT" ]; then
+        eval $CMD_START >>${JGROUPS_CONSOLE} 2>&1 &
+    else
+        echo $SUBIT "export JAVA_HOME=$JAVA_HOME; export JAVA_OPTS=\"$JAVA_OPTS\";$CMD_START >> $JGROUPS_HOME/log/gossip-boot.log 2>&1 &"
+        $SUBIT "export JAVA_HOME=$JAVA_HOME; export JAVA_OPTS=\"$JAVA_OPTS\";$CMD_START > $JGROUPS_HOME/log/gossip-boot.log 2>&1 &"
+        #$SUBIT "export JAVA_HOME=$JAVA_HOME; export JAVA_OPTS=\"$JAVA_OPTS\";$CMD_START"
+    fi
+
+    sleep=0
+    RETVAL=1
+    while [ $sleep -lt $JGROUPS_START_TIMEOUT -a $RETVAL -eq 1 ]; do
+        echo -n -e "\nwaiting for processes to start";
+        sleep 5
+        sleep=`expr $sleep + 5`
+        # if server.log has been updated
+        if [ $JGROUPS_HOME/log/temp.file -ot $JGROUPS_HOME/log/gossip-boot.log ]; then
+            #echo grep -q 'GossipRouter started at' $JGROUPS_HOME/log/gossip-boot.log > /dev/null 2>&1
+            grep -q 'GossipRouter started at' $JGROUPS_HOME/log/gossip-boot.log > /dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                RETVAL=0
+            fi
+        fi
+        pid=0
+        procrunning
+        if [ $pid == '0' ]; then
+            failure $"${NAME} startup"
+            echo -n -e "\nProcess crashed on startup"
+            echo
+            RETVAL=2
+        fi
+    done
+    rm $JGROUPS_HOME/log/temp.file
+
+    if [ -x /etc/rc.d/init.d/functions ]; then
+        if [ $RETVAL -eq 0 ]; then
+            success $"${NAME} startup"
+        else
+            # check if the process is still running
+            pid=0
+            procrunning
+            if [ ! $pid = '0' ]; then
+                echo -n -e "\n${NAME} startup has timed out, process still running. \n"
+                echo
+            else
+                failure $"${NAME} startup"
+            fi
+        fi
+    fi
+
+    echo
+    [ $RETVAL = 0 ] && touch $JGROUPSLOCK
+    pid=0
+    procrunning
+    if [ ! $pid = '0' ]; then
+        echo $pid > $JBOSSPID
+        if [ "$JGROUPSUS" != "RUNASIS" ]; then
+            chown $JGROUPSUS:$JBOSSGR $JBOSSPID
+        fi
+    fi
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping ${NAME}: "
+    pid=0
+    procrunning
+    if [ $pid = '0' ]; then
+        failure $"${NAME} shutdown"
+        echo -n -e "\nNo JGroups Gossip router is currently running\n"
+        if [ -f $JGROUPSLOCK ]; then 
+            rm -f $JGROUPSLOCK
+        fi
+        if [ -f $JBOSSPID ]; then 
+            rm -f $JBOSSPID
+        fi
+        return 1
+    fi
+
+    pid=0
+    RETVAL=1
+    procrunning
+
+    # If process is still running
+
+    # First, try to kill it nicely
+    if [ $RETVAL != 0 ] ; then
+        echo "trying to kill $pid maybe"
+        for id in `ps --pid $pid | awk '{print $1}' | grep -v "^PID$"`; do
+           echo $SUBIT "kill -15 $id" 2>/dev/null
+           $SUBIT "kill -15 $id" 2>/dev/null
+        done
+    
+        sleep=0
+        while [ $sleep -lt $JGROUPS_STOP_TIMEOUT -a $RETVAL -eq 1 ]; do
+            echo -n -e "\nwaiting for processes to stop";
+            sleep 2
+            sleep=`expr $sleep + 2`
+            pid=0
+            procrunning
+            if [ $pid == '0' ]; then
+                RETVAL=0
+            fi
+        done
+    fi
+
+    # Still not dead... notify user
+
+    count=0
+    pid=0
+    procrunning
+
+    if [ $pid != '0' ] ; then
+        jboss_java_pid=`ps --ppid $pid | grep java | awk '{print $1}'`
+        echo -e "\nTimeout: Shutdown command was sent, but process is still running with PID $jboss_java_pid"
+        failure $"${NAME} shutdown"
+    else
+        if [ -x /etc/rc.d/init.d/functions ]; then
+                success $"${NAME} shutdown"
+        fi
+     fi
+
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $JGROUPSLOCK $JBOSSPID
+    return $RETVAL
+}
+
+status() {
+    pid=0
+    procrunning
+    if [ $pid == 0 ]; then
+        if [ -f $JGROUPSLOCK ]; then
+            echo "${NAME} is dead but subsys locked";
+            return 2
+        fi
+        if [ -f $JBOSSPID ]; then
+            echo "${NAME} is dead but pid file exists";
+            return 3
+        fi
+        echo "${NAME} is stopped";
+        return 0
+    else
+        echo "${NAME} (pid $pid) is running";
+        return 0
+    fi
+}
+                                                                                
+# Restart only if process is already running
+condrestart() {
+	pid=0
+	procrunning
+	if [ $pid != 0 ]; then
+	   stop
+	   sleep 3
+	   start
+	fi
+}
+
+case "$1" in
+start)
+    start
+    ;;
+stop)
+    stop
+    ;;
+restart|reload)
+    stop
+    sleep 3
+    start
+    ;;
+condrestart)
+    condrestart
+    ;;
+status)
+    status
+    ;;
+help)
+    echo "usage: ${NAME} (start|stop|status|restart|help)"
+    ;;
+*)
+    echo "usage: ${NAME} (start|stop|status|restart|help)"
+    exit 1
+esac
+
+exit $RETVAL
