@@ -9,6 +9,7 @@ module JBossCloud
       @topdir           = topdir
       @appliance_dir    = appliance_dir
       @simple_name      = File.basename( appliance_dir )
+      @super_simple_name      = File.basename( @simple_name, '-appliance' )
       @appliance_build_dir = "#{@build_dir}/appliances/#{@simple_name}"
       @version = version
       @release = release
@@ -31,7 +32,7 @@ module JBossCloud
         end
       end
  
-      desc "Build source for #{@simple_name} appliance"
+      desc "Build source for #{@super_simple_name} appliance"
       task "appliance:#{@simple_name}:source" => [ "#{@topdir}/SOURCES/#{@simple_name}-#{@version}.tar.gz" ]
     end
 

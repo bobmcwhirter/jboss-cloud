@@ -10,6 +10,7 @@ module JBossCloud
       @build_dir        = build_dir
       @topdir           = topdir
       @appliance_name   = appliance_name
+      @super_simple_name = File.basename( @appliance_name, '-appliance' )
       @simple_names     = simple_names
       define
     end
@@ -36,7 +37,7 @@ module JBossCloud
         file "#{@build_dir}/appliances/#{@appliance_name}/#{@appliance_name}.ks"=>[ "rpm:#{simple_name}" ] 
       end
 
-      desc "Build kickstart for #{@appliance_name} appliance"
+      desc "Build kickstart for #{@super_simple_name} appliance"
       task "appliance:#{@appliance_name}:kickstart" => [ "#{@build_dir}/appliances/#{@appliance_name}/#{@appliance_name}.ks" ]
     end
 

@@ -10,6 +10,7 @@ module JBossCloud
       @build_dir        = build_dir
       @topdir           = topdir
       @simple_name      = simple_name
+      @super_simple_name      = File.basename( simple_name, "-appliance" )
       @version = version
       @release = release
       define
@@ -40,7 +41,7 @@ module JBossCloud
         end
       end
  
-      desc "Build RPM spec for #{@simple_name} appliance"
+      desc "Build RPM spec for #{@super_simple_name} appliance"
       task "appliance:#{@simple_name}:spec" => [ "#{@build_dir}/appliances/#{@simple_name}/#{@simple_name}.spec" ]
     end
 
