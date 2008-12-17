@@ -65,7 +65,7 @@ module JBossCloud
       end
 
       Dir[ "appliances/*/*.pp" ].each do |appliance_recipe|
-        JBossCloud::Appliance.new( self.build_dir, "#{self.root}/#{self.topdir}", appliance_recipe, self.version, self.release )
+        JBossCloud::Appliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, appliance_recipe, self.version, self.release )
       end
 
     end

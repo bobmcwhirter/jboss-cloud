@@ -17,7 +17,7 @@ module JBossCloud
 
     def define
       definition = { }
-      definition['local_repository_url'] = "#{@topdir}/RPMS/noarch"
+      definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
       definition['post_script']          = ''
       definition['appliance_names']      = @simple_names
       def definition.method_missing(sym,*args)

@@ -12,14 +12,14 @@ module JBossCloud
     def define
       desc "Force a rebuild of the repository data"
       task "rpm:repodata:force"=>[ @topdir ] do
-        execute_command( "createrepo #{@topdir}/RPMS/#{@arch}" )
+        execute_command( "createrepo --update #{@topdir}/RPMS/#{@arch}" )
       end
 
       desc "Build repository data"
       task 'rpm:repodata' => "#{@topdir}/RPMS/#{@arch}/repodata/repomd.xml"
 
       file "#{@topdir}/RPMS/#{@arch}/repodata/repomd.xml"=>FileList.new( "#{@topdir}/RPMS/#{@arch}/*.rpm" ) do
-        execute_command( "createrepo #{@topdir}/RPMS/#{@arch}" )
+        execute_command( "createrepo --update #{@topdir}/RPMS/#{@arch}" )
       end
     end
   end
