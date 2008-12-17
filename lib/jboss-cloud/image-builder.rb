@@ -5,6 +5,7 @@ require 'jboss-cloud/topdir'
 require 'jboss-cloud/repodata'
 require 'jboss-cloud/rpm'
 require 'jboss-cloud/appliance'
+require 'jboss-cloud/multi-appliance'
 
 module JBossCloud
   class ImageBuilder
@@ -53,8 +54,6 @@ module JBossCloud
     end
 
     def define_rules
-      puts "defining rules"
-
       directory self.build_dir
 
       JBossCloud::Topdir.new( self.topdir )
@@ -64,8 +63,12 @@ module JBossCloud
         JBossCloud::RPM.new( self.topdir, spec_file )
       end
 
-      Dir[ "appliances/*/*.pp" ].each do |appliance_recipe|
-        JBossCloud::Appliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, appliance_recipe, self.version, self.release )
+      Dir[ "appliances/*/*.appl" ].each do |appliance_def|
+        JBossCloud::Appliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, appliance_def, self.version, self.release )
+      end
+
+      Dir[ "appliances/*.mappl" ].each do |multi_appliance_def|
+        JBossCloud::MultiAppliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, multi_appliance_def, self.version, self.release )
       end
 
     end

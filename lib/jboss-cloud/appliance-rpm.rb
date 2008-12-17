@@ -18,7 +18,6 @@ module JBossCloud
       desc "Build #{simple_name} RPM."
       task "rpm:#{simple_name}"=>[ rpm_file ]
 
-      puts "appliance RPM #{rpm_file}"
       file rpm_file => [ @spec_file, "#{@topdir}/SOURCES/#{simple_name}-#{@version}.tar.gz", 'rpm:topdir' ] do
         root = `pwd`.strip
         Dir.chdir( File.dirname( @spec_file ) ) do

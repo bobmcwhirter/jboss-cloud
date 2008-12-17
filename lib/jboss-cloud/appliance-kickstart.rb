@@ -24,10 +24,10 @@ module JBossCloud
         self[ sym.to_s ]
       end
 
-     
+      directory "#{@build_dir}/appliances/#{@appliance_name}"
+
       file "#{@build_dir}/appliances/#{@appliance_name}/#{@appliance_name}.ks"=>[ "#{@build_dir}/appliances/#{@appliance_name}" ] do
         template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
-        puts "using template #{template}"
 
         erb = ERB.new( File.read( template ) )
         File.open( "#{@build_dir}/appliances/#{@appliance_name}/#{@appliance_name}.ks", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }

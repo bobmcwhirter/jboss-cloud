@@ -1,11 +1,16 @@
 
-module JBossCloud
-  class ApplianceImage < JBossCloud::RPM
+require 'rake/tasklib'
+require 'jboss-cloud/appliance-vmx-image'
 
-    def initialize(build_dir, rpms_cache_dir, kickstart_file)
+module JBossCloud
+  class ApplianceImage < Rake::TaskLib
+
+    def initialize(build_dir, rpms_cache_dir, kickstart_file, version, release)
       @build_dir = build_dir
       @rpms_cache_dir = rpms_cache_dir
       @kickstart_file = kickstart_file
+      @version = version
+      @release = release
       define
     end
 
@@ -16,7 +21,7 @@ module JBossCloud
       super_simple_name = File.basename( simple_name, '-appliance' )
 
       desc "Build #{super_simple_name} appliance."
-      task "appliance:#{super_simple_name}"=>[ xml_file ]
+      task "appliance:#{simple_name}"=>[ xml_file ]
 
       file "#{@build_dir}/appliances/#{simple_name}/base-pkgs.ks" => [ "kickstarts/base-pkgs.ks" ] do
         FileUtils.cp( "kickstarts/base-pkgs.ks", "#{@build_dir}/appliances/#{simple_name}/base-pkgs.ks" )
@@ -29,6 +34,8 @@ module JBossCloud
         Rake::Task[ 'rpm:repodata:force' ].invoke
         execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{tmp_dir} --cache=#{@rpms_cache_dir} --config #{@kickstart_file} -o #{@build_dir}/appliances --name #{simple_name} --vmem 1024 --vcpu 1" )
       end
+
+      ApplianceVMXImage.new( @build_dir, xml_file, @version, @release )
 
     end
   end

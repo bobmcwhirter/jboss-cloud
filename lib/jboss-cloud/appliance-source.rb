@@ -25,7 +25,6 @@ module JBossCloud
         stage_directory = "#{@appliance_build_dir}/sources/#{@simple_name}-#{@version}/appliances"
         FileUtils.rm_rf stage_directory
         FileUtils.mkdir_p stage_directory
-        puts "#{Dir.pwd} copy from #{@appliance_dir}"
         FileUtils.cp_r( "#{@appliance_dir}/", stage_directory  )
         Dir.chdir( "#{@appliance_build_dir}/sources" ) do
           execute_command( "tar zcvf #{@topdir}/SOURCES/#{@simple_name}-#{@version}.tar.gz #{@simple_name}-#{@version}/" )

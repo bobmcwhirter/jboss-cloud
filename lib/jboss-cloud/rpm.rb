@@ -1,6 +1,7 @@
+require 'rake/tasklib'
 
 module JBossCloud
-  class RPM
+  class RPM < Rake::TaskLib
 
     def self.provides
       @provides ||= {}
