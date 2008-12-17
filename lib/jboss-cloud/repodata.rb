@@ -11,7 +11,7 @@ module JBossCloud
 
     def define
       desc "Force a rebuild of the repository data"
-      task "rpm:repodata:force"=>[ @topdir ] do
+      task "rpm:repodata:force"=>[ 'rpm:topdir' ] do
         execute_command( "createrepo --update #{@topdir}/RPMS/#{@arch}" )
       end
 

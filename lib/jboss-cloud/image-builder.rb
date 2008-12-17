@@ -58,6 +58,7 @@ module JBossCloud
 
       JBossCloud::Topdir.new( self.topdir )
       JBossCloud::Repodata.new( self.topdir, 'noarch' )
+      #JBossCloud::Repodata.new( self.topdir, 'i386' )
 
       Dir[ 'specs/extras/*.spec' ].each do |spec_file|
         JBossCloud::RPM.new( self.topdir, spec_file )

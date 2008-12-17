@@ -13,6 +13,8 @@ module JBossCloud
       directory "#{@topdir}/SOURCES"
       directory "#{@topdir}/BUILD"
       directory "#{@topdir}/RPMS"
+      directory "#{@topdir}/RPMS/noarch"
+      #directory "#{@topdir}/RPMS/i386"
       directory "#{@topdir}/SRPMS"
 
       desc "Create the RPM build topdir"
@@ -21,6 +23,8 @@ module JBossCloud
         "#{@topdir}/SOURCES",
         "#{@topdir}/BUILD",
         "#{@topdir}/RPMS",
+        "#{@topdir}/RPMS/noarch",
+        #"#{@topdir}/RPMS/i386",
         "#{@topdir}/SRPMS",
       ]
     end
