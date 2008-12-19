@@ -1,0 +1,1 @@
+/sbin/chkconfig --level 234 jboss-as5 on

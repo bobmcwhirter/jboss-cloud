@@ -28,8 +28,15 @@ module JBossCloud
         "repo --name=jboss-cloud --cost=10 --baseurl=file://#{@topdir}/RPMS/noarch",
         # "repo --name=jboss-cloud-i386   --cost=10 --baseurl=file://#{@topdir}/RPMS/i386",
       ]
-      if ( File.exist?( "appliances/#{@simple_name}/#{@simple_name}.post" ) )
-        definition['post_script'] = File.read( "appliances/#{@simple_name}/#{@simple_name}.post" )
+      if ( File.exist?( "extra-rpms" ) )
+        definition['repos'] << "repo --name=extra-rpms --cost=1 --baseurl=file://#{Dir.pwd}/extra-rpms/noarch"
+      end
+
+      for  appliance_name in @appliance_names
+        if ( File.exist?( "appliances/#{appliance_name}/#{appliance_name}.post" ) )
+          definition['post_script'] += "\n## #{appliance_name}.post\n"
+          definition['post_script'] += File.read( "appliances/#{appliance_name}/#{appliance_name}.post" )
+        end
       end
 
       all_excludes = []
