@@ -41,6 +41,8 @@ module JBossCloud
         end
       end
 
+      task 'rpm:all' => [ rpm_file ]
+
       build_source_dependencies( rpm_file, version, release )
     end
     
@@ -114,3 +116,6 @@ module JBossCloud
     end
   end
 end
+
+desc "Build all RPMs"
+task 'rpm:all'
