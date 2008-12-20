@@ -7,6 +7,10 @@ module JBossCloud
       @provides ||= {}
     end
 
+    def self.provides_rpm_path
+      @provides_rpm_path ||= {}
+    end
+
     def initialize(topdir, spec_file)
       @topdir = topdir
       @spec_file = spec_file
@@ -17,12 +21,15 @@ module JBossCloud
       simple_name = File.basename( @spec_file, ".spec" )
       release = nil
       version = nil
+      arch    = nil
       Dir.chdir( File.dirname( @spec_file ) ) do
         release = `rpm --specfile #{simple_name}.spec -q --qf '%{Release}'`
         version = `rpm --specfile #{simple_name}.spec -q --qf '%{Version}'`
+        arch = `rpm --specfile #{simple_name}.spec -q --qf '%{arch}'`
       end
-      rpm_file = "#{@topdir}/RPMS/noarch/#{simple_name}-#{version}-#{release}.noarch.rpm"
+      rpm_file = "#{@topdir}/RPMS/#{arch}/#{simple_name}-#{version}-#{release}.#{arch}.rpm"
       JBossCloud::RPM.provides[simple_name] = "#{simple_name}-#{version}-#{release}"
+      JBossCloud::RPM.provides_rpm_path[simple_name] = rpm_file
 
       desc "Build #{simple_name} RPM."
       task "rpm:#{simple_name}"=>[ rpm_file ]
@@ -30,7 +37,7 @@ module JBossCloud
       file rpm_file => [ 'rpm:topdir', @spec_file ] do
         root = `pwd`.strip
         Dir.chdir( File.dirname( @spec_file ) ) do
-          execute_command "rpmbuild --define '_topdir #{root}/#{@topdir}' --target noarch -ba #{simple_name}.spec"
+          execute_command "rpmbuild --define '_topdir #{root}/#{@topdir}' --target #{arch} -ba #{simple_name}.spec"
         end
       end
 
@@ -40,7 +47,7 @@ module JBossCloud
 
     def handle_requirement(rpm_file, requirement)
       if JBossCloud::RPM.provides.keys.include?( requirement )
-        file rpm_file  => [ "#{@topdir}/RPMS/noarch/#{JBossCloud::RPM.provides[requirement]}.noarch.rpm" ]
+        file rpm_file  => [ JBossCloud::RPM.provides_rpm_path[ requirement ] ]
       end
     end
 

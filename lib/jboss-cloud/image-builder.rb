@@ -56,9 +56,7 @@ module JBossCloud
     def define_rules
       directory self.build_dir
 
-      JBossCloud::Topdir.new( self.topdir )
-      JBossCloud::Repodata.new( self.topdir, 'noarch' )
-      #JBossCloud::Repodata.new( self.topdir, 'i386' )
+      JBossCloud::Topdir.new( self.topdir, [ 'noarch', 'i386' ] )
 
       Dir[ 'specs/extras/*.spec' ].each do |spec_file|
         JBossCloud::RPM.new( self.topdir, spec_file )

@@ -4,8 +4,10 @@ Name: httpd-mod_cluster
 Version: 1.0.0.Beta2
 Release: 1
 License: LGPL
-BuildArch: noarch
+#BuildArch: i386
 Group: Applications/System
+Requires: httpd       >= 2.2.10
+Requires: httpd-devel >= 2.2.10
 Source0: http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-src-ssl.tar.gz
 #BuildRoot: /tmp/%{name}
 
@@ -44,7 +46,7 @@ rm -Rf $RPM_BUILD_ROOT
 %pre
 
 %files
-%defattr(-,jboss,jboss)
+%defattr(-,root,root)
 /
 
 
