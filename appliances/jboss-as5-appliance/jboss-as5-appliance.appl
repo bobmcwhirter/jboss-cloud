@@ -4,5 +4,5 @@ summary: JBoss AS5
 packages:
   - jboss-as5
   - jboss-rails
-  - jboss-rails
+  - as5-mod_cluster
   - java-1.6.0-openjdk-devel

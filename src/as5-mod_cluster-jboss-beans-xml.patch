@@ -1,0 +1,10 @@
+--- jboss-beans.xml	2008-12-22 14:59:14.000000000 -0500
++++ jboss-beans-my.xml	2008-12-22 15:04:13.000000000 -0500
+@@ -10,6 +10,7 @@
+            is enabled in the tomcat server.xml file.
+       -->
+       <depends>jboss.jca:service=CachedConnectionManager</depends>
++      <depends>HAModClusterService</depends>
+ 
+       <!-- Transaction manager for unfinished transaction checking in the CachedConnectionValve -->      
+       <depends>jboss:service=TransactionManager</depends>

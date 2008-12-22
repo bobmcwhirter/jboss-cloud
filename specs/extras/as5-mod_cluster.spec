@@ -8,6 +8,8 @@ BuildArch: noarch
 Group: Applications/System
 Requires: jboss-as5
 Source0: http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-src-ssl.tar.gz
+Source1: as5-mod_cluster-server-xml.patch
+Source2: as5-mod_cluster-jboss-beans-xml.patch
 Patch: as5-mod_cluster-%{version}.patch
 #BuildRoot: /tmp/%{name}
 
@@ -38,14 +40,26 @@ mvn package -Dmaven.test.skip=true
 configs=( all  default  standard  web )
 
 for config in ${configs[@]} ; do
-  install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deployers
-  cp -R ./target/mod-cluster.sar $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deployers/
+  install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deploy
+  cp -R ./target/mod-cluster.sar $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deploy/
 done
 
 %clean
 #rm -Rf $RPM_BUILD_ROOT
 
 %pre
+
+%post
+configs=( all  default  standard  web )
+
+for config in ${configs[@]} ; do
+  pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
+  patch server.xml < %{SOURCE1}
+  pushd META-INF
+  patch jboss-beans.xml < %{SOURCE2}
+  popd
+  popd
+done 
 
 %files
 %defattr(-,root,root)
