@@ -7,6 +7,7 @@ License: LGPL
 BuildArch: noarch
 Group: Applications/System
 Requires: jboss-as5
+Requires: patch
 Source0: http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-src-ssl.tar.gz
 Source1: as5-mod_cluster-server-xml.patch
 Source2: as5-mod_cluster-jboss-beans-xml.patch
@@ -44,6 +45,10 @@ for config in ${configs[@]} ; do
   cp -R ./target/mod-cluster.sar $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deploy/
 done
 
+install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
+cp %{SOURCE1} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
+cp %{SOURCE2} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
+
 %clean
 #rm -Rf $RPM_BUILD_ROOT
 
@@ -54,12 +59,24 @@ configs=( all  default  standard  web )
 
 for config in ${configs[@]} ; do
   pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
-  patch server.xml < %{SOURCE1}
+  /usr/bin/patch server.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-server-xml.patch
   pushd META-INF
-  patch jboss-beans.xml < %{SOURCE2}
+  /usr/bin/patch jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-jboss-beans-xml.patch
   popd
   popd
 done 
+
+%preun
+configs=( all  default  standard  web )
+
+for config in ${configs[@]} ; do
+  pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
+  /usr/bin/patch -R server.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-server-xml.patch
+  pushd META-INF
+  /usr/bin/patch -R jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-jboss-beans-xml.patch
+  popd
+  popd
+done
 
 %files
 %defattr(-,root,root)
