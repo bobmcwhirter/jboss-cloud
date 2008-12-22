@@ -43,12 +43,10 @@ module JBossCloud
       for  appliance_name in @appliance_names
         if ( File.exist?( "appliances/#{appliance_name}/#{appliance_name}.appl" ) )
           repo_lines, repo_excludes = read_repositories( "appliances/#{appliance_name}/#{appliance_name}.appl" )
-          #puts repos.inspect
           definition['repos'] += repo_lines
           all_excludes += repo_excludes
         end
       end
-      puts "repos #{definition['repos'].inspect}"
       unless ( all_excludes.empty? )
         definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}"
       end
