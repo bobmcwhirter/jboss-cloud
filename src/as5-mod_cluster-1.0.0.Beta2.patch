@@ -1,0 +1,42 @@
+diff -uNr mod_cluster-1.0.0.Beta2-src-ssl/srclib/mod_cluster/pom.xml mod_cluster-1.0.0.Beta2-src-ssl-working/srclib/mod_cluster/pom.xml
+--- mod_cluster-1.0.0.Beta2-src-ssl/srclib/mod_cluster/pom.xml	2008-12-02 10:44:00.000000000 -0500
++++ mod_cluster-1.0.0.Beta2-src-ssl-working/srclib/mod_cluster/pom.xml	2008-12-22 12:01:01.000000000 -0500
+@@ -18,6 +18,31 @@
+     <connection>scm:svn:https://svn.jboss.org/repos/jbossnative/trunk/mod_cluster</connection>
+     <developerConnection>scm:svn:https://svn.jboss.org/repos/labs/labs/jbossbuild/jboss-parent/tags/jboss-parent-4/mod-cluster</developerConnection>
+   </scm>
++
++  <repositories>
++    <repository>
++      <id>repository.jboss.org</id>
++      <name>JBoss Releases Repository</name>
++      <url>http://repository.jboss.org/maven2</url>
++      <releases>
++        <enabled>true</enabled>
++      </releases>
++      <snapshots>
++        <enabled>false</enabled>
++      </snapshots>
++    </repository>
++    <repository>
++      <id>snapshots.jboss.org</id>
++      <name>JBoss Snapshots Repository</name>
++      <url>http://snapshots.jboss.org/maven2</url>
++      <releases>
++        <enabled>false</enabled>
++      </releases>
++      <snapshots>
++        <enabled>true</enabled>
++      </snapshots>
++    </repository>
++  </repositories>
+   
+   <build>
+     <resources>
+@@ -394,4 +419,4 @@
+       </build>
+     </profile>
+   </profiles>
+-</project>
+\ No newline at end of file
++</project>

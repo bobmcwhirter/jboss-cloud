@@ -111,6 +111,9 @@ module JBossCloud
         elsif ( line =~ /Source[0-9]+: (.*)/ )
           source = $1.strip
           handle_source( rpm_file, source, version, release  )
+        elsif ( line =~ /Patch[0-9]*: (.*)/ )
+          patch = $1.strip
+          handle_source( rpm_file, patch, version, release  )
         end
       end
     end
