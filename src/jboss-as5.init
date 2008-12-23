@@ -102,6 +102,7 @@ if [ ! -z $JBOSS_IP ]; then
    JBOSSSH="$JBOSSSH -b $JBOSS_IP"
 fi
 
+
 # Set the RUN_CONF to config specific, if it exists
 if [ -f $JBOSS_HOME/server/$JBOSSCONF/run.conf ]; then
    RUN_CONF=$JBOSS_HOME/server/$JBOSSCONF/run.conf
@@ -123,6 +124,8 @@ JAVA_OPTS="$JAVA_OPTS -Djboss.hapartition.mcast_port=$JBOSS_UDP_PORT_HA"
 JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3entitypartition.mcast_port=$JBOSS_UDP_PORT_EJB3"
 [ "x$JBOSS_UDP_PORT_EJB3SFSB" != "x" ] && \
 JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3sfsbpartition.mcast_port=$JBOSS_UDP_PORT_EJB3SFSB"
+[ "x$JBOSS_PROXY_LIST" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.modcluster.proxyList=$JBOSS_PROXY_LIST"
 
 # Set the awt.headless option
 JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"

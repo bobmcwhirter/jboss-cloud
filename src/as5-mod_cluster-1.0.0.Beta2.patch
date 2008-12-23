@@ -40,3 +40,31 @@ diff -uNr mod_cluster-1.0.0.Beta2-src-ssl/srclib/mod_cluster/pom.xml mod_cluster
 -</project>
 \ No newline at end of file
 +</project>
+diff -uNr mod_cluster-1.0.0.Beta2-src-ssl/srclib/mod_cluster/src/main/resources/mod-cluster-jboss-beans.xml mod_cluster-1.0.0.Beta2-src-ssl-working/srclib/mod_cluster/src/main/resources/mod-cluster-jboss-beans.xml
+--- mod_cluster-1.0.0.Beta2-src-ssl/srclib/mod_cluster/src/main/resources/mod-cluster-jboss-beans.xml	2008-12-02 15:56:39.000000000 -0500
++++ mod_cluster-1.0.0.Beta2-src-ssl-working/srclib/mod_cluster/src/main/resources/mod-cluster-jboss-beans.xml	2008-12-23 13:46:33.000000000 -0500
+@@ -21,7 +21,7 @@
+     
+     <!-- Comma separated list of address:port listing the httpd servers
+          where mod_cluster is running. -->
+-    <!--property name="proxyList"></property-->
++    <property name="proxyList">${jboss.modcluster.proxyList}</property>
+     <!-- URL prefix to send with commands to mod_cluster.  Default is no prefix. -->
+     <!--property name="proxyURL"></property-->
+     
+@@ -112,7 +112,7 @@
+     </constructor>
+     <!-- Comma separated list of address:port listing the httpd servers
+          where mod_cluster is running. -->
+-    <!--property name="proxyList"></property-->
++    <property name="proxyList">${jboss.modcluster.proxyList}</property>
+     <!-- URL prefix to send with commands to mod_cluster.  Default is no prefix. -->
+     <!--property name="proxyURL"></property-->
+     
+@@ -296,4 +296,4 @@
+     </constructor>
+   </bean>
+ 
+-</deployment>
+\ No newline at end of file
++</deployment>
