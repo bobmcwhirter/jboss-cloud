@@ -66,6 +66,10 @@ for config in ${configs[@]} ; do
   popd
 done 
 
+echo ""
+echo "# Comma-separated list of address:port for mod_cluster front-end proxies"
+echo "JBOSS_PROXY_LIST=" >> /etc/jboss-as5.conf
+
 %preun
 configs=( all  default  standard  web )
 

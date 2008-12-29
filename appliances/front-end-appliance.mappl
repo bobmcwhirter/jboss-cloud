@@ -1,0 +1,5 @@
+
+appliances:
+  - httpd-appliance
+  - postgis-appliance
+  - jboss-jgroups-appliance
