@@ -1,3 +1,11 @@
+#dkms to support rebuilding of modules, this isn't awesome
+gcc
+make
+dkms
+
+#for vmware guesting
+dkms-open-vm-tools
+
 #needed to disable selinux
 lokkit
 
