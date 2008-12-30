@@ -25,7 +25,7 @@ module JBossCloud
       Dir.chdir( File.dirname( @spec_file ) ) do
         release = `rpm --specfile #{simple_name}.spec -q --qf '%{Release}'`
         version = `rpm --specfile #{simple_name}.spec -q --qf '%{Version}'`
-        arch = `rpm --specfile #{simple_name}.spec -q --qf '%{arch}'`
+        arch = `rpm --specfile #{simple_name}.spec -q --qf '%{arch}\\n'`.split("\n").first
       end
       rpm_file = "#{@topdir}/RPMS/#{arch}/#{simple_name}-#{version}-#{release}.#{arch}.rpm"
       JBossCloud::RPM.provides[simple_name] = "#{simple_name}-#{version}-#{release}"
@@ -102,7 +102,7 @@ module JBossCloud
       s
     end
 
-    def build_source_dependencies( rpm_file, version=nil, release=nil )
+    def build_source_dependencies( rpm_file, version=nil, release=nil)
       File.open( @spec_file).each_line do |line|
         line.gsub!( /#.*$/, '' )
         if ( line =~ /Requires: (.*)/ )
