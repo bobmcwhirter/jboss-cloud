@@ -16,34 +16,35 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
 # Author: Bryan Kearney <bkearney@redhat.com>
+# Author: Bob McWhirter <bob@jboss.org>
 #--
 
-#
-# base thincrust appliance
-#
+class jboss_as5_appliance {
 
-# Modules used by the appliance
-import "appliance_base"
-import "banners"
-import "firewall"
-import "console"
-import "ssh"
-import "jboss-as5-appliance"
+  group {"jboss":
+    ensure => "present",
+  }
 
-# Information about our appliance
-$appliance_name = "JBoss AS5 Appliance"
-$appliance_version = "0.0.1"
+  user {"jboss":
+    groups => ["jboss"],
+    membership => "minimum",
+  }
 
-# Configuration
-appliance_base::setup{$appliance_name:}
-appliance_base::enable_updates{$appliance_name:}
-banners::all{$appliance_name:}
-firewall::setup{$appliance_name: status=>"disabled"}
-console::site{$appliance_name: content_template=>"content.erb"}
-ssh::setup{$appliance_name:}
+  firewall_rule{"jboss": destination_port=>"8080"}
 
-include jboss_as5_appliance
+  augeas{"jbossasconf":
+    context => "/files",
+    changes => [
+      "set /etc/jboss-as5.conf/JBOSS_IP $ipaddress",
+      "set /etc/jboss-as5.conf/JAVA_HOME /usr"        
+    ],
+    load_path => "${ace_home}lenses",
+  }
 
-file {"/etc/gshadow":
-	source => "puppet:///jbossas5/gshadow",
+  service {"jboss-as5":
+    ensure => running,
+    enable => true,
+    hasstatus => false,
+    require => Augeas["jbossasconf"]
+  }
 }
