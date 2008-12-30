@@ -16,11 +16,8 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
 # Author: Bryan Kearney <bkearney@redhat.com>
+# Author: Bob McWhirter <bob@jboss.org>
 #--
-
-#
-# base thincrust appliance
-#
 
 # Modules used by the appliance
 import "appliance_base"
@@ -42,7 +39,7 @@ firewall::setup{$appliance_name: status=>"disabled"}
 console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
-include jboss_as5_appliance
+include jboss-as5::appliance
 
 file {"/etc/gshadow":
 	source => "puppet:///jbossas5/gshadow",

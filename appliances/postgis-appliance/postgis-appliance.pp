@@ -16,10 +16,11 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
 # Author: Bryan Kearney <bkearney@redhat.com>
+# Author: Bob McWhirter <bob@jboss.org>
 #--
 
 #
-# base thincrust appliance
+# PostGIS appliance
 #
 
 # Modules used by the appliance
@@ -28,6 +29,7 @@ import "banners"
 import "firewall"
 import "console"
 import "ssh"
+import "postgis-appliance"
 
 # Information about our appliance
 $appliance_name = "PostGIS Appliance"
@@ -41,15 +43,9 @@ firewall::setup{$appliance_name: status=>"disabled"}
 console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
+include postgis::appliance
 
 file {"/etc/gshadow":
 	source => "puppet:///postgis-appliance/gshadow",
 }
 
-#firewall_rule{"jboss": destination_port=>"8080"}
-
-service {"postgresql":
-    ensure => running,
-    enable => true,
-    hasstatus => false,
-}

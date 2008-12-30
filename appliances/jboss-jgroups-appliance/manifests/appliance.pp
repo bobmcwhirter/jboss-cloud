@@ -18,33 +18,33 @@
 # Author: Bryan Kearney <bkearney@redhat.com>
 #--
 
-#
-# base thincrust appliance
-#
 
-# Modules used by the appliance
-import "appliance_base"
-import "banners"
-import "firewall"
-import "console"
-import "ssh"
+class jboss-jgroups::appliance {
 
-import "jboss-jgroups-appliance"
+  group {"jgroups":
+      ensure => "present",
+  }
 
-# Information about our appliance
-$appliance_name = "JBoss JGroups Appliance"
-$appliance_version = "0.0.1"
+  user {"jgroups":
+      groups => ["jgroups"],
+      membership => "minimum",
+  }
 
-# Configuration
-appliance_base::setup{$appliance_name:}
-appliance_base::enable_updates{$appliance_name:}
-banners::all{$appliance_name:}
-firewall::setup{$appliance_name: status=>"disabled"}
-console::site{$appliance_name: content_template=>"content.erb"}
-ssh::setup{$appliance_name:}
+  firewall_rule{"jboss": destination_port=>"8080"}
 
-file {"/etc/gshadow":
-	source => "puppet:///jboss-jgroups-appliance/gshadow",
+  augeas{"jbossjgroupsconf":
+      context => "/files",
+      changes => [
+          "set /etc/jboss-jgroups.conf/JGROUPS_IP $ipaddress",
+          "set /etc/jboss-jgroups.conf/JAVA_HOME /usr"        
+      ],
+      load_path => "${ace_home}lenses",
+  }
+
+  service {"jgroups-gossip":
+      ensure => running,
+      enable => true,
+      hasstatus => false,
+      require => Augeas["jbossjgroupsconf"]
+  }
 }
-
-include jboss-jgroups::appliance

@@ -19,32 +19,11 @@
 # Author: Bob McWhirter <bob@jboss.org>
 #--
 
-class jboss_as5_appliance {
 
-  group {"jboss":
-    ensure => "present",
-  }
-
-  user {"jboss":
-    groups => ["jboss"],
-    membership => "minimum",
-  }
-
-  firewall_rule{"jboss": destination_port=>"8080"}
-
-  augeas{"jbossasconf":
-    context => "/files",
-    changes => [
-      "set /etc/jboss-as5.conf/JBOSS_IP $ipaddress",
-      "set /etc/jboss-as5.conf/JAVA_HOME /usr"        
-    ],
-    load_path => "${ace_home}lenses",
-  }
-
-  service {"jboss-as5":
-    ensure => running,
-    enable => true,
-    hasstatus => false,
-    require => Augeas["jbossasconf"]
+class postgis::appliance {
+  service {"postgresql":
+      ensure => running,
+      enable => true,
+      hasstatus => false,
   }
 }

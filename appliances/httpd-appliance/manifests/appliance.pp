@@ -16,35 +16,16 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
 # Author: Bryan Kearney <bkearney@redhat.com>
+# Author: Bob McWhirter <bob@jboss.org>
 #--
 
-#
-# base thincrust appliance
-#
 
-# Modules used by the appliance
-import "appliance_base"
-import "banners"
-import "firewall"
-import "console"
-import "ssh"
+class httpd::appliance {
+  firewall_rule{"jboss": destination_port=>"80"}
 
-import "jboss-jgroups-appliance"
-
-# Information about our appliance
-$appliance_name = "JBoss JGroups Appliance"
-$appliance_version = "0.0.1"
-
-# Configuration
-appliance_base::setup{$appliance_name:}
-appliance_base::enable_updates{$appliance_name:}
-banners::all{$appliance_name:}
-firewall::setup{$appliance_name: status=>"disabled"}
-console::site{$appliance_name: content_template=>"content.erb"}
-ssh::setup{$appliance_name:}
-
-file {"/etc/gshadow":
-	source => "puppet:///jboss-jgroups-appliance/gshadow",
+  service {"httpd":
+      ensure => running,
+      enable => true,
+      hasstatus => false,
+  }
 }
-
-include jboss-jgroups::appliance

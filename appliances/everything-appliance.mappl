@@ -1,5 +1,0 @@
-
-appliances:
-  - jboss-as5-appliance
-  - jboss-jgroups-appliance
-  - postgis-appliance

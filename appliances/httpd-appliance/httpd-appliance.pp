@@ -28,6 +28,7 @@ import "banners"
 import "firewall"
 import "console"
 import "ssh"
+import "httpd-appliance"
 
 # Information about our appliance
 $appliance_name = "Apache httpd and JBoss mod_cluster"
@@ -41,15 +42,9 @@ firewall::setup{$appliance_name: status=>"disabled"}
 console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
+include httpd::appliance
 
 file {"/etc/gshadow":
 	source => "puppet:///postgis-appliance/gshadow",
 }
 
-#firewall_rule{"jboss": destination_port=>"8080"}
-
-service {"httpd":
-    ensure => running,
-    enable => true,
-    hasstatus => false,
-}
