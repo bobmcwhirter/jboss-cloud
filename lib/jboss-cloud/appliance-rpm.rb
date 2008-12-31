@@ -26,6 +26,7 @@ module JBossCloud
       end
 
       file rpm_file=> [ 'rpm:dkms-open-vm-tools' ]
+      file rpm_file=> [ 'rpm:vm2-support' ]
 
     end
     

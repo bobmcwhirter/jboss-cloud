@@ -23,8 +23,8 @@ module JBossCloud
       version = nil
       arch    = nil
       Dir.chdir( File.dirname( @spec_file ) ) do
-        release = `rpm --specfile #{simple_name}.spec -q --qf '%{Release}'`
-        version = `rpm --specfile #{simple_name}.spec -q --qf '%{Version}'`
+        release = `rpm --specfile #{simple_name}.spec -q --qf '%{Release}\\n'`.split("\n").first
+        version = `rpm --specfile #{simple_name}.spec -q --qf '%{Version}\\n'`.split("\n").first
         arch = `rpm --specfile #{simple_name}.spec -q --qf '%{arch}\\n'`.split("\n").first
       end
       rpm_file = "#{@topdir}/RPMS/#{arch}/#{simple_name}-#{version}-#{release}.#{arch}.rpm"

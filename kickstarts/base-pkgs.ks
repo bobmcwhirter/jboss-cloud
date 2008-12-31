@@ -5,6 +5,7 @@ dkms
 
 #for vmware guesting
 dkms-open-vm-tools
+vm2-support
 
 #needed to disable selinux
 lokkit
