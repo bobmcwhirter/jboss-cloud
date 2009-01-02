@@ -1,0 +1,20 @@
+diff -uNr jboss-5.0.0.GA/server/all/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml jboss-5.0.0.GA-cloud/server/all/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml
+--- jboss-5.0.0.GA/server/all/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml	2008-12-04 21:22:54.000000000 -0500
++++ jboss-5.0.0.GA-cloud/server/all/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml	2009-01-02 17:26:15.000000000 -0500
+@@ -8,6 +8,7 @@
+ 		     singleton_name="shared-udp"
+ 		     mcast_port="${jboss.jgroups.udp.mcast_port:45688}"
+ 		     mcast_addr="${jboss.jgroups.udp.mcast_addr,jgroups.udp.mcast_addr:228.11.11.11}"
++		     ip_mcast="false"
+ 		     tos="8"
+ 		     ucast_recv_buf_size="20000000"
+ 		     ucast_send_buf_size="640000"
+@@ -71,7 +72,7 @@
+                 stack below.
+           -->
+           &shared-udp;
+-          <PING timeout="2000" num_initial_members="3"/>
++          <PING gossip_host="${jboss.gossip_host}" gossip_port="${jboss.gossip_port}" gossip_refresh="${jboss.gossip_refresh}" timeout="2000" num_initial_members="3"/>
+           <MERGE2 max_interval="100000" min_interval="20000"/>
+           <FD_SOCK/>
+           <FD timeout="6000" max_tries="5" shun="true"/>

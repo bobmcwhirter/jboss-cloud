@@ -127,6 +127,13 @@ JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3sfsbpartition.mcast_port=$JBOSS_UDP_PORT_EJB3S
 [ "x$JBOSS_PROXY_LIST" != "x" ] && \
 JAVA_OPTS="$JAVA_OPTS -Djboss.modcluster.proxyList=$JBOSS_PROXY_LIST"
 
+[ "x$JBOSS_GOSSIP_HOST" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.gossip_host=$JBOSS_GOSSIP_HOST"
+[ "x$JBOSS_GOSSIP_PORT" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.gossip_port=$JBOSS_GOSSIP_PORT"
+[ "x$JBOSS_GOSSIP_REFRESH" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.gossip_refresh=$JBOSS_GOSSIP_REFRESH"
+
 # Set the awt.headless option
 JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"
 export JAVA_OPTS

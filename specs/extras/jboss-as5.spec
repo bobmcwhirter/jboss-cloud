@@ -10,6 +10,7 @@ BuildArch: noarch
 Group: Applications/System
 Source0: http://voxel.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
 Source1: jboss-as5.init
+Patch: jboss-as5-cloud-gossip.patch
 BuildRoot: /tmp/jboss-%{version}
 
 %define runuser jboss
@@ -20,6 +21,7 @@ The JBossAS 5 Java Application Server
 
 %prep
 %setup -n jboss-%{version}
+%patch -p1
 
 %install
 mkdir -p $RPM_BUILD_ROOT/opt
