@@ -14,7 +14,7 @@ diff -uNr jboss-5.0.0.GA/server/all/deploy/cluster/jgroups-channelfactory.sar/ME
            -->
            &shared-udp;
 -          <PING timeout="2000" num_initial_members="3"/>
-+          <PING gossip_host="${jboss.gossip_host}" gossip_port="${jboss.gossip_port}" gossip_refresh="${jboss.gossip_refresh}" timeout="2000" num_initial_members="3"/>
++          <PING gossip_host="${jboss.gossip_host:}" gossip_port="${jboss.gossip_port:12001}" gossip_refresh="${jboss.gossip_refresh:5000}" timeout="2000" num_initial_members="3"/>
            <MERGE2 max_interval="100000" min_interval="20000"/>
            <FD_SOCK/>
            <FD timeout="6000" max_tries="5" shun="true"/>
