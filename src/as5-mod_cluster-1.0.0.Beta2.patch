@@ -48,7 +48,7 @@ diff -uNr mod_cluster-1.0.0.Beta2-src-ssl/srclib/mod_cluster/src/main/resources/
      <!-- Comma separated list of address:port listing the httpd servers
           where mod_cluster is running. -->
 -    <!--property name="proxyList"></property-->
-+    <property name="proxyList">${jboss.modcluster.proxyList}</property>
++    <property name="proxyList">${jboss.modcluster.proxyList:}</property>
      <!-- URL prefix to send with commands to mod_cluster.  Default is no prefix. -->
      <!--property name="proxyURL"></property-->
      
@@ -57,7 +57,7 @@ diff -uNr mod_cluster-1.0.0.Beta2-src-ssl/srclib/mod_cluster/src/main/resources/
      <!-- Comma separated list of address:port listing the httpd servers
           where mod_cluster is running. -->
 -    <!--property name="proxyList"></property-->
-+    <property name="proxyList">${jboss.modcluster.proxyList}</property>
++    <property name="proxyList">${jboss.modcluster.proxyList:}</property>
      <!-- URL prefix to send with commands to mod_cluster.  Default is no prefix. -->
      <!--property name="proxyURL"></property-->
      
