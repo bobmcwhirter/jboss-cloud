@@ -36,7 +36,10 @@ class jboss-as5::appliance {
     context => "/files",
     changes => [
       "set /etc/jboss-as5.conf/JBOSS_IP $ipaddress",
-      "set /etc/jboss-as5.conf/JAVA_HOME /usr"        
+      "set /etc/jboss-as5.conf/JBOSS_GOSSIP_HOST     $vm2_jboss_gossip_host",
+      "set /etc/jboss-as5.conf/JBOSS_PROXY_LIST      $vm2_jboss_proxy_list",
+      "set /etc/jboss-as5.conf/JBOSS_SERVER_PEER_ID  $jboss_server_peer_id",
+      "set /etc/jboss-as5.conf/JAVA_HOME             /usr"        
     ],
     load_path => "${ace_home}lenses",
   }

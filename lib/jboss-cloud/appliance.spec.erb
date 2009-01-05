@@ -39,6 +39,10 @@ mkdir -p %{buildroot}/%{aceHome}
 mkdir -p %{buildroot}/%{aceHome}/lenses
 cp -R * %{buildroot}/%{aceHome}
 mv %{buildroot}%{aceHome}/appliances/%{name}/lenses/* %{buildroot}/%{aceHome}/lenses
+if [ -d %{buildroot}/%{aceHome}/appliances/%{name}/facts ] ; then
+  mkdir -p %{buildroot}/%{aceHome}/facts
+  mv %{buildroot}%{aceHome}/appliances/%{name}/facts/* %{buildroot}/%{aceHome}/facts
+fi
 
 %clean
 rm -rf %{buildroot}

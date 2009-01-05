@@ -7,6 +7,7 @@ License: LGPL
 BuildArch: noarch
 Group: Applications/System
 Source0: vm2-support
+Source1: vm2-facter.rb
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
@@ -20,6 +21,9 @@ VM2 Support
 %install
 install -d -m 755 $RPM_BUILD_ROOT/sbin
 cp %{SOURCE0} $RPM_BUILD_ROOT/sbin/vm2-support
+
+install -d -m 755 $RPM_BUILD_ROOT/usr/share/ace/facts
+cp %{SOURCE1} $RPM_BUILD_ROOT/usr/share/ace/facts
 
 
 %clean
