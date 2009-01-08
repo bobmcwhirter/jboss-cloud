@@ -34,6 +34,7 @@ module JBossCloud
     attr_accessor :name
     attr_accessor :version
     attr_accessor :release
+    attr_accessor :arch
 
     attr_accessor :root
     attr_accessor :build_dir
@@ -46,6 +47,7 @@ module JBossCloud
       @name    = project_config[:name]
       @version = project_config[:version]
       @release = project_config[:release]
+      @arch = (-1.size) == 8 ? "x86_64" : "i386"
 
       @build_dir         = project_config[:build_dir]         || DEFAULT_PROJECT_CONFIG[:build_dir]
       @topdir            = project_config[:topdir]            || "#{self.build_dir}/topdir"
@@ -56,10 +58,16 @@ module JBossCloud
     def define_rules
       directory self.build_dir
 
+      build_arch = ENV['ARCH'].nil? ? self.arch : ENV['ARCH']
+
+      puts "Current architecture: #{self.arch}"
+
       JBossCloud::Topdir.new( self.topdir, [ 'noarch', 'i386', 'x86_64' ] )
 
+      puts "Building RPMs for architecture #{build_arch}"
+
       Dir[ 'specs/extras/*.spec' ].each do |spec_file|
-        JBossCloud::RPM.new( self.topdir, spec_file )
+        JBossCloud::RPM.new( self.topdir, spec_file, build_arch )
       end
 
       Dir[ "appliances/*/*.appl" ].each do |appliance_def|
