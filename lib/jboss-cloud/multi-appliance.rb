@@ -11,13 +11,14 @@ module JBossCloud
 
   class MultiAppliance < Rake::TaskLib
 
-    def initialize(build_dir, topdir, rpms_cache_dir, multi_appliance_def, version, release)
+    def initialize(build_dir, topdir, rpms_cache_dir, multi_appliance_def, version, release, arch)
       @build_dir        = build_dir
       @topdir           = topdir
       @rpms_cache_dir   = rpms_cache_dir
       @multi_appliance_def    = multi_appliance_def
       @version          = version
       @release          = release
+      @arch             = arch
       define
     end
 
@@ -34,7 +35,7 @@ module JBossCloud
 
       definition = YAML.load_file( @multi_appliance_def )
       appliance_names = definition['appliances']
-      JBossCloud::ApplianceKickstart.new( @build_dir, @topdir, simple_name, appliance_names )
+      JBossCloud::ApplianceKickstart.new( @build_dir, @topdir, simple_name, @arch, appliance_names )
       JBossCloud::ApplianceImage.new( @build_dir, @rpms_cache_dir, "#{@build_dir}/appliances/#{simple_name}/#{simple_name}.ks", @version, @release )
     end
 

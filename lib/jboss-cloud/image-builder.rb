@@ -71,11 +71,11 @@ module JBossCloud
       end
 
       Dir[ "appliances/*/*.appl" ].each do |appliance_def|
-        JBossCloud::Appliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, appliance_def, self.version, self.release )
+        JBossCloud::Appliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, appliance_def, self.version, self.release, build_arch )
       end
 
       Dir[ "appliances/*.mappl" ].each do |multi_appliance_def|
-        JBossCloud::MultiAppliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, multi_appliance_def, self.version, self.release )
+        JBossCloud::MultiAppliance.new( self.build_dir, "#{self.root}/#{self.topdir}", self.rpms_cache_dir, multi_appliance_def, self.version, self.release, build_arch )
       end
 
     end

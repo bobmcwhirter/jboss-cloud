@@ -6,12 +6,13 @@ module JBossCloud
 
   class ApplianceKickstart < Rake::TaskLib
 
-    def initialize(build_dir, topdir, simple_name, appliance_names=[])
+    def initialize(build_dir, topdir, simple_name, arch, appliance_names=[])
       @build_dir         = build_dir
       @topdir            = topdir
       @simple_name       = simple_name
       @super_simple_name = File.basename( @simple_name, '-appliance' )
       @appliance_names   = appliance_names
+      @arch              = arch
       define
     end
 
@@ -21,13 +22,13 @@ module JBossCloud
       definition['post_script']          = ''
       definition['exclude_clause']       = ''
       definition['appliance_names']      = @appliance_names
+      definition['arch']                 = @arch
       def definition.method_missing(sym,*args)
         self[ sym.to_s ]
       end
       definition['repos'] = [
         "repo --name=jboss-cloud --cost=10 --baseurl=file://#{@topdir}/RPMS/noarch",
-        "repo --name=jboss-cloud-i386 --cost=10 --baseurl=file://#{@topdir}/RPMS/i386",
-        "repo --name=jboss-cloud-x86_64 --cost=10 --baseurl=file://#{@topdir}/RPMS/x86_64",
+        "repo --name=jboss-cloud-#{@arch} --cost=10 --baseurl=file://#{@topdir}/RPMS/#{@arch}",
       ]
       if ( File.exist?( "extra-rpms" ) )
         definition['repos'] << "repo --name=extra-rpms --cost=1 --baseurl=file://#{Dir.pwd}/extra-rpms/noarch"
