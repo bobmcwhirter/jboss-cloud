@@ -5,8 +5,8 @@
 ##
 
 %define tname open-vm-tools
-%define builddate 2008.10.10
-%define buildver 123053
+%define builddate 2008.12.23
+%define buildver 137496
 
 Name:      dkms-open-vm-tools
 Version:   0
@@ -15,7 +15,7 @@ Summary:   VMware Tools
 Group:     Applications/Multimedia
 License:   LGPLv2+
 URL:       http://open-vm-tools.sourceforge.net/
-Source0:   http://downloads.sourceforge.net/open-vm-tools/open-vm-tools-2008.10.10-123053.tar.gz
+Source0:   http://downloads.sourceforge.net/open-vm-tools/open-vm-tools-2008.12.23-137496.tar.gz
 Source1:   vmware-guest.init
 BuildRoot: %{_tmppath}/%{name}-%{builddate}-%{release}-root-%(%{__id_u} -n)
 
@@ -190,6 +190,9 @@ fi
 
 
 %changelog
+* Fri Jan 9 2009 Marek Goldmann <marek.goldmann@gmail.com> - 0.1.2008.12.23
+- Update to upstream build 137496
+
 * Mon Sep  8 2008 Denis Leroy <denis@poolshark.org> - 0-1.2008.09.03
 - Update to 2008.09.03 upstream
 - Added new kernel modules
