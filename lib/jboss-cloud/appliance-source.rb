@@ -4,13 +4,13 @@ module JBossCloud
 
   class ApplianceSource < Rake::TaskLib
 
-    def initialize(build_dir, topdir, appliance_dir, version, release)
+    def initialize(build_dir, topdir, appliance_dir, version, release, arch)
       @build_dir        = build_dir
       @topdir           = topdir
       @appliance_dir    = appliance_dir
       @simple_name      = File.basename( appliance_dir )
       @super_simple_name      = File.basename( @simple_name, '-appliance' )
-      @appliance_build_dir = "#{@build_dir}/appliances/#{@simple_name}"
+      @appliance_build_dir = "#{@build_dir}/appliances/#{arch}/#{@simple_name}"
       @version = version
       @release = release
       define

@@ -53,21 +53,21 @@ module JBossCloud
         definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}"
       end
 
-      directory "#{@build_dir}/appliances/#{@simple_name}"
+      directory "#{@build_dir}/appliances/#{@arch}/#{@simple_name}"
 
-      file "#{@build_dir}/appliances/#{@simple_name}/#{@simple_name}.ks"=>[ "#{@build_dir}/appliances/#{@simple_name}" ] do
+      file "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "#{@build_dir}/appliances/#{@arch}/#{@simple_name}" ] do
         template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
 
         erb = ERB.new( File.read( template ) )
-        File.open( "#{@build_dir}/appliances/#{@simple_name}/#{@simple_name}.ks", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
+        File.open( "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
       end
 
       for appliance_name in @appliance_names
-        file "#{@build_dir}/appliances/#{@simple_name}/#{@simple_name}.ks"=>[ "rpm:#{appliance_name}" ] 
+        file "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "rpm:#{appliance_name}" ]
       end
 
       desc "Build kickstart for #{@super_simple_name} appliance"
-      task "appliance:#{@simple_name}:kickstart" => [ "#{@build_dir}/appliances/#{@simple_name}/#{@simple_name}.ks" ]
+      task "appliance:#{@simple_name}:kickstart" => [ "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks" ]
     end
 
     def read_repositories(appliance_definition)
@@ -77,6 +77,7 @@ module JBossCloud
       excludes = []
       unless ( repos_def.nil? )
         repos_def.each do |name,config|
+          puts name
           repo_line = "repo --name=#{name} --baseurl=#{config['baseurl']}"
           unless ( config['filters'].nil? )
             excludes = config['filters']

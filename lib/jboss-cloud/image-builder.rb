@@ -60,11 +60,11 @@ module JBossCloud
 
       build_arch = ENV['ARCH'].nil? ? self.arch : ENV['ARCH']
 
-      puts "Current architecture: #{self.arch}"
+      puts "\n\rCurrent architecture:\t#{self.arch}"
 
       JBossCloud::Topdir.new( self.topdir, [ 'noarch', 'i386', 'x86_64' ] )
 
-      puts "Building RPMs for architecture #{build_arch}"
+      puts "Building architecture:\t#{build_arch}\n\r"
 
       Dir[ 'specs/extras/*.spec' ].each do |spec_file|
         JBossCloud::RPM.new( self.topdir, spec_file, build_arch )
