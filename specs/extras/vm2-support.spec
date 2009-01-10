@@ -8,7 +8,7 @@ BuildArch: noarch
 Group: Applications/System
 Source0: vm2-support
 Source1: vm2-facter.rb
-BuildRoot: /tmp/%{name}
+#BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
 

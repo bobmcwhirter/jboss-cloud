@@ -10,6 +10,7 @@ module JBossCloud
     end
 
     def define
+      directory "#{@topdir}/tmp"
       directory "#{@topdir}/SPECS"
       directory "#{@topdir}/SOURCES"
       directory "#{@topdir}/BUILD"
@@ -21,6 +22,7 @@ module JBossCloud
 
       desc "Create the RPM build topdir"
       task "rpm:topdir" => [ 
+        "#{@topdir}/tmp",
         "#{@topdir}/SPECS",
         "#{@topdir}/SOURCES",
         "#{@topdir}/BUILD",
