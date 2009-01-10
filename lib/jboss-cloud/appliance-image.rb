@@ -33,7 +33,7 @@ module JBossCloud
 
       file xml_file => [ @kickstart_file, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/base-pkgs.ks", tmp_dir ] do
         Rake::Task[ 'rpm:repodata:force' ].invoke
-        execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{tmp_dir} --cache=#{@rpms_cache_dir} --config #{@kickstart_file} -o #{@build_dir}/appliances/#{@arch} --name #{simple_name} --vmem 1024 --vcpu 1" )
+        execute_command( "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{tmp_dir} --cache=#{@rpms_cache_dir}/#{@arch} --config #{@kickstart_file} -o #{@build_dir}/appliances/#{@arch} --name #{simple_name} --vmem 1024 --vcpu 1" )
       end
 
       ApplianceVMXImage.new( @build_dir, xml_file, @version, @release, @arch )
