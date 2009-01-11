@@ -21,7 +21,11 @@ module JBossCloud
       file rpm_file => [ @spec_file, "#{@topdir}/SOURCES/#{simple_name}-#{@version}.tar.gz", 'rpm:topdir' ] do
         root = `pwd`.strip
         Dir.chdir( File.dirname( @spec_file ) ) do
-          execute_command "rpmbuild --define '_topdir #{@topdir}' --target noarch -ba #{simple_name}.spec"
+          exit_status=  execute_command "rpmbuild --define '_topdir #{@topdir}' --target noarch -ba #{simple_name}.spec"
+          unless exit_status
+            puts "\nBuilding #{simple_name} failed! Hint: consult above messages.\n\r"
+            abort
+          end
         end
       end
 

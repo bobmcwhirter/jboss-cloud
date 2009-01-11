@@ -1,11 +1,11 @@
-require 'open3'
+require 'open4/open4.rb'
 
 def execute_command(cmd)
   puts "CMD [\n\t#{cmd}\n]"
   old_trap = trap("INT") do
     puts "caught SIGINT, shutting down"
   end
-  Open3.popen3( cmd ) do |stdin, stdout, stderr|
+  exit_status = Open4.popen4( cmd ) do |pid, stdin, stdout, stderr|
     #stdin.close
     threads = []
     threads << Thread.new(stdout) do |input_str|
@@ -20,5 +20,9 @@ def execute_command(cmd)
     end
     threads.each{|t|t.join}
   end
+
   trap("INT", old_trap )
+  puts "\r\nCommand '#{cmd}' failed with exit status #{exit_status.exitstatus}" unless exit_status.success?
+  return exit_status.success?
+  
 end

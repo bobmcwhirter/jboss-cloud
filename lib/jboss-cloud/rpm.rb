@@ -41,7 +41,11 @@ module JBossCloud
       file rpm_file => [ 'rpm:topdir', @spec_file ] do
         root = `pwd`.strip
         Dir.chdir( File.dirname( @spec_file ) ) do
-          execute_command "rpmbuild --define '_topdir #{root}/#{@topdir}' --target #{arch} -ba #{simple_name}.spec"
+          exit_status = execute_command "rpmbuild --define '_topdir #{root}/#{@topdir}' --target #{arch} -ba #{simple_name}.spec"
+          unless exit_status
+            puts "\nBuilding #{simple_name} failed! Hint: consult above messages.\n\r"
+            abort
+          end
         end
       end
 
