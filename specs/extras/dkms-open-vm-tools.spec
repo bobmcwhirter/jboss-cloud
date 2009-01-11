@@ -27,6 +27,12 @@ BuildRequires: libdnet-devel
 BuildRequires: procps
 BuildRequires: libdnet-devel
 BuildRequires: libicu-devel
+BuildRequires: libX11-devel
+BuildRequires: libXext-devel
+BuildRequires: libXinerama-devel
+BuildRequires: libXrender-devel
+BuildRequires: libXtst-devel
+BuildRequires: procps
 
 Requires(post):    dkms gcc desktop-file-utils
 Requires(preun):   dkms gcc
