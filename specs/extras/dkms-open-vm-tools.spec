@@ -21,18 +21,9 @@ BuildRoot: %{_tmppath}/%{name}-%{builddate}-%{release}-root-%(%{__id_u} -n)
 
 ExclusiveArch: i386 i586 i686 x86_64
 
-BuildRequires: gtk2-devel
-BuildRequires: libXtst-devel
 BuildRequires: libdnet-devel
-BuildRequires: procps
-BuildRequires: libdnet-devel
+BuildRequires: libdnet
 BuildRequires: libicu-devel
-BuildRequires: libX11-devel
-BuildRequires: libXext-devel
-BuildRequires: libXinerama-devel
-BuildRequires: libXrender-devel
-BuildRequires: libXtst-devel
-BuildRequires: procps
 
 Requires(post):    dkms gcc desktop-file-utils
 Requires(preun):   dkms gcc
@@ -55,7 +46,11 @@ supported Unix like guest operating systems.
 	--disable-dependency-tracking \
 	--disable-unity \
 	--without-kernel-modules \
-	--without-root-privileges
+	--without-root-privileges \
+	--without-procps \
+	--without-x \
+        --host %{_arch}-unknown-linux-gnu 
+
 make %{?_smp_mflags}
 
 
@@ -84,25 +79,25 @@ mkdir -p $RPM_BUILD_ROOT%{_includedir}/vmci
 install -m 0644 modules/linux/vsock/linux/vmci_sockets.h $RPM_BUILD_ROOT%{_includedir}/vmci
 
 # Move vmware-user desktop into autostart directory
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/gnome/autostart
-mv $RPM_BUILD_ROOT%{_datadir}/applications/vmware-user.desktop $RPM_BUILD_ROOT%{_datadir}/gnome/autostart/
-cat <<EOF >>  $RPM_BUILD_ROOT%{_datadir}/gnome/autostart/vmware-user.desktop
-Type=Application
-EOF
+#mkdir -p $RPM_BUILD_ROOT%{_datadir}/gnome/autostart
+#mv $RPM_BUILD_ROOT%{_datadir}/applications/vmware-user.desktop $RPM_BUILD_ROOT%{_datadir}/gnome/autostart/
+#cat <<EOF >>  $RPM_BUILD_ROOT%{_datadir}/gnome/autostart/vmware-user.desktop
+#Type=Application
+#EOF
 
 # Install desktop file for toolbox
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
-cat <<EOF > $RPM_BUILD_ROOT%{_datadir}/applications/vmware-toolbox.desktop
-[Desktop Entry]
-Encoding=UTF-8
-Name=VMware Toolbox
-Comment=VMware Guest Toolbox
-Exec=vmware-toolbox
-Terminal=false
-Type=Application
-Categories=Gnome;Application;System
-StartupNotify=false
-EOF
+#mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
+#cat <<EOF > $RPM_BUILD_ROOT%{_datadir}/applications/vmware-toolbox.desktop
+#[Desktop Entry]
+#Encoding=UTF-8
+#Name=VMware Toolbox
+#Comment=VMware Guest Toolbox
+#Exec=vmware-toolbox
+#Terminal=false
+#Type=Application
+#Categories=Gnome;Application;System
+#StartupNotify=false
+#EOF
 
 # Install kernel modules sources for DKMS
 mkdir -p $RPM_BUILD_ROOT%{_usrsrc}/%{tname}-%{builddate}
@@ -181,8 +176,8 @@ fi
 %doc AUTHORS COPYING ChangeLog NEWS README
 %{_bindir}/vmware*
 %{_sbindir}/vmware*
-%{_datadir}/applications/*.desktop
-%{_datadir}/gnome/autostart/*.desktop
+#%{_datadir}/applications/*.desktop
+#%{_datadir}/gnome/autostart/*.desktop
 /etc/init.d/*
 %{_libdir}/*.so*
 %{_includedir}/vmci
@@ -192,7 +187,7 @@ fi
 %{_sysconfdir}/modprobe.d/*
 %{_usrsrc}/%{tname}-%{builddate}
 %attr(4755,root,root) /sbin/mount.vmhgfs
-%attr(4755,root,root) %{_bindir}/vmware-user-suid-wrapper
+#%attr(4755,root,root) %{_bindir}/vmware-user-suid-wrapper
 
 
 %changelog
