@@ -1,5 +1,5 @@
 Summary: JBoss mod_cluster for Apache httpd
-Name: httpd-mod_cluster
+Name: mod_cluster
 Version: 1.0.0.Beta2
 Release: 1
 License: LGPL

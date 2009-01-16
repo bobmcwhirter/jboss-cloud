@@ -1,6 +1,6 @@
 
 Summary: JBoss mod_cluster for JBoss AS5
-Name: as5-mod_cluster
+Name: jboss-as5-mod_cluster
 Version: 1.0.0.Beta2
 Release: 1
 License: LGPL
@@ -9,9 +9,9 @@ Group: Applications/System
 Requires: jboss-as5
 Requires: patch
 Source0: http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-src-ssl.tar.gz
-Source1: as5-mod_cluster-server-xml.patch
-Source2: as5-mod_cluster-jboss-beans-xml.patch
-Patch: as5-mod_cluster-%{version}.patch
+Source1: jboss-as5-mod_cluster-server-xml.patch
+Source2: jboss-as5-mod_cluster-jboss-beans-xml.patch
+Patch: jboss-as5-mod_cluster-%{version}.patch
 #BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
