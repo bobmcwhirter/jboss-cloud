@@ -77,7 +77,6 @@ module JBossCloud
       excludes = []
       unless ( repos_def.nil? )
         repos_def.each do |name,config|
-          puts name
           repo_line = "repo --name=#{name} --baseurl=#{config['baseurl']}"
           unless ( config['filters'].nil? )
             excludes = config['filters']
