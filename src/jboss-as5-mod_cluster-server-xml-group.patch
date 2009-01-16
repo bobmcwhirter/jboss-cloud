@@ -1,0 +1,14 @@
+--- server.xml	2008-12-22 14:59:14.000000000 -0500
++++ server-my.xml	2008-12-22 15:02:28.000000000 -0500
+@@ -5,6 +5,11 @@
+    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+    <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
+    <Listener className="org.apache.catalina.core.JasperListener" />
++    
++   <!-- Initialize the mod-cluster integration listener -->
++   <Listener className="org.jboss.web.tomcat.service.deployers.MicrocontainerIntegrationLifecycleListener"
++             delegateBeanName="ModClusterService"/>
++
+ 
+    <Service name="jboss.web">
+ 

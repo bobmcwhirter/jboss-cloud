@@ -23,14 +23,6 @@ The JBossAS 5 Java Application Server
 %setup -n jboss-%{version}
 %patch -p1
 
-# add neccessary folders
-mkdir %{_topdir}/BUILD/jboss-%{version}/server/cluster
-mkdir %{_topdir}/BUILD/jboss-%{version}/server/group
-
-# copy profiles
-cp -R %{_topdir}/BUILD/jboss-%{version}/server/default/* %{_topdir}/BUILD/jboss-%{version}/server/group/
-cp -R %{_topdir}/BUILD/jboss-%{version}/server/all/* %{_topdir}/BUILD/jboss-%{version}/server/cluster/
-
 %install
 mkdir -p $RPM_BUILD_ROOT/opt
 cp -R . $RPM_BUILD_ROOT/opt/jboss-as5

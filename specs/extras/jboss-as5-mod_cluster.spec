@@ -6,11 +6,13 @@ Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Requires: jboss-as5
+Requires: jboss-as5-cloud-profiles
 Requires: patch
 Source0: http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-src-ssl.tar.gz
-Source1: jboss-as5-mod_cluster-server-xml.patch
-Source2: jboss-as5-mod_cluster-jboss-beans-xml.patch
+Source1: jboss-as5-mod_cluster-server-xml-group.patch
+Source2: jboss-as5-mod_cluster-jboss-beans-xml-group.patch
+Source3: jboss-as5-mod_cluster-server-xml-cluster.patch
+Source4: jboss-as5-mod_cluster-jboss-beans-xml-cluster.patch
 Patch: jboss-as5-mod_cluster-%{version}.patch
 #BuildRoot: /tmp/%{name}
 
@@ -37,8 +39,7 @@ cd mod_cluster-%{version}-src-ssl
 cd srclib/mod_cluster/
 mvn package -Dmaven.test.skip=true
 
-## every config but minimal
-configs=( all  default  standard  web )
+configs=( cluster  group )
 
 for config in ${configs[@]} ; do
   install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/server/${config}/deploy
@@ -48,6 +49,8 @@ done
 install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
 cp %{SOURCE1} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
 cp %{SOURCE2} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
+cp %{SOURCE3} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
+cp %{SOURCE4} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
 
 %clean
 #rm -Rf $RPM_BUILD_ROOT
@@ -55,13 +58,13 @@ cp %{SOURCE2} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
 %pre
 
 %post
-configs=( all  default  standard  web )
+configs=( cluster  group )
 
 for config in ${configs[@]} ; do
   pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
-  /usr/bin/patch server.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-server-xml.patch
+  /usr/bin/patch server.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-server-xml-${config}.patch
   pushd META-INF
-  /usr/bin/patch jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-jboss-beans-xml.patch
+  /usr/bin/patch jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-jboss-beans-xml-${config}.patch
   popd
   popd
 done 
@@ -71,19 +74,19 @@ echo "# Comma-separated list of address:port for mod_cluster front-end proxies"
 echo "JBOSS_PROXY_LIST=" >> /etc/jboss-as5.conf
 
 %preun
-configs=( all  default  standard  web )
+configs=( cluster group )
 
 for config in ${configs[@]} ; do
   pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
-  /usr/bin/patch -R server.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-server-xml.patch
+  /usr/bin/patch -R server.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-server-xml-${config}.patch
   pushd META-INF
-  /usr/bin/patch -R jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/as5-mod_cluster-jboss-beans-xml.patch
+  /usr/bin/patch -R jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-jboss-beans-xml-${config}.patch
   popd
   popd
 done
 
 %files
-%defattr(-,root,root)
+%defattr(-,jboss,jboss)
 /
 
 
