@@ -1,6 +1,6 @@
 
-Summary: JBoss mod_cluster for JBoss AS5
-Name: jboss-as5-mod_cluster
+Summary: JBoss mod_cluster for JBoss AS5 cloud profiles
+Name: jboss-as5-cloud-mod_cluster
 Version: 1.0.0.Beta2
 Release: 1
 License: LGPL
@@ -19,7 +19,7 @@ Patch: jboss-as5-mod_cluster-%{version}.patch
 %define __jar_repack %{nil}
 
 %description
-JBoss mod_cluster for JBoss AS5
+JBoss mod_cluster for JBoss AS5 cloud profiles
 
 %prep
 cd %{_topdir}/BUILD
@@ -74,7 +74,7 @@ echo "# Comma-separated list of address:port for mod_cluster front-end proxies"
 echo "JBOSS_PROXY_LIST=" >> /etc/jboss-as5.conf
 
 %preun
-configs=( cluster group )
+configs=( cluster  group )
 
 for config in ${configs[@]} ; do
   pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
