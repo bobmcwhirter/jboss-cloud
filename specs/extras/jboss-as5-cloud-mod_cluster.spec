@@ -61,29 +61,33 @@ cp %{SOURCE4} $RPM_BUILD_ROOT/opt/jboss-as5/mod_cluster-patches/
 configs=( cluster  group )
 
 for config in ${configs[@]} ; do
-  pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
-  /usr/bin/patch server.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-server-xml-${config}.patch
-  pushd META-INF
-  /usr/bin/patch jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-jboss-beans-xml-${config}.patch
-  popd
-  popd
+  pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/ > /dev/null
+  /usr/bin/patch -s server.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-server-xml-${config}.patch
+  pushd META-INF > /dev/null
+  /usr/bin/patch -s jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-jboss-beans-xml-${config}.patch
+  popd > /dev/null
+  popd > /dev/null
 done 
 
-echo ""
-echo "# Comma-separated list of address:port for mod_cluster front-end proxies"
-echo "JBOSS_PROXY_LIST=" >> /etc/jboss-as5.conf
+if [ `grep -c '^JBOSS_PROXY_LIST' /etc/jboss-as5.conf` -eq 0 ]; then
+  echo "# Comma-separated list of address:port for mod_cluster front-end proxies"  >> /etc/jboss-as5.conf
+  echo "JBOSS_PROXY_LIST=" >> /etc/jboss-as5.conf
+fi
 
 %preun
 configs=( cluster  group )
 
 for config in ${configs[@]} ; do
-  pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/
-  /usr/bin/patch -R server.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-server-xml-${config}.patch
-  pushd META-INF
-  /usr/bin/patch -R jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-jboss-beans-xml-${config}.patch
-  popd
-  popd
+  pushd /opt/jboss-as5/server/${config}/deploy/jbossweb.sar/ > /dev/null
+  /usr/bin/patch -sR server.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-server-xml-${config}.patch
+  pushd META-INF > /dev/null
+  /usr/bin/patch -sR jboss-beans.xml < /opt/jboss-as5/mod_cluster-patches/jboss-as5-mod_cluster-jboss-beans-xml-${config}.patch
+  popd > /dev/null
+  popd > /dev/null
 done
+
+mv /etc/jboss-as5.conf /etc/jboss-as5.conf.rpmsave
+grep -v '^JBOSS_PROXY_LIST' /etc/jboss-as5.conf.rpmsave | grep -v '^# Comma-separated list of address:port for mod_cluster front-end proxies' > /etc/jboss-as5.conf
 
 %files
 %defattr(-,jboss,jboss)
