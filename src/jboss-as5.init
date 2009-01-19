@@ -51,13 +51,13 @@ JBOSSCP=${JBOSSCP:-"$JBOSS_HOME/bin/shutdown.jar:$JBOSS_HOME/client/jbossall-cli
 #if 'cluster' and 'group' profiles are available
 
 if [ -d "$JBOSS_HOME/server/cluster" ] && [ -d "$JBOSS_HOME/server/group" ]; then
-	#if JBOSS_PROXY_LIST is set, running profile will be 'cluster' in other case 'group'
-	if [ ${#JBOSS_PROXY_LIST} -gt 0 ]; then
+	#if GOSSIP_HOST is set, running profile will be 'cluster' in other case 'group'
+	if [ ${#GOSSIP_HOST} -gt 0 ]; then
 		JBOSSCONF=${JBOSSCONF:-"cluster"}
 	else
 		JBOSSCONF=${JBOSSCONF:-"group"}
 	fi
-#if JBOSS_PROXY_LIST is not set, running profile will be 'all'
+#if GOSSIP_HOST is not set, running profile will be 'all'
 else
 	JBOSSCONF=${JBOSSCONF:-"all"}
 fi
