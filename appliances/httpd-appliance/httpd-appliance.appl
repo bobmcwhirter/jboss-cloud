@@ -3,4 +3,4 @@ summary: Apache httpd and JBoss mod_cluster
 
 packages:
   - httpd
-  - httpd-mod_cluster
+  - mod_cluster
