@@ -48,7 +48,19 @@ JAVAPTH=${JAVAPTH:-"$JAVA_HOME/bin"}
 JBOSSCP=${JBOSSCP:-"$JBOSS_HOME/bin/shutdown.jar:$JBOSS_HOME/client/jbossall-client.jar"}
 
 #define jboss configuration to start
-JBOSSCONF=${JBOSSCONF:-"all"}
+#if 'cluster' and 'group' profiles are available
+
+if [ -d "$JBOSS_HOME/server/cluster" ] && [ -d "$JBOSS_HOME/server/group" ]; then
+	#if JBOSS_PROXY_LIST is set, running profile will be 'cluster' in other case 'group'
+	if [ ${#JBOSS_PROXY_LIST} -gt 0 ]; then
+		JBOSSCONF=${JBOSSCONF:-"cluster"}
+	else
+		JBOSSCONF=${JBOSSCONF:-"group"}
+	fi
+#if JBOSS_PROXY_LIST is not set, running profile will be 'all'
+else
+	JBOSSCONF=${JBOSSCONF:-"all"}
+fi
 
 #define the script to use to start jboss
 JBOSSSH=${JBOSSSH:-"$JBOSS_HOME/bin/run.sh -c $JBOSSCONF"}
