@@ -32,7 +32,11 @@ module JBossCloud
           description_elem.text = "#{@simple_name} Appliance\n Version: #{@version}-#{@release}"
           doc.root.insert_after( name_elem, description_elem )
         end
+        # updating xml the file according to selected build architecture
+        arch_elem = doc.elements["//arch"]
+        arch_elem.text = @arch
         File.open( "#{@appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
+        abort
       end      
 
       file appliance_vmx_package => [ "#{@appliance_xml_file}.vmx-input" ] do
