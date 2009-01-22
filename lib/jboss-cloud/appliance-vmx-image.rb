@@ -43,7 +43,10 @@ module JBossCloud
         #execute_command( "virt-pack -o $PWD/#{@build_dir}/appliances/#{@arch} #{@appliance_xml_file}.vmx-input" )
         
         vmx_file = File.dirname( @appliance_xml_file) + "/" + File.basename( @appliance_xml_file, ".xml" ) + '.vmx'
-        execute_command( "#{Dir.pwd}/lib/python-virtinst/virt-convert -o vmx #{@appliance_xml_file}.vmx-input #{File.dirname( @appliance_xml_file)}/" ) unless ( File.exists?( vmx_file ) )
+
+        if ( !File.exists?( vmx_file ) || File.new( "#{@appliance_xml_file}.vmx-input" ).mtime > File.new( vmx_file ).mtime  )
+          execute_command( "#{Dir.pwd}/lib/python-virtinst/virt-convert -o vmx #{@appliance_xml_file}.vmx-input #{File.dirname( @appliance_xml_file)}/" )
+        end
         
         if ( File.exists?( vmx_file ) )
           
