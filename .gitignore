@@ -4,4 +4,5 @@ rpms-cache
 sources-cache
 extra-rpms
 build
+*.pyc
 
