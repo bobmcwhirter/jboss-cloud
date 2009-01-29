@@ -1,3 +1,4 @@
+
 %define jboss_version 5.0.0.GA
 %define __jar_repack %{nil}
 
@@ -8,7 +9,7 @@ Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{jboss_version}-jdk6.zip
+Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-5.0.0.GA-jdk6.zip
 Requires: jboss-as5
 BuildRoot: /tmp/jboss-cloud-profiles-%{jboss_version}
 
