@@ -235,7 +235,10 @@ def main():
                 format = "vdisk"
 
             elif options.output_format == "vmx":
-                format = "vmdk"
+                if diskcfg.disk_format_names[format] == diskcfg.DISK_FORMAT_VMDK_SCSI:
+                    format = "vmdkscsi"
+                else:
+                    format = "vmdk"
             if not format:
                 format = "raw"
 

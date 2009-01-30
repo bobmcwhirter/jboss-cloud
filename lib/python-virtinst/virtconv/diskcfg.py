@@ -29,6 +29,7 @@ DISK_FORMAT_NONE = 0
 DISK_FORMAT_RAW = 1
 DISK_FORMAT_VMDK = 2
 DISK_FORMAT_VDISK = 3
+DISK_FORMAT_VMDK_SCSI = 4
 
 DISK_TYPE_DISK = 0
 DISK_TYPE_CDROM = 1
@@ -40,12 +41,14 @@ CSUM_SHA256 = 1
 disk_suffixes = {
     DISK_FORMAT_RAW: ".raw",
     DISK_FORMAT_VMDK: ".vmdk",
+    DISK_FORMAT_VMDK_SCSI: ".vmdk",
     DISK_FORMAT_VDISK: ".vdisk",
 }
 
 qemu_formats = {
     DISK_FORMAT_RAW: "raw",
     DISK_FORMAT_VMDK: "vmdk",
+    DISK_FORMAT_VMDK_SCSI: "vmdkscsi",
     DISK_FORMAT_VDISK: "vdisk",
 }
 
@@ -53,6 +56,7 @@ disk_format_names = {
     "none": DISK_FORMAT_NONE,
     "raw": DISK_FORMAT_RAW,
     "vmdk": DISK_FORMAT_VMDK,
+    "vmdkscsi": DISK_FORMAT_VMDK_SCSI,
     "vdisk": DISK_FORMAT_VDISK,
 }
 
@@ -236,6 +240,7 @@ class disk(object):
         if not (out_format == DISK_FORMAT_NONE or
             out_format == DISK_FORMAT_VDISK or
             out_format == DISK_FORMAT_RAW or
+            out_format == DISK_FORMAT_VMDK_SCSI or
             out_format == DISK_FORMAT_VMDK):
             raise NotImplementedError("Cannot convert to disk format %s" %
                 output_format)
