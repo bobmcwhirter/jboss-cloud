@@ -20,9 +20,14 @@ module JBossCloud
     end
 
     def define_precursors
-      appliance_vmx_package= "#{@build_dir}/appliances/#{@arch}/#{@simple_name}-#{@version}-#{@release}.#{@arch}.tgz"
 
-      file "#{@appliance_xml_file}.vmx-input"=>[ @appliance_xml_file ] do
+      super_simple_name = File.basename( @simple_name, '-appliance' )
+      vmware_personal_output_folder = File.dirname( @appliance_xml_file ) + "/vmware/personal"
+      vmware_personal_vmx_file = vmware_personal_output_folder + "/" + File.basename( @appliance_xml_file, ".xml" ) + '.vmx'
+      vmware_enterprise_output_folder = File.dirname( @appliance_xml_file ) + "/vmware/enterprise"
+      vmware_enterprise_vmx_file = vmware_enterprise_output_folder + "/" + File.basename( @appliance_xml_file, ".xml" ) + '.vmx'
+
+      file "#{@appliance_xml_file}.vmx-input" => [ @appliance_xml_file ] do
         doc = REXML::Document.new( File.read( @appliance_xml_file ) )
         name_elem = doc.root.elements['name']
         name_elem.attributes[ 'version' ] = "#{@version}-#{@release}"
@@ -36,46 +41,78 @@ module JBossCloud
         arch_elem = doc.elements["//arch"]
         arch_elem.text = @arch
         File.open( "#{@appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
-        abort
-      end      
+      end
+      
+      desc "Build #{super_simple_name} appliance for VMware personal environments (Server/Workstation/Fusion)"
+      task "appliance:#{@simple_name}:vmware:personal" => [ "#{@appliance_xml_file}.vmx-input" ] do
+        FileUtils.mkdir_p vmware_personal_output_folder       
 
-      file appliance_vmx_package => [ "#{@appliance_xml_file}.vmx-input" ] do
-        #execute_command( "virt-pack -o $PWD/#{@build_dir}/appliances/#{@arch} #{@appliance_xml_file}.vmx-input" )
-        
-        vmx_file = File.dirname( @appliance_xml_file) + "/" + File.basename( @appliance_xml_file, ".xml" ) + '.vmx'
-
-        if ( !File.exists?( vmx_file ) || File.new( "#{@appliance_xml_file}.vmx-input" ).mtime > File.new( vmx_file ).mtime  )
-          execute_command( "#{Dir.pwd}/lib/python-virtinst/virt-convert -o vmx #{@appliance_xml_file}.vmx-input #{File.dirname( @appliance_xml_file)}/" )
-        end
-        
-        if ( File.exists?( vmx_file ) )
-          
-          vmx_data = File.open( vmx_file).readlines
-
-          vmx_data.map! do |line|
-            # replace guestOS informations to: other26xlinux or other26xlinux-64, this seems to be the savests values (tm)
-            line = line.gsub(/guestOS = (.*)/, "guestOS = #{@arch == "x86_64" ? "other26xlinux-64" : "other26xlinux"}")
-
-            # replace IDE disk with SCSI, it's recommended (don't know about source, but it is)
-            # IDE disks aren't working for ESXi, so we must have generated SCSI
-            # changing only vmx file won't work because of 'IDE disk geometry' message after power on
-            # currently commented out
-            #
-            # line = line.gsub(/ide0:0/, "scsi0:0")
-          end
-
-          # yes, we want a SCSI controller because we have SCSI disks!
-          # vmx_data += ["scsi0.present = \"true\""] unless vmx_data.grep(/scsi0.present = "true"/).length  > 0
-          # vmx_data += ["scsi0.virtualDev = \"lsilogic\""] unless vmx_data.grep(/scsi0.virtualDev = "lsilogic"/).length  > 0
-          
-          # write changes to file
-          File.new( vmx_file , "w+" ).puts( vmx_data )
+        if ( !File.exists?( vmware_personal_vmx_file ) || File.new( "#{@appliance_xml_file}.vmx-input" ).mtime > File.new( vmware_personal_vmx_file ).mtime  )
+          execute_command( "#{Dir.pwd}/lib/python-virtinst/virt-convert -o vmx -D vmdk #{@appliance_xml_file}.vmx-input #{vmware_personal_output_folder}/" )
         end
       end
 
-      super_simple_name = File.basename( @simple_name, '-appliance' )
-      desc "Build #{super_simple_name} appliance for VMware"
-      task "appliance:#{@simple_name}:vmx" => [ appliance_vmx_package ]
+      desc "Build #{super_simple_name} appliance for VMware enterprise environments (ESX/ESXi)"
+      task "appliance:#{@simple_name}:vmware:enterprise" => [ "#{@appliance_xml_file}.vmx-input" ] do
+        FileUtils.mkdir_p vmware_enterprise_output_folder
+
+        # copy RAW disk to VMware enterprise destination folder
+        FileUtils.cp( File.dirname( @appliance_xml_file ) + "/#{@simple_name}-sda.raw", vmware_enterprise_output_folder + "/#{@simple_name}-sda.raw" )
+
+        vmx_data = File.open( vmware_personal_vmx_file ).readlines
+        
+        vmx_data.map! do |line|
+          # replace guestOS informations to: other26xlinux or other26xlinux-64, this seems to be the savests values (tm)
+          line = line.gsub(/guestOS = (.*)/, "guestOS = #{@arch == "x86_64" ? "other26xlinux-64" : "other26xlinux"}")
+
+          # replace IDE disk with SCSI, it's recommended for workstation and required for ESX
+          line = line.gsub(/ide0:0/, "scsi0:0")
+        end
+
+        # yes, we want a SCSI controller because we have SCSI disks!
+        vmx_data += ["scsi0.present = \"true\""] unless vmx_data.grep(/scsi0.present = "true"/).length  > 0
+        vmx_data += ["scsi0.virtualDev = \"lsilogic\""] unless vmx_data.grep(/scsi0.virtualDev = "lsilogic"/).length  > 0
+
+        # write changes to file
+        File.new( vmware_enterprise_vmx_file , "w+" ).puts( vmx_data )
+
+        # create new VMDK descriptor file
+        vmdk_descriptor_file_name = vmware_enterprise_output_folder + "/#{@simple_name}-sda.vmdk"
+
+        vmdk_file = File.new( vmdk_descriptor_file_name, "w+" )
+
+        vmdk_file.puts("# Disk DescriptorFile")
+        vmdk_file.puts("version=1")
+        vmdk_file.puts("CID=af54a9d2")
+        vmdk_file.puts("parentCID=ffffffff")
+        vmdk_file.puts("createType=\"vmfs\"")
+
+        vmdk_file.puts("")
+
+        vmdk_file.puts("# Extent description")
+        # todo: read from kickstart file disk size and put appropriate value after RW:
+        vmdk_file.puts("RW 4194304 VMFS \"#{@simple_name}-sda.raw\"")
+
+        vmdk_file.puts("")
+
+        vmdk_file.puts("# The Disk Data Base")
+        vmdk_file.puts("#DDB")
+
+        vmdk_file.puts("")
+
+        # todo: update these values according to disk size change
+        vmdk_file.puts("ddb.toolsVersion = \"0\"")
+        vmdk_file.puts("ddb.adapterType = \"lsilogic\"")
+        vmdk_file.puts("ddb.geometry.sectors = \"63\"")
+        vmdk_file.puts("ddb.geometry.heads = \"255\"")
+        vmdk_file.puts("ddb.geometry.cylinders = \"261\"")
+        vmdk_file.puts("ddb.encoding = \"UTF-8\"")
+        vmdk_file.puts("ddb.virtualHWVersion = \"4\"")
+
+        # don't know if this is required, for now - commented
+        #ddb.uuid = "60 00 C2 97 c7 af 99 c5-bc d9 2a eb 9c 7b 66 10"
+
+      end
     end
 
   end

@@ -8,7 +8,7 @@ timezone US/Eastern
 auth --useshadow --enablemd5
 selinux --disabled
 firewall --disabled
-bootloader --timeout=1 --append="acpi=force"
+bootloader --timeout=1 --append="acpi=force scsi_mod.scan=sync"
 network --bootproto=dhcp --device=eth0 --onboot=on
 
 # Root password is thincrust
@@ -17,7 +17,7 @@ rootpw --iscrypted $1$uw6MV$m6VtUWPed4SqgoW6fKfTZ/
 # 
 # Partitoin Information. Change this as necessary
 #
-part / --size 1500 --fstype ext3 --ondisk sda
+part / --size 2048 --fstype ext3 --ondisk sda
 
 #
 # Include the repositories
