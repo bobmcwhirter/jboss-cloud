@@ -43,7 +43,7 @@ module JBossCloud
         File.open( "#{@appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
       end
       
-      desc "Build #{super_simple_name} appliance for VMware personal environments (Server/Workstation/Fusion)"
+      #desc "Build #{super_simple_name} appliance for VMware personal environments (Server/Workstation/Fusion)"
       task "appliance:#{@simple_name}:vmware:personal" => [ "#{@appliance_xml_file}.vmx-input" ] do
         FileUtils.mkdir_p vmware_personal_output_folder       
 
@@ -52,8 +52,8 @@ module JBossCloud
         end
       end
 
-      desc "Build #{super_simple_name} appliance for VMware enterprise environments (ESX/ESXi)"
-      task "appliance:#{@simple_name}:vmware:enterprise" => [ "#{@appliance_xml_file}.vmx-input" ] do
+      #desc "Build #{super_simple_name} appliance for VMware enterprise environments (ESX/ESXi)"
+      task "appliance:#{@simple_name}:vmware:enterprise" => [ "appliance:#{@simple_name}:vmware:personal" ] do
         FileUtils.mkdir_p vmware_enterprise_output_folder
 
         # copy RAW disk to VMware enterprise destination folder
@@ -113,7 +113,9 @@ module JBossCloud
         #ddb.uuid = "60 00 C2 97 c7 af 99 c5-bc d9 2a eb 9c 7b 66 10"
 
       end
-    end
 
+      desc "Build #{super_simple_name} appliance for VMware"
+      task "appliance:#{@simple_name}:vmware" => [ "appliance:#{@simple_name}:vmware:enterprise" ]
+    end
   end
 end
