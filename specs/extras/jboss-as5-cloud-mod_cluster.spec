@@ -1,7 +1,7 @@
 
 Summary: JBoss mod_cluster for JBoss AS5 cloud profiles
 Name: jboss-as5-cloud-mod_cluster
-Version: 1.0.0.Beta2
+Version: 1.0.0.Beta3
 Release: 1
 License: LGPL
 BuildArch: noarch
