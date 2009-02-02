@@ -49,8 +49,23 @@ module JBossCloud
         FileUtils.mkdir_p vmware_personal_output_folder
 
         if ( !File.exists?( vmware_personal_vmx_file ) || File.new( "#{@appliance_xml_file}.vmx-input" ).mtime > File.new( vmware_personal_vmx_file ).mtime  )
-          execute_command( "#{Dir.pwd}/lib/python-virtinst/virt-convert -o vmx -D vmdk #{@appliance_xml_file}.vmx-input #{vmware_personal_output_folder}/" )
+          #execute_command( "#{Dir.pwd}/lib/python-virtinst/virt-convert -o vmx -D vmdk #{@appliance_xml_file}.vmx-input #{vmware_personal_output_folder}/" )
         end
+
+        vmx_data = File.open( "src/base.vmx" ).read
+
+        # change name
+        vmx_data.gsub!( /#NAME#/ , @simple_name )
+        # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
+        vmx_data.gsub!( /#GUESTOS#/ , "#{@arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+        # disk filename must match
+        vmx_data.gsub!(/#{@simple_name}.vmdk/, "#{@simple_name}-sda.vmdk")
+
+        # todo: add support for select this while building appliance
+        vmx_data += "\nethernet0.networkName = \"NAT\""
+
+        # write changes to file
+        File.new( vmware_personal_vmx_file , "w+" ).puts( vmx_data )
       end
 
       desc "Build #{super_simple_name} appliance for VMware enterprise environments (ESX/ESXi)"
@@ -79,6 +94,9 @@ module JBossCloud
         # yes, we want a SCSI controller because we have SCSI disks!
         vmx_data += "\nscsi0.present = \"true\""
         vmx_data += "\nscsi0.virtualDev = \"lsilogic\""
+
+        # todo: add support for select this while building appliance
+        vmx_data += "\nethernet0.networkName = \"NAT\""
 
         # write changes to file
         File.new( vmware_enterprise_vmx_file , "w+" ).puts( vmx_data )

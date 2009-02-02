@@ -37,7 +37,7 @@ ide0:0.startConnected = "TRUE"
 ide0:0.writeThrough = "TRUE"
 
 ethernet0.present = "TRUE"
-ethernet0.connectionType = "nat"
+#ethernet0.connectionType = "nat"
 ethernet0.addressType = "generated"
 ethernet0.generatedAddressOffset = "0"
 ethernet0.autoDetect = "TRUE"
