@@ -71,8 +71,8 @@ module JBossCloud
 
         # todo add version gsub: #VERSION#
         vmx_data.gsub!( /#NAME#/ , @simple_name )
-        # replace guestOS informations to: other26xlinux or other26xlinux-64, this seems to be the savests values (tm)
-        vmx_data.gsub!( /#GUESTOS#/ , "#{@arch == "x86_64" ? "other26xlinux-64" : "other26xlinux"}" )
+        # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
+        vmx_data.gsub!( /#GUESTOS#/ , "#{@arch == "x86_64" ? "otherlinux-64" : "linux"}" )
         # replace IDE disk with SCSI, it's recommended for workstation and required for ESX
         vmx_data.gsub!( /ide0:0/ , "scsi0:0" )
 
