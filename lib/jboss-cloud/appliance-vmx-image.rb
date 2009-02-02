@@ -51,10 +51,12 @@ module JBossCloud
 
         vmx_data = File.open( "src/base.vmx" ).read
 
+        # replace version with current jboss cloud version
+        vmx_data.gsub!( /#VERSION#/ , JBossCloud::ImageBuilder.builder.config.version_with_release )
         # change name
         vmx_data.gsub!( /#NAME#/ , @simple_name )
         # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
-        vmx_data.gsub!( /#GUESTOS#/ , "#{@arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+        vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::ImageBuilder.builder.config.build_arch == "x86_64" ? "otherlinux-64" : "linux"}" )
         # disk filename must match
         vmx_data.gsub!(/#{@simple_name}.vmdk/, "#{@simple_name}-sda.vmdk")
 
