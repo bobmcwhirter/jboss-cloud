@@ -16,6 +16,15 @@ module JBossCloud
       define_precursors
     end
 
+    def replace_common_vmx_values( vmx_data )
+      # replace version with current jboss cloud version
+      vmx_data.gsub!( /#VERSION#/ , JBossCloud::ImageBuilder.builder.config.version_with_release )
+      # change name
+      vmx_data.gsub!( /#NAME#/ , @simple_name )
+      # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
+      vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::ImageBuilder.builder.config.build_arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+    end
+
     def define_precursors
 
       super_simple_name = File.basename( @simple_name, '-appliance' )
@@ -51,12 +60,8 @@ module JBossCloud
 
         vmx_data = File.open( "src/base.vmx" ).read
 
-        # replace version with current jboss cloud version
-        vmx_data.gsub!( /#VERSION#/ , JBossCloud::ImageBuilder.builder.config.version_with_release )
-        # change name
-        vmx_data.gsub!( /#NAME#/ , @simple_name )
-        # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
-        vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::ImageBuilder.builder.config.build_arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+        replace_common_vmx_values( vmx_data )
+
         # disk filename must match
         vmx_data.gsub!(/#{@simple_name}.vmdk/, "#{@simple_name}-sda.vmdk")
 
@@ -83,12 +88,8 @@ module JBossCloud
 
         vmx_data = File.open( "src/base.vmx" ).read
 
-        # replace version with current jboss cloud version
-        vmx_data.gsub!( /#VERSION#/ , JBossCloud::ImageBuilder.builder.config.version_with_release )
-        # replace name with current appliance name
-        vmx_data.gsub!( /#NAME#/ , @simple_name )
-        # replace guestOS informations to: other26xlinux or other26xlinux-64, this seems to be the savests values (tm)
-        vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::ImageBuilder.builder.config.build_arch == "x86_64" ? "other26xlinux-64" : "other26xlinux"}" )
+        replace_common_vmx_values( vmx_data )
+        
         # replace IDE disk with SCSI, it's recommended for workstation and required for ESX
         vmx_data.gsub!( /ide0:0/ , "scsi0:0" )
 
