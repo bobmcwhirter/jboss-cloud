@@ -69,7 +69,9 @@ module JBossCloud
 
         vmx_data = File.open( "src/base.vmx" ).read
 
-        # todo add version gsub: #VERSION#
+        # replace version with current jboss cloud version
+        vmx_data.gsub!( /#VERSION#/ , JBossCloud::ImageBuilder.builder.config.version_with_release )
+        # replace name with current appliance name
         vmx_data.gsub!( /#NAME#/ , @simple_name )
         # replace guestOS informations to: other26xlinux or other26xlinux-64, this seems to be the savests values (tm)
         vmx_data.gsub!( /#GUESTOS#/ , "#{@arch == "x86_64" ? "other26xlinux-64" : "other26xlinux"}" )
