@@ -5,13 +5,10 @@ module JBossCloud
 
   class ApplianceVMXImage < Rake::TaskLib
 
-    def initialize(build_dir, appliance_xml_file, version, release, arch)
-      @build_dir        = build_dir
+    def initialize( appliance_xml_file )
       @appliance_xml_file   = appliance_xml_file
       @simple_name = File.basename( appliance_xml_file, '.xml' )
-      @version = version
-      @release = release
-      @arch = arch
+
       define
     end
 
@@ -31,16 +28,16 @@ module JBossCloud
       file "#{@appliance_xml_file}.vmx-input" => [ @appliance_xml_file ] do
         doc = REXML::Document.new( File.read( @appliance_xml_file ) )
         name_elem = doc.root.elements['name']
-        name_elem.attributes[ 'version' ] = "#{@version}-#{@release}"
+        name_elem.attributes[ 'version' ] = "#{JBossCloud::ImageBuilder.builder.config.version_with_release}"
         description_elem = doc.root.elements['description']
         if ( description_elem.nil? )
           description_elem = REXML::Element.new( "description" )
-          description_elem.text = "#{@simple_name} Appliance\n Version: #{@version}-#{@release}"
+          description_elem.text = "#{@simple_name} Appliance\n Version: #{JBossCloud::ImageBuilder.builder.config.version_with_release}"
           doc.root.insert_after( name_elem, description_elem )
         end
         # update xml the file according to selected build architecture
         arch_elem = doc.elements["//arch"]
-        arch_elem.text = @arch
+        arch_elem.text = JBossCloud::ImageBuilder.builder.config.build_arch
         File.open( "#{@appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
       end
 
@@ -74,7 +71,7 @@ module JBossCloud
         # replace name with current appliance name
         vmx_data.gsub!( /#NAME#/ , @simple_name )
         # replace guestOS informations to: other26xlinux or other26xlinux-64, this seems to be the savests values (tm)
-        vmx_data.gsub!( /#GUESTOS#/ , "#{@arch == "x86_64" ? "other26xlinux-64" : "other26xlinux"}" )
+        vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::ImageBuilder.builder.config.build_arch == "x86_64" ? "other26xlinux-64" : "other26xlinux"}" )
         # replace IDE disk with SCSI, it's recommended for workstation and required for ESX
         vmx_data.gsub!( /ide0:0/ , "scsi0:0" )
 
