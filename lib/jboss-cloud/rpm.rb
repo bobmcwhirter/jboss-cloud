@@ -90,13 +90,13 @@ module JBossCloud
       source_basename = File.basename( source )
 
       source_file       = "#{@topdir}/SOURCES/#{source_basename}"
-      source_cache_file = "#{JBossCloud::ImageBuilder.builder.sources_cache_dir}/#{source_basename}"
+      source_cache_file = "#{JBossCloud::ImageBuilder.builder.config.dir_src_cache}/#{source_basename}"
 
       file rpm_file => [ source_file ]
 
       file source_file => [ 'rpm:topdir' ] do
         if ( ! File.exist?( source_cache_file ) )
-          FileUtils.mkdir_p( JBossCloud::ImageBuilder.builder.sources_cache_dir )
+          FileUtils.mkdir_p( JBossCloud::ImageBuilder.builder.config.dir_src_cache )
           execute_command( "wget #{source} -O #{source_cache_file} --progress=bar:mega" )
         end
         FileUtils.cp( source_cache_file, source_file )
