@@ -9,6 +9,12 @@ require 'jboss-cloud/multi-appliance'
 
 module JBossCloud
   class Config
+    @@config = nil
+
+    def Config.get
+      @@config
+    end
+
     def initialize(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build )
       @name = name
       @version = version
@@ -20,6 +26,8 @@ module JBossCloud
       @dir_root = dir_root
       @dir_top = dir_top
       @dir_build = dir_build
+
+      @@config = self
     end
 
     attr_reader :name
@@ -76,29 +84,29 @@ module JBossCloud
       dir_top           = project_config[:topdir]            || "#{dir_build}/topdir"
       dir_src_cache     = project_config[:sources_cache_dir] || DEFAULT_PROJECT_CONFIG[:sources_cache_dir]
       dir_rpms_cache    = project_config[:rpms_cache_dir]    || DEFAULT_PROJECT_CONFIG[:rpms_cache_dir]
-
-      @config = Config.new(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build )
+     
+      Config.new(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build )
     end
 
     def define_rules
-      directory self.config.dir_build
+      directory Config.get.dir_build
 
-      puts "\n\rCurrent architecture:\t#{self.config.arch}"
+      puts "\n\rCurrent architecture:\t#{Config.get.arch}"
 
-      JBossCloud::Topdir.new( self.config.dir_top, [ 'noarch', 'i386', 'x86_64' ] )
+      JBossCloud::Topdir.new( Config.get.dir_top, [ 'noarch', 'i386', 'x86_64' ] )
 
-      puts "Building architecture:\t#{self.config.build_arch}\n\r"
+      puts "Building architecture:\t#{Config.get.build_arch}\n\r"
 
       Dir[ 'specs/extras/*.spec' ].each do |spec_file|
-        JBossCloud::RPM.new( self.config.dir_top, spec_file, self.config.build_arch )
+        JBossCloud::RPM.new( Config.get.dir_top, spec_file, Config.get.build_arch )
       end
 
       Dir[ "appliances/*/*.appl" ].each do |appliance_def|
-        JBossCloud::Appliance.new( self.config.dir_build, "#{self.config.dir_root}/#{self.config.dir_top}", self.config.dir_rpms_cache, appliance_def, self.config.version, self.config.release, self.config.build_arch )
+        JBossCloud::Appliance.new( Config.get.dir_build, "#{Config.get.dir_root}/#{Config.get.dir_top}", Config.get.dir_rpms_cache, appliance_def, Config.get.version, Config.get.release, Config.get.build_arch )
       end
 
       Dir[ "appliances/*.mappl" ].each do |multi_appliance_def|
-        JBossCloud::MultiAppliance.new( self.config.dir_build, "#{self.config.dir_root}/#{self.config.dir_top}", self.config.dir_rpms_cache, multi_appliance_def, self.config.version, self.config.release, self.config.build_arch )
+        JBossCloud::MultiAppliance.new( Config.get.dir_build, "#{Config.get.dir_root}/#{Config.get.dir_top}", Config.get.dir_rpms_cache, multi_appliance_def, Config.get.version, Config.get.release, Config.get.build_arch )
       end
     end
   end

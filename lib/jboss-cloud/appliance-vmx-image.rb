@@ -18,11 +18,11 @@ module JBossCloud
 
     def replace_common_vmx_values( vmx_data )
       # replace version with current jboss cloud version
-      vmx_data.gsub!( /#VERSION#/ , JBossCloud::ImageBuilder.builder.config.version_with_release )
+      vmx_data.gsub!( /#VERSION#/ , JBossCloud::Config.get.version_with_release )
       # change name
       vmx_data.gsub!( /#NAME#/ , @simple_name )
       # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
-      vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::ImageBuilder.builder.config.build_arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+      vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::Config.get.build_arch == "x86_64" ? "otherlinux-64" : "linux"}" )
     end
 
     def define_precursors
@@ -37,16 +37,16 @@ module JBossCloud
       file "#{@appliance_xml_file}.vmx-input" => [ @appliance_xml_file ] do
         doc = REXML::Document.new( File.read( @appliance_xml_file ) )
         name_elem = doc.root.elements['name']
-        name_elem.attributes[ 'version' ] = "#{JBossCloud::ImageBuilder.builder.config.version_with_release}"
+        name_elem.attributes[ 'version' ] = "#{JBossCloud::Config.get.version_with_release}"
         description_elem = doc.root.elements['description']
         if ( description_elem.nil? )
           description_elem = REXML::Element.new( "description" )
-          description_elem.text = "#{@simple_name} Appliance\n Version: #{JBossCloud::ImageBuilder.builder.config.version_with_release}"
+          description_elem.text = "#{@simple_name} Appliance\n Version: #{JBossCloud::Config.get.version_with_release}"
           doc.root.insert_after( name_elem, description_elem )
         end
         # update xml the file according to selected build architecture
         arch_elem = doc.elements["//arch"]
-        arch_elem.text = JBossCloud::ImageBuilder.builder.config.build_arch
+        arch_elem.text = JBossCloud::Config.get.build_arch
         File.open( "#{@appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
       end
 
