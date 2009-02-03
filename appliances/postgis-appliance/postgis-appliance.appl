@@ -10,3 +10,4 @@ packages:
   - postgresql
   - postgresql-server
   - postgis
+  - oddthesis-repo

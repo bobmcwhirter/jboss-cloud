@@ -6,3 +6,4 @@ packages:
   - jboss-rails
   - jboss-as5-cloud-mod_cluster
   - java-1.6.0-openjdk
+  - oddthesis-repo
