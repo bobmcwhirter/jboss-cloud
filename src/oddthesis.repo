@@ -1,7 +1,15 @@
-[oddthesis]
+[oddthesis-$basearch]
 name=Oddthesis $basearch
 failovermethod=priority
 baseurl=http://repo.oddthesis.org/packages/#distro#/$releasever/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oddthesis
+
+[oddthesis-noarch]
+name=Oddthesis noarch
+failovermethod=priority
+baseurl=http://repo.oddthesis.org/packages/#distro#/$releasever/noarch/
 enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oddthesis
