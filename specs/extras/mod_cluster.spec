@@ -72,13 +72,36 @@ cp %{SOURCE1} $RPM_BUILD_ROOT/etc/httpd/conf.d/
 %clean
 rm -Rf $RPM_BUILD_ROOT
 
+
 %pre
+
+%post
+
+pushd /etc/httpd/conf > /dev/null
+
+cp httpd.conf httpd.conf.orig
+sed s/"^LoadModule proxy_balancer_module"/"#LoadModule proxy_balancer_module"/ httpd.conf.orig > httpd.conf
+
+popd > /dev/null
+
+%preun
+
+pushd /etc/httpd/conf > /dev/null
+
+rm -f httpd.conf.orig > /dev/null
+cp httpd.conf httpd.conf.orig
+sed s/"^#LoadModule proxy_balancer_module"/"LoadModule proxy_balancer_module"/ httpd.conf.orig > httpd.conf
+
+popd > /dev/null
 
 %files
 %defattr(-,root,root)
 /
 
 %changelog
+* Wed Feb 04 2009 Marek Goldmann 1.0.0.Beta3
+- Commenting proxy_balancer_module
+
 * Tue Dec 30 2008 Marek Goldmann 1.0.0.Beta2
 - Added support for x86_64 arch
 
