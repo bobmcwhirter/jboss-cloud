@@ -12,7 +12,6 @@ module JBossCloudWizard
 
       @options = OpenStruct.new
       @options.verbose = false
-      @options.quiet = false
       #todo initialize all paths
     end
     
@@ -22,7 +21,7 @@ module JBossCloudWizard
         exit(0)
       end
       
-      puts "\nWelcome to JBoss Cloud appliance builder wizard\n\r"
+      puts "\n###\r\n### Welcome to JBoss Cloud appliance builder wizard\r\n###\r\n"
 
       wizard = JBossCloudWizard::Wizard.new(@options)
       wizard.start
@@ -36,7 +35,7 @@ module JBossCloudWizard
 
     # Performs post-parse processing on options
     def process_options
-      @options.verbose = false if @options.quiet
+      # @options.verbose = false if @options.quiet
     end
 
     def parsed_options?
@@ -44,7 +43,6 @@ module JBossCloudWizard
       opts = OptionParser.new
       opts.on('-v', '--version')    { output_version ; exit 0 }
       opts.on('-V', '--verbose')    { @options.verbose = true }
-      opts.on('-q', '--quiet')      { @options.quiet = true }
 
       opts.parse!(@arguments) rescue return false
 
