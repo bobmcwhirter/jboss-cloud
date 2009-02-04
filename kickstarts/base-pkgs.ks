@@ -3,6 +3,8 @@ gcc
 make
 dkms
 
+oddthesis-repo
+
 #for vmware guesting
 dkms-open-vm-tools
 vm2-support

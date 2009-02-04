@@ -4,4 +4,3 @@ summary: JBoss JGroups
 packages:
   - jboss-jgroups
   - java-1.6.0-openjdk
-  - oddthesis-repo

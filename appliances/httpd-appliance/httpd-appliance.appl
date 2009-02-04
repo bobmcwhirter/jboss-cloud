@@ -4,4 +4,3 @@ summary: Apache httpd and JBoss mod_cluster
 packages:
   - httpd
   - mod_cluster
-  - oddthesis-repo
