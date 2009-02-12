@@ -32,14 +32,41 @@ class jboss-as5::appliance {
 
   firewall_rule{"jboss": destination_port=>"8080"}
 
-  augeas{"jbossasconf":
+  if $boot_jboss_gossip_host {
+    augeas{"jbossasconf_gossip_host":
+      context => "/files",
+      changes => [
+        "set /etc/jboss-as5.conf/JBOSS_GOSSIP_HOST     $boot_jboss_gossip_host"
+      ],
+      load_path => "${ace_home}lenses",
+    }
+  }
+
+  if $boot_jboss_proxy_list {
+    augeas{"jbossasconf_proxy_list":
+      context => "/files",
+      changes => [
+        "set /etc/jboss-as5.conf/JBOSS_PROXY_LIST     $boot_jboss_proxy_list"
+      ],
+      load_path => "${ace_home}lenses",
+    }
+  }
+
+  if $boot_jboss_server_peer_id {
+    augeas{"jbossasconf_peer_id":
+      context => "/files",
+      changes => [
+        "set /etc/jboss-as5.conf/JBOSS_SERVER_PEER_ID     $boot_jboss_server_peer_id"
+      ],
+      load_path => "${ace_home}lenses",
+    }
+  }
+
+  augeas{"jbossasconf_global":
     context => "/files",
     changes => [
-      "set /etc/jboss-as5.conf/JBOSS_IP $ipaddress",
-      "set /etc/jboss-as5.conf/JBOSS_GOSSIP_HOST     $vm2_jboss_gossip_host",
-      "set /etc/jboss-as5.conf/JBOSS_PROXY_LIST      $vm2_jboss_proxy_list",
-      "set /etc/jboss-as5.conf/JBOSS_SERVER_PEER_ID  $jboss_server_peer_id",
-      "set /etc/jboss-as5.conf/JAVA_HOME             /usr"        
+      "set /etc/jboss-as5.conf/JBOSS_IP		$ipaddress",
+      "set /etc/jboss-as5.conf/JAVA_HOME	/usr"        
     ],
     load_path => "${ace_home}lenses",
   }
@@ -47,7 +74,6 @@ class jboss-as5::appliance {
   service {"jboss-as5":
     ensure => running,
     enable => true,
-    hasstatus => false,
-    require => Augeas["jbossasconf"]
+    hasstatus => false
   }
 }
