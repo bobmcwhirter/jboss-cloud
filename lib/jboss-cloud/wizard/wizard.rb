@@ -70,7 +70,15 @@ module JBossCloudWizard
     def step5
       puts "\n### Specify your network name"
 
-      @network = gets.chomp
+      network = gets.chomp
+      
+      # should be the best value
+      if network.length == 0
+        @network = "NAT"
+      else
+        @network = network
+      end
+
     end
 
     # selecting output format
@@ -118,8 +126,8 @@ module JBossCloudWizard
       puts "Wizard runs in quiet mode, messages are not shown. Add '-V' for verbose.\r\n\r\n" unless @options.verbose
 
       command = "rake appliance:#{@appliance}" if @output_format.to_i == 1
-      command = "rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
-      command = "rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
+      command = "NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
+      command = "NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
 
       unless execute("#{command}", @options.verbose)
         puts "Build failed"
