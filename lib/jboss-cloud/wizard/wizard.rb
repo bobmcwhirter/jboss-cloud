@@ -2,6 +2,9 @@ require 'jboss-cloud/exec'
 
 module JBossCloudWizard
   class Wizard
+
+    AVAILABLE_OUTPUT_FORMATS = ["RAW",  "VMware Enterprise (ESX/ESXi)", "VMware Personal (Player, Workstation, Server)"]
+
     def initialize(options)
       @options = options
       @available_appliances = Array.new
@@ -29,7 +32,7 @@ module JBossCloudWizard
       # network
       # 
       # VMware
-      if (@output_format == 2 or @output_format == 3)
+      if (@output_format.to_i == 2 or @output_format.to_i == 3)
         step5
       end
 
@@ -83,11 +86,12 @@ module JBossCloudWizard
 
     def verified?
       puts "\n### Selected options:\r\n"
-      
+
       puts "\nAppliance:\t#{@appliance}"
       puts "Memory:\t\t#{@mem_size}MB"
-      puts "Network:\t#{@network}" if (@output_format == 2 or @output_format == 3)
+      puts "Network:\t#{@network}" if (@output_format.to_i == 2 or @output_format.to_i == 3)
       puts "Disk:\t\t#{@disk_size/1024}GB"
+      puts "Output format:\t#{AVAILABLE_OUTPUT_FORMATS[@output_format.to_i-1]}"
 
       return is_correct?
     end
@@ -108,13 +112,16 @@ module JBossCloudWizard
       end
     end
 
-
     def build
-      puts "\nBuilding #{@appliance}..."
+      puts "\nBuilding #{@appliance}... (this may take a while)"
 
       puts "Wizard runs in quiet mode, messages are not shown. Add '-V' for verbose.\r\n\r\n" unless @options.verbose
 
-      unless execute("rake appliance:#{@appliance}", @options.verbose)
+      command = "rake appliance:#{@appliance}" if @output_format.to_i == 1
+      command = "rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
+      command = "rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
+
+      unless execute("#{command}", @options.verbose)
         puts "Build failed"
         exit(1)
       end
@@ -141,9 +148,11 @@ module JBossCloudWizard
     def list_output_formats
       puts "\nAvailable output formats:"
 
-      puts "1. RAW"
-      puts "2. VMware Enterprise (ESX/ESXi)"
-      puts "3. VMware Personal (Player, Workstation, Server)"
+      nb = 0
+
+      AVAILABLE_OUTPUT_FORMATS.each do |output_format|
+        puts "#{nb += 1}. #{output_format}"
+      end      
     end
 
     def valid_output_format? ( output_format )
