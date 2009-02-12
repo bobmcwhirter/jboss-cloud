@@ -27,6 +27,8 @@ def execute(cmd, verbose)
   end
 
   trap("INT", old_trap )
-  puts "\r\nCommand '#{cmd}' failed with exit status #{exit_status.exitstatus}" unless (exit_status.success? && !verbose)
+
+  puts "\r\nCommand '#{cmd}' failed with exit status #{exit_status.exitstatus}" unless exit_status.success? if verbose
+  
   return exit_status.success?
 end
