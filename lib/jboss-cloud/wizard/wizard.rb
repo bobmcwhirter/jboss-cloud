@@ -7,6 +7,8 @@ module JBossCloudWizard
       @available_appliances = Array.new
       @mem_size = 1024
       @disk_size = 2048
+      @network = "NAT"
+      @output_format = 1
     end
 
     def start
@@ -18,11 +20,18 @@ module JBossCloudWizard
       # memory - currently commented - we're using 1024 for now
       # step2
 
-      # network
-      step3
-
       # disk - currently commented - we're using 2GB disks for now
-      # step4
+      # step3
+
+      # output type
+      step4
+
+      # network
+      # 
+      # VMware
+      if (@output_format == 2 or @output_format == 3)
+        step5
+      end
 
       unless verified?
         start
@@ -55,10 +64,21 @@ module JBossCloudWizard
     end
 
     # selecting right network name/type
-    def step3
+    def step5
       puts "\n### Specify your network name"
 
       @network = gets.chomp
+    end
+
+    # selecting output format
+    def step4
+      list_output_formats
+
+      print "\n### Specify output format (1-3) [1] "
+
+      output_format = gets.chomp
+
+      step4 unless valid_output_format?( output_format )
     end
 
     def verified?
@@ -66,7 +86,7 @@ module JBossCloudWizard
       
       puts "\nAppliance:\t#{@appliance}"
       puts "Memory:\t\t#{@mem_size}MB"
-      puts "Network:\t#{@network}"
+      puts "Network:\t#{@network}" if (@output_format == 2 or @output_format == 3)
       puts "Disk:\t\t#{@disk_size/1024}GB"
 
       return is_correct?
@@ -118,7 +138,35 @@ module JBossCloudWizard
       end
     end
 
-    def valid_memsize?(memsize)
+    def list_output_formats
+      puts "\nAvailable output formats:"
+
+      puts "1. RAW"
+      puts "2. VMware Enterprise (ESX/ESXi)"
+      puts "3. VMware Personal (Player, Workstation, Server)"
+    end
+
+    def valid_output_format? ( output_format )
+      # default - RAW
+      if output_format.length == 0
+        @output_format = 1
+        return true
+      end
+
+      if output_format.to_i == 0
+        puts "#{output_format} is not a valid value"
+        return false
+      end
+
+      if output_format.to_i >= 1 and output_format.to_i <= 3
+        @output_format = output_format
+        return true
+      end
+
+      return false
+    end
+
+    def valid_memsize?( memsize )
 
       if memsize.to_i == 0
         puts "#{memsize} is not a valid value" unless memsize.length == 0
