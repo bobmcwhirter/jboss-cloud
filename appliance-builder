@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby 
+
+$: << 'lib'
+
+require 'jboss-cloud/wizard/app'
+
+trap("INT"){
+  exit(0)
+}
+
+app = JBossCloudWizard::App.new(ARGV, STDIN)
+app.run

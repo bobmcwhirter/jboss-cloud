@@ -16,13 +16,19 @@ module JBossCloud
       define_precursors
     end
 
-    def replace_common_vmx_values( vmx_data )
+    def change_common_vmx_values( vmx_data )
       # replace version with current jboss cloud version
       vmx_data.gsub!( /#VERSION#/ , JBossCloud::Config.get.version_with_release )
       # change name
       vmx_data.gsub!( /#NAME#/ , @simple_name )
       # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
       vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::Config.get.build_arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+
+      # network name
+      network_name = ENV['NETWORK_NAME'].nil? ? "NAT" : ENV['NETWORK_NAME']
+      vmx_data += "\nethernet0.networkName = \"#{network_name}\""
+
+      return vmx_data
     end
 
     def define_precursors
@@ -59,14 +65,10 @@ module JBossCloud
         end
 
         vmx_data = File.open( "src/base.vmx" ).read
-
-        replace_common_vmx_values( vmx_data )
+        vmx_data = change_common_vmx_values( vmx_data )
 
         # disk filename must match
         vmx_data.gsub!(/#{@simple_name}.vmdk/, "#{@simple_name}-sda.vmdk")
-
-        # todo: add support for select this while building appliance
-        vmx_data += "\nethernet0.networkName = \"NAT\""
 
         # write changes to file
         File.new( vmware_personal_vmx_file , "w+" ).puts( vmx_data )
@@ -87,8 +89,7 @@ module JBossCloud
         end
 
         vmx_data = File.open( "src/base.vmx" ).read
-
-        replace_common_vmx_values( vmx_data )
+        vmx_data = change_common_vmx_values( vmx_data )
         
         # replace IDE disk with SCSI, it's recommended for workstation and required for ESX
         vmx_data.gsub!( /ide0:0/ , "scsi0:0" )
@@ -96,9 +97,6 @@ module JBossCloud
         # yes, we want a SCSI controller because we have SCSI disks!
         vmx_data += "\nscsi0.present = \"true\""
         vmx_data += "\nscsi0.virtualDev = \"lsilogic\""
-
-        # todo: add support for select this while building appliance
-        vmx_data += "\nethernet0.networkName = \"NAT\""
 
         # write changes to file
         File.new( vmware_enterprise_vmx_file , "w+" ).puts( vmx_data )
