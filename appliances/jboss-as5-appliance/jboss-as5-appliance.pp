@@ -41,6 +41,3 @@ ssh::setup{$appliance_name:}
 
 include jboss-as5::appliance
 
-file {"/etc/gshadow":
-	source => "puppet:///jbossas5/gshadow",
-}
