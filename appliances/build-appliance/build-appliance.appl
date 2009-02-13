@@ -15,4 +15,4 @@ packages:
   - libdnet
   - libicu-devel
   - httpd-devel
-  - jboss-cloud-source
+  - jboss-cloud-environment
