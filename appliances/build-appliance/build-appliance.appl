@@ -1,0 +1,17 @@
+
+summary: Appliance build environment
+
+packages:
+  - git
+  - gcc-c++
+  - wget
+  - rpmdevtools
+  - java-1.6.0-openjdk-devel
+  - autoconf
+  - createrepo
+  - appliance-tools
+  - sudo
+  - libdnet-devel
+  - libdnet
+  - libicu-devel
+  - httpd-devel
