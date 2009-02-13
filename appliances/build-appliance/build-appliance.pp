@@ -28,7 +28,7 @@ import "banners"
 import "firewall"
 import "console"
 import "ssh"
-import "httpd-appliance"
+import "build-appliance"
 
 # Information about our appliance
 $appliance_name = "Appliance build environment"
@@ -42,4 +42,4 @@ firewall::setup{$appliance_name: status=>"disabled"}
 console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
-include httpd::appliance
+include build::appliance

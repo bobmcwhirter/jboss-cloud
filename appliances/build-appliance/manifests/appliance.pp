@@ -19,13 +19,6 @@
 # Author: Bob McWhirter <bob@jboss.org>
 #--
 
+class build::appliance {
+}
 
-#class httpd::appliance {
-#  firewall_rule{"jboss": destination_port=>"80"}
-
-#  service {"httpd":
-#      ensure => running,
-#      enable => true,
-#      hasstatus => false,
-#  }
-#}
