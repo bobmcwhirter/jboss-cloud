@@ -25,6 +25,7 @@ rm -Rf $RPM_BUILD_ROOT
 %post
 /bin/cp /etc/sudoers /etc/sudoers.orig
 /bin/echo "oddthesis ALL = NOPASSWD: /usr/bin/appliance-creator" >> /etc/sudoers
+/bin/echo "Defaults:oddthesis env_keep+=\"PYTHONUNBUFFERED\"" >> /etc/sudoers
 
 %preun
 /bin/rm /etc/sudoers
