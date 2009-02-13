@@ -15,4 +15,4 @@ packages:
   - libdnet
   - libicu-devel
   - httpd-devel
-  - oddthesis-cloud-source
+  - jboss-cloud-source

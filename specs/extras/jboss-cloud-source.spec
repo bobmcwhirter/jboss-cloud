@@ -1,6 +1,6 @@
 
-Summary: Oddthesis JBoss Cloud source
-Name: oddthesis-cloud-source
+Summary: JBoss Cloud source
+Name: jboss-cloud-source
 Version: 1
 Release: dev
 License: LGPL
@@ -9,7 +9,7 @@ Group: Applications/System
 BuildRoot: /tmp/%{name}
 
 %description
-Oddthesis JBoss Cloud source
+JBoss Cloud source
 
 %prep
 /bin/rm -rf %{_topdir}/SOURCES/jboss-cloud
