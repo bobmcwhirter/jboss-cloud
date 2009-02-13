@@ -1,6 +1,6 @@
 
 Summary: Oddthesis JBoss Cloud source
-Name: oddthesis-cloud
+Name: oddthesis-cloud-source
 Version: 1
 Release: dev
 License: LGPL
@@ -21,6 +21,14 @@ cp -R %{_topdir}/SOURCES/jboss-cloud/ $RPM_BUILD_ROOT/opt/
 
 %clean
 rm -Rf $RPM_BUILD_ROOT
+
+%post
+/bin/cp /etc/sudoers /etc/sudoers.orig
+/bin/echo "oddthesis ALL = NOPASSWD: /usr/bin/appliance-creator" >> /etc/sudoers
+
+%preun
+/bin/rm /etc/sudoers
+/bin/cp /etc/sudoers.orig /etc/sudoers
 
 %files
 %defattr(-,root,root)

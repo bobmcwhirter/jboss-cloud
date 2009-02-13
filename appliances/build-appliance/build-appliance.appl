@@ -15,4 +15,4 @@ packages:
   - libdnet
   - libicu-devel
   - httpd-devel
-  - oddthesis-cloud
+  - oddthesis-cloud-source
