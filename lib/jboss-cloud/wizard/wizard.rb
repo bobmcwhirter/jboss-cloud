@@ -190,7 +190,7 @@ module JBossCloudWizard
         return false
       end
 
-      if @appliance == "jboss-as5-appliance"
+      if @appliance == "jboss-as5-appliance" or @appliance == "build-appliance"
         min_memsize = 512
       else
         min_memsize = 128
@@ -204,6 +204,7 @@ module JBossCloudWizard
       # todo add reconfiguration of JBoss AS run.conf file
 
       # Minimal amount of RAM for appliances:
+      # build-appliance           - 512
       # jboss-as5-appliance       - 512
       # postgis-appliance         - 128
       # httpd-appliance           - 128
