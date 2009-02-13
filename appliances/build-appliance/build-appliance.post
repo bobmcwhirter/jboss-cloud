@@ -1,2 +1,2 @@
 /usr/sbin/useradd -m -p '$1$rJT7v$rovvIw9nHJQdLZBvZJNPa0' oddthesis
-#/usr/bin/git clone git@github.com:bobmcwhirter/jboss-cloud.git /home/oddthesis/jboss-cloud
+/bin/chmod oddthesis:oddthesis /opt/jboss-cloud -R
