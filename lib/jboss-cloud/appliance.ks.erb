@@ -17,7 +17,7 @@ rootpw --iscrypted $1$rJT7v$rovvIw9nHJQdLZBvZJNPa0
 # 
 # Partitoin Information. Change this as necessary
 #
-part / --size 2048 --fstype ext3 --ondisk sda
+part / --size <%= disk_size %> --fstype ext3 --ondisk sda
 
 #
 # Include the repositories

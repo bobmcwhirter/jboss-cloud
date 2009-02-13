@@ -19,17 +19,22 @@ module JBossCloud
     def define
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
+      definition['disk_size']            = 2048
+      definition['disk_size']            = 10240 if (@simple_name == "build-appliance")
       definition['post_script']          = ''
       definition['exclude_clause']       = ''
       definition['appliance_names']      = @appliance_names
       definition['arch']                 = @arch
+      
       def definition.method_missing(sym,*args)
         self[ sym.to_s ]
       end
+
       definition['repos'] = [
         "repo --name=jboss-cloud --cost=10 --baseurl=file://#{@topdir}/RPMS/noarch",
         "repo --name=jboss-cloud-#{@arch} --cost=10 --baseurl=file://#{@topdir}/RPMS/#{@arch}",
       ]
+
       if ( File.exist?( "extra-rpms" ) )
         definition['repos'] << "repo --name=extra-rpms --cost=1 --baseurl=file://#{Dir.pwd}/extra-rpms/noarch"
       end
