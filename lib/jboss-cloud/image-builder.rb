@@ -6,6 +6,7 @@ require 'jboss-cloud/repodata'
 require 'jboss-cloud/rpm'
 require 'jboss-cloud/appliance'
 require 'jboss-cloud/multi-appliance'
+require 'ostruct'
 
 module JBossCloud
   class Config
@@ -20,21 +21,27 @@ module JBossCloud
       @version = version
       @release = release
       @arch = arch
-      @build_arch = build_arch
       @dir_rpms_cache = dir_rpms_cache
       @dir_src_cache = dir_src_cache
       @dir_root = dir_root
       @dir_top = dir_top
       @dir_build = dir_build
 
+      @target = OpenStruct.new
+      @target.os = OpenStruct.new
+
+      @target.arch = build_arch
+      @target.os.name = "fedora"
+      @target.os.version = 10
+      
       @@config = self
     end
 
     attr_reader :name
     attr_reader :version
     attr_reader :release
+    attr_reader :target
     attr_reader :arch
-    attr_reader :build_arch
     attr_reader :dir_rpms_cache
     attr_reader :dir_src_cache
     attr_reader :dir_root
@@ -89,24 +96,30 @@ module JBossCloud
     end
 
     def define_rules
+
+      if Config.get.arch == "i386" and Config.get.target.arch == "x86_64"
+        puts "Building x86_64 images from i386 system isn't possible, aborting."
+        abort
+      end
+
       directory Config.get.dir_build
 
       puts "\n\rCurrent architecture:\t#{Config.get.arch}"
 
       JBossCloud::Topdir.new( Config.get.dir_top, [ 'noarch', 'i386', 'x86_64' ] )
 
-      puts "Building architecture:\t#{Config.get.build_arch}\n\r"
+      puts "Building architecture:\t#{Config.get.target.arch}\n\r"
 
       Dir[ 'specs/extras/*.spec' ].each do |spec_file|
-        JBossCloud::RPM.new( Config.get.dir_top, spec_file, Config.get.build_arch )
+        JBossCloud::RPM.new( Config.get.dir_top, spec_file, Config.get.target.arch )
       end
 
       Dir[ "appliances/*/*.appl" ].each do |appliance_def|
-        JBossCloud::Appliance.new( Config.get.dir_build, "#{Config.get.dir_root}/#{Config.get.dir_top}", Config.get.dir_rpms_cache, appliance_def, Config.get.version, Config.get.release, Config.get.build_arch )
+        JBossCloud::Appliance.new( Config.get.dir_build, "#{Config.get.dir_root}/#{Config.get.dir_top}", Config.get.dir_rpms_cache, appliance_def, Config.get.version, Config.get.release, Config.get.target.arch )
       end
 
       Dir[ "appliances/*.mappl" ].each do |multi_appliance_def|
-        JBossCloud::MultiAppliance.new( Config.get.dir_build, "#{Config.get.dir_root}/#{Config.get.dir_top}", Config.get.dir_rpms_cache, multi_appliance_def, Config.get.version, Config.get.release, Config.get.build_arch )
+        JBossCloud::MultiAppliance.new( Config.get.dir_build, "#{Config.get.dir_root}/#{Config.get.dir_top}", Config.get.dir_rpms_cache, multi_appliance_def, Config.get.version, Config.get.release, Config.get.target.arch )
       end
     end
   end

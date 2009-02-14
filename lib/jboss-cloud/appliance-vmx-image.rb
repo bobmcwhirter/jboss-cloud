@@ -22,7 +22,7 @@ module JBossCloud
       # change name
       vmx_data.gsub!( /#NAME#/ , @simple_name )
       # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
-      vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::Config.get.build_arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+      vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::Config.get.target.arch == "x86_64" ? "otherlinux-64" : "linux"}" )
 
       # network name
       network_name = ENV['NETWORK_NAME'].nil? ? "NAT" : ENV['NETWORK_NAME']
@@ -52,7 +52,7 @@ module JBossCloud
         end
         # update xml the file according to selected build architecture
         arch_elem = doc.elements["//arch"]
-        arch_elem.text = JBossCloud::Config.get.build_arch
+        arch_elem.text = JBossCloud::Config.get.target.arch
         File.open( "#{@appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
       end
 

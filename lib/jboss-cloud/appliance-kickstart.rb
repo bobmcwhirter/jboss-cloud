@@ -17,6 +17,7 @@ module JBossCloud
     end
 
     def define
+
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
       definition['disk_size']            = 2048
@@ -54,6 +55,7 @@ module JBossCloud
           all_excludes += repo_excludes
         end
       end
+
       unless ( all_excludes.empty? )
         definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}"
       end
@@ -76,7 +78,17 @@ module JBossCloud
     end
 
     def read_repositories(appliance_definition)
-      definition = YAML.load_file( appliance_definition )
+
+      defs = { }
+      defs['arch'] = JBossCloud::Config.get.target.arch
+      defs['os_name'] = JBossCloud::Config.get.target.os.name
+      defs['os_version'] = JBossCloud::Config.get.target.os.version
+
+      def defs.method_missing(sym,*args)
+        self[ sym.to_s ]
+      end
+
+      definition = YAML.load( ERB.new( File.read( appliance_definition ) ).result( defs.send( :binding ) ) )
       repos_def = definition['repos']
       repos = []
       excludes = []
