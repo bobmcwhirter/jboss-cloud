@@ -42,4 +42,4 @@ firewall::setup{$appliance_name: status=>"disabled"}
 console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
-include build::appliance
+include meta::appliance
