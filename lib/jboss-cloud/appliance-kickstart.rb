@@ -20,7 +20,7 @@ module JBossCloud
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
       definition['disk_size']            = 2048
-      definition['disk_size']            = 10240 if (@simple_name == "build-appliance")
+      definition['disk_size']            = 10240 if (@simple_name == "meta-appliance")
       definition['post_script']          = ''
       definition['exclude_clause']       = ''
       definition['appliance_names']      = @appliance_names

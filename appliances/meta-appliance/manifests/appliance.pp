@@ -19,6 +19,6 @@
 # Author: Bob McWhirter <bob@jboss.org>
 #--
 
-class build::appliance {
+class meta::appliance {
 }
 
