@@ -28,7 +28,7 @@ import "banners"
 import "firewall"
 import "console"
 import "ssh"
-import "build-appliance"
+import "meta-appliance"
 
 # Information about our appliance
 $appliance_name = "Metappliance"
