@@ -5,5 +5,5 @@
  # %users  localhost=/sbin/shutdown -h now
  
 +oddthesis ALL = NOPASSWD: /usr/bin/appliance-creator
-+Defaults:oddthesis env_keep+="PYTHONUNBUFFERED"
-
++Defaults:oddthesis env_keep+="PYTHONUNBUFFERED"+
++
