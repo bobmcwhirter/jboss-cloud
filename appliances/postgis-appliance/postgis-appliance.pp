@@ -33,7 +33,7 @@ import "postgis-appliance"
 
 # Information about our appliance
 $appliance_name = "PostGIS Appliance"
-$appliance_version = "0.0.1"
+$appliance_version = "1.0.0.Beta2"
 
 # Configuration
 appliance_base::setup{$appliance_name:}
@@ -44,8 +44,4 @@ console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
 include postgis::appliance
-
-file {"/etc/gshadow":
-	source => "puppet:///postgis-appliance/gshadow",
-}
 

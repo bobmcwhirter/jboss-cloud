@@ -33,7 +33,7 @@ import "jboss-jgroups-appliance"
 
 # Information about our appliance
 $appliance_name = "JBoss JGroups Appliance"
-$appliance_version = "0.0.1"
+$appliance_version = "1.0.0.Beta2"
 
 # Configuration
 appliance_base::setup{$appliance_name:}
@@ -42,9 +42,5 @@ banners::all{$appliance_name:}
 firewall::setup{$appliance_name: status=>"disabled"}
 console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
-
-file {"/etc/gshadow":
-	source => "puppet:///jboss-jgroups-appliance/gshadow",
-}
 
 include jboss-jgroups::appliance

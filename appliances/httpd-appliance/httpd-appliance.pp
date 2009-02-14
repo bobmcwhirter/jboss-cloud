@@ -31,8 +31,8 @@ import "ssh"
 import "httpd-appliance"
 
 # Information about our appliance
-$appliance_name = "Apache httpd and JBoss mod_cluster"
-$appliance_version = "0.0.1"
+$appliance_name = "Apache httpd with JBoss mod_cluster Appliance"
+$appliance_version = "1.0.0.Beta2"
 
 # Configuration
 appliance_base::setup{$appliance_name:}
@@ -43,8 +43,4 @@ console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
 include httpd::appliance
-
-file {"/etc/gshadow":
-	source => "puppet:///postgis-appliance/gshadow",
-}
 

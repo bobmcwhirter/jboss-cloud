@@ -29,7 +29,7 @@ import "jboss-as5-appliance"
 
 # Information about our appliance
 $appliance_name = "JBoss AS5 Appliance"
-$appliance_version = "0.0.1"
+$appliance_version = "1.0.0.Beta2"
 
 # Configuration
 appliance_base::setup{$appliance_name:}

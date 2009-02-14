@@ -31,8 +31,8 @@ import "ssh"
 import "build-appliance"
 
 # Information about our appliance
-$appliance_name = "Appliance build environment"
-$appliance_version = "0.0.1"
+$appliance_name = "Metappliance"
+$appliance_version = "1.0.0.Beta2"
 
 # Configuration
 appliance_base::setup{$appliance_name:}
