@@ -1,0 +1,9 @@
+--- sudoers	2008-05-05 07:53:04.000000000 -0400
++++ sudoers.working	2009-02-14 16:46:17.000000000 -0500
+@@ -91,3 +91,6 @@
+ ## Allows members of the users group to shutdown this system
+ # %users  localhost=/sbin/shutdown -h now
+ 
++oddthesis ALL = NOPASSWD: /usr/bin/appliance-creator
++Defaults:oddthesis env_keep+="PYTHONUNBUFFERED"
+
