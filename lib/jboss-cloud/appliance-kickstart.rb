@@ -24,7 +24,7 @@ module JBossCloud
 
       # if we're building meta-appliance and disk size is less than 10GB
       if @simple_name == "meta-appliance" and Config.get.target.disk_size < 10240
-        definition['disk_size']
+        definition['disk_size'] = 10240
       end
 
       definition['post_script']          = ''
