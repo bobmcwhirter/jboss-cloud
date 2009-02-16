@@ -5,15 +5,15 @@ parentCID=ffffffff
 createType="vmfs"
 
 # Extent description
-RW 4194304 VMFS "#NAME#-sda.raw"
+RW #TOTAL_SECTORS# VMFS "#NAME#-sda.raw"
 
 # The Disk Data Base
 #DDB
 
 ddb.toolsVersion = "0"
 ddb.adapterType = "lsilogic"
-ddb.geometry.sectors = "63"
-ddb.geometry.heads = "255"
-ddb.geometry.cylinders = "261"
+ddb.geometry.sectors = "#SECTORS#"
+ddb.geometry.heads = "#HEADS#"
+ddb.geometry.cylinders = "#CYLINDERS#"
 ddb.encoding = "UTF-8"
 ddb.virtualHWVersion = "4"

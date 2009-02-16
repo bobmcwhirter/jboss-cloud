@@ -16,6 +16,38 @@ module JBossCloud
       define_precursors
     end
 
+    # returns value of cylinders, heads and sector for selected disk size (in MB)
+    def generate_scsi_chs(disk_size)
+
+      gb_sectors = 2097152
+      
+      if disk_size == 1024
+        h = 128
+        s = 32
+      else
+        h = 255
+        s = 63
+      end
+
+      c = disk_size / 1024 * gb_sectors / (h*s)
+      total_sectors = gb_sectors * disk_size / 1024
+
+      return [ c, h, s, total_sectors ]
+    end
+
+    def change_vmdk_values( vmdk_data )
+      
+      c, h, s, total_sectors = generate_scsi_chs( JBossCloud::Config.get.target.disk_size )
+
+      vmdk_data.gsub!( /#NAME#/ , @simple_name )
+      vmdk_data.gsub!( /#CYLINDERS#/ , c.to_s )
+      vmdk_data.gsub!( /#HEADS#/ , h.to_s )
+      vmdk_data.gsub!( /#SECTORS#/ , s.to_s )
+      vmdk_data.gsub!( /#TOTAL_SECTORS#/ , total_sectors.to_s )
+      
+      return vmdk_data
+    end
+
     def change_common_vmx_values( vmx_data )
       # replace version with current jboss cloud version
       vmx_data.gsub!( /#VERSION#/ , JBossCloud::Config.get.version_with_release )
@@ -32,7 +64,6 @@ module JBossCloud
     end
 
     def define_precursors
-
       super_simple_name = File.basename( @simple_name, '-appliance' )
       vmware_personal_output_folder = File.dirname( @appliance_xml_file ) + "/vmware/personal"
       vmware_personal_vmx_file = vmware_personal_output_folder + "/" + File.basename( @appliance_xml_file, ".xml" ) + '.vmx'
@@ -101,14 +132,8 @@ module JBossCloud
         # write changes to file
         File.new( vmware_enterprise_vmx_file , "w+" ).puts( vmx_data )
 
-        vmdk_data = File.open( "src/base.vmdk" ).read
-        vmdk_data.gsub!( /#NAME#/ , @simple_name )
-
-        # todo: read from kickstart file disk size and put appropriate value after RW:
-        # todo: update these values according to disk size change
-
         # create new VMDK descriptor file
-        File.new( vmware_enterprise_vmdk_file, "w+" ).puts( vmdk_data )
+        File.new( vmware_enterprise_vmdk_file, "w+" ).puts( change_vmdk_values( File.open( "src/base.vmdk" ).read ) )
 
       end
 

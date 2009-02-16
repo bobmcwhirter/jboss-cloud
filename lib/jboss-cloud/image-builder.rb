@@ -16,7 +16,7 @@ module JBossCloud
       @@config
     end
 
-    def initialize(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build )
+    def initialize(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build, disk_size )
       @name = name
       @version = version
       @release = release
@@ -33,6 +33,7 @@ module JBossCloud
       @target.arch = build_arch
       @target.os.name = "fedora"
       @target.os.version = 10
+      @target.disk_size = disk_size
       
       @@config = self
     end
@@ -80,19 +81,34 @@ module JBossCloud
     }
 
     def initialize(project_config)
+      valid_archs = [ "i386", "x86_64" ]
+
       dir_root    = `pwd`.strip
       name        = project_config[:name]
       version     = project_config[:version]
       release     = project_config[:release]
       arch        = (-1.size) == 8 ? "x86_64" : "i386"
-      build_arch  = ENV['ARCH'].nil? ? arch : ENV['ARCH']
+
+      if (!ENV['ARCH'].nil? and !valid_archs.include?( ENV['ARCH']))
+        puts "'#{ENV['ARCH']}' is not a valid build architecture. Available architectures: #{valid_archs.join(", ")}, aborting."
+        abort
+      end
+
+      build_arch = ENV['ARCH'].nil? ? arch : ENV['ARCH']
+
+      if (!ENV['DISK_SIZE'].nil? && (ENV['DISK_SIZE'].to_i == 0 || ENV['DISK_SIZE'].to_i % 1024 > 0))
+        puts "'#{ENV['DISK_SIZE']}' is not a valid disk size. Please enter valid size in MB, aborting."
+        abort
+      end
+
+      disk_size = ENV['DISK_SIZE'].nil? ? 2048 : ENV['DISK_SIZE'].to_i
 
       dir_build         = project_config[:build_dir]         || DEFAULT_PROJECT_CONFIG[:build_dir]
       dir_top           = project_config[:topdir]            || "#{dir_build}/topdir"
       dir_src_cache     = project_config[:sources_cache_dir] || DEFAULT_PROJECT_CONFIG[:sources_cache_dir]
       dir_rpms_cache    = project_config[:rpms_cache_dir]    || DEFAULT_PROJECT_CONFIG[:rpms_cache_dir]
      
-      Config.new(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build )
+      Config.new(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build, disk_size )
     end
 
     def define_rules
