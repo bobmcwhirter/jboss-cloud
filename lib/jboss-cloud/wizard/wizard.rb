@@ -23,8 +23,8 @@ module JBossCloudWizard
       # memory - currently commented - we're using 1024 for now
       # step2
 
-      # disk - currently commented - we're using 2GB disks for now
-      # step3
+      # disk
+      step3
 
       # output type
       step4
@@ -66,6 +66,15 @@ module JBossCloudWizard
       step2 unless valid_memsize?( memsize )
     end
 
+    #selecting disk size
+    def step3
+      print "\n### How big should be the disk (in MB)? [2048] "
+
+      disk_size = gets.chomp
+
+      step3 unless valid_disk_size?( disk_size )
+    end
+
     # selecting right network name/type
     def step5
       puts "\n### Specify your network name"
@@ -98,7 +107,7 @@ module JBossCloudWizard
       puts "\nAppliance:\t#{@appliance}"
       puts "Memory:\t\t#{@mem_size}MB"
       puts "Network:\t#{@network}" if (@output_format.to_i == 2 or @output_format.to_i == 3)
-      puts "Disk:\t\t#{@disk_size/1024}GB"
+      puts "Disk:\t\t#{@disk_size.to_i/1024}GB"
       puts "Output format:\t#{AVAILABLE_OUTPUT_FORMATS[@output_format.to_i-1]}"
 
       return is_correct?
@@ -126,8 +135,8 @@ module JBossCloudWizard
       puts "Wizard runs in quiet mode, messages are not shown. Add '-V' for verbose.\r\n\r\n" unless @options.verbose
 
       command = "rake appliance:#{@appliance}" if @output_format.to_i == 1
-      command = "NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
-      command = "NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
+      command = "DISK_SIZE=\"#{@disk_size}\" NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
+      command = "DISK_SIZE=\"#{@disk_size}\" NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
 
       unless execute("#{command}", @options.verbose)
         puts "Build failed"
@@ -181,6 +190,36 @@ module JBossCloudWizard
       end
 
       return false
+    end
+
+    def valid_disk_size?( disk_size )
+      if (disk_size.length == 0)
+        disk_size = 2048
+      end
+
+      if disk_size.to_i == 0
+        puts "#{disk_size} is not a valid value" unless disk_size.length == 0
+        return false
+      end
+
+      if @appliance == "meta-appliance"
+        min_disk_size = 10240
+      else
+        min_disk_size = 2048
+      end
+
+      if (disk_size.to_i % 1024 > 0)
+        puts "Disk size should be multiplicity of 1024"
+        return false
+      end
+
+      if (disk_size.to_i < min_disk_size)
+        puts "#{disk_size}MB is not enough for #{@appliance}, please give >= #{min_disk_size}MB"
+        return false
+      end
+
+      @disk_size = disk_size
+      return true
     end
 
     def valid_memsize?( memsize )
