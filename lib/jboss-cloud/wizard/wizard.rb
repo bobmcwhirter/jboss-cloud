@@ -134,9 +134,11 @@ module JBossCloudWizard
 
       puts "Wizard runs in quiet mode, messages are not shown. Add '-V' for verbose.\r\n\r\n" unless @options.verbose
 
-      command = "rake appliance:#{@appliance}" if @output_format.to_i == 1
-      command = "DISK_SIZE=\"#{@disk_size}\" NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
-      command = "DISK_SIZE=\"#{@disk_size}\" NETWORK_NAME=\"#{@network}\" rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
+      command = "DISK_SIZE=\"#{@disk_size}\" NETWORK_NAME=\"#{@network}\" "
+
+      command += "rake appliance:#{@appliance}" if @output_format.to_i == 1
+      command += "rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
+      command += "rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
 
       unless execute("#{command}", @options.verbose)
         puts "Build failed"
