@@ -1,28 +1,121 @@
 require 'jboss-cloud/exec'
+require 'jboss-cloud/config'
+require 'jboss-cloud/wizard/step_appliance'
+require 'jboss-cloud/wizard/step_disk'
+require 'yaml'
+require 'fileutils'
 
 module JBossCloudWizard
   class Wizard
 
     AVAILABLE_OUTPUT_FORMATS = ["RAW",  "VMware Enterprise (ESX/ESXi)", "VMware Personal (Player, Workstation, Server)"]
+    AVAILABLE_ARCHES = [ "i386", "x86_64" ]
 
     def initialize(options)
       @options = options
       @available_appliances = Array.new
-      @mem_size = 1024
-      @disk_size = 2048
-      @network = "NAT"
-      @output_format = 1
+      @appliance_configs = Hash.new
+
+      @config_dir = "/home/#{ENV['USER']}/.jboss-cloud/configs"
+
+      if !File.exists?(@config_dir) && !File.directory?(@config_dir)
+        puts "Config dir doesn't exists. Creating new." if @options.verbose
+        FileUtils.mkdir_p @config_dir
+      end     
+    end
+
+    def read_available_appliances
+      @available_appliances.clear
+
+      puts "\nReading available appliances..." if @options.verbose
+
+      Dir[ "appliances/*/*.appl" ].each do |appliance_def|
+        @available_appliances.push( File.basename( appliance_def, '.appl' ))
+      end
+
+      puts "No appliances found" if @options.verbose and @available_appliances.size == 0
+      puts "Found #{@available_appliances.size} #{@available_appliances.size > 1 ? "appliances" : "appliance"} (#{@available_appliances.join(", ")})" if @options.verbose and @available_appliances.size > 0
+    end
+
+    def read_configs
+      read_available_appliances
+
+      @appliance_configs.clear
+
+      puts "\nReading saved configurations..." if @options.verbose
+
+      Dir[ "#{@config_dir}/*.cfg" ].each do |config_def|
+        config_name = File.basename( config_def, '.cfg' )
+
+        @appliance_configs.store( config_name, YAML.load_file( config_def ))
+      end
+
+      puts "No saved configs found" if @options.verbose and @appliance_configs.size == 0
+      puts "Found #{@appliance_configs.size} saved #{@appliance_configs.size > 1 ? "configs" : "config"} (#{@appliance_configs.keys.join(", ")})" if @options.verbose and @appliance_configs.size > 0
+    end
+
+    def step_appliance
+      @current_appliance_config = StepAppliance.new(@available_appliances).ask
+      @previous_appliance_config = @previous_appliance_configs[@current_appliance_config.name + "-" + @current_appliance_config.arch]
+    end
+
+    def step_disk
+      StepDisk.new(@current_appliance_config, @previous_appliance_config).ask
+    end
+
+    def display_configs
+      return if @appliance_configs.size == 0
+
+      puts "### Saved configs:"
+
+      i = 0
+
+      @appliance_configs.keys.each do |config|
+        puts "    #{i+=1}. #{config}"
+      end
+
+    end
+
+    def select_config
+      
+
+      return if @appliance_configs.size == 0
+
+      display_configs
+
+      print "\n### Select saved config or press ENTER to create a fresh one (1-#{@appliance_configs.size}) "
+
+      selected_config = gets.chomp
+
+      selected_config
     end
 
     def start
-      init_appliances
 
+      puts "\n###\r\n### Welcome to JBoss Cloud appliance builder wizard\r\n###\r\n\r\n"
+
+      read_configs
+
+      puts select_config
+
+      abort
+
+      step_appliance
+      step_disk
+      
+
+      
+
+      abort
       # appliance
-      step1
+      
+      #puts @available_appliances[@appliance.to_i]
 
+      
       # memory - currently commented - we're using 1024 for now
-      # step2
+      #step2
 
+      abort
       # disk
       step3
 
@@ -30,7 +123,7 @@ module JBossCloudWizard
       step4
 
       # network
-      # 
+      #
       # VMware
       if (@output_format.to_i == 2 or @output_format.to_i == 3)
         step5
@@ -48,18 +141,12 @@ module JBossCloudWizard
 
     # selecting appliance to build
     def step1
-      list_appliances
 
-      puts "\n### Which appliance do you want to build?"
-
-      appliance = gets.chomp
-
-      step1 unless valid_appliance_name?( appliance )
     end
 
     # selecting memory size for appliance
     def step2
-      print "\n### How much RAM (in MB) do you want in your appliance? [1024] "
+      puts_question "How much RAM (in MB) do you want in your appliance? [1024]"
 
       memsize = gets.chomp
 
@@ -67,13 +154,7 @@ module JBossCloudWizard
     end
 
     #selecting disk size
-    def step3
-      print "\n### How big should be the disk (in MB)? [2048] "
 
-      disk_size = gets.chomp
-
-      step3 unless valid_disk_size?( disk_size )
-    end
 
     # selecting right network name/type
     def step5
@@ -148,22 +229,6 @@ module JBossCloudWizard
       puts "Build was successful. Check #{Dir.pwd}/build/appliances/ folder for output files."
     end
 
-    def init_appliances
-      @available_appliances.clear
-
-      Dir[ "appliances/*/*.appl" ].each do |appliance|
-        @available_appliances.push( "#{File.basename( appliance, '.appl' )}" )
-      end
-    end
-
-    def list_appliances
-      puts "\nAvailable appliances:"
-
-      @available_appliances.each do |appliance|
-        puts "- " + appliance
-      end
-    end
-
     def list_output_formats
       puts "\nAvailable output formats:"
 
@@ -171,7 +236,7 @@ module JBossCloudWizard
 
       AVAILABLE_OUTPUT_FORMATS.each do |output_format|
         puts "#{nb += 1}. #{output_format}"
-      end      
+      end
     end
 
     def valid_output_format? ( output_format )
@@ -192,36 +257,6 @@ module JBossCloudWizard
       end
 
       return false
-    end
-
-    def valid_disk_size?( disk_size )
-      if (disk_size.length == 0)
-        disk_size = 2048
-      end
-
-      if disk_size.to_i == 0
-        puts "#{disk_size} is not a valid value" unless disk_size.length == 0
-        return false
-      end
-
-      if @appliance == "meta-appliance"
-        min_disk_size = 10240
-      else
-        min_disk_size = 2048
-      end
-
-      if (disk_size.to_i % 1024 > 0)
-        puts "Disk size should be multiplicity of 1024"
-        return false
-      end
-
-      if (disk_size.to_i < min_disk_size)
-        puts "#{disk_size}MB is not enough for #{@appliance}, please give >= #{min_disk_size}MB"
-        return false
-      end
-
-      @disk_size = disk_size
-      return true
     end
 
     def valid_memsize?( memsize )
@@ -260,12 +295,7 @@ module JBossCloudWizard
       return true
     end
 
-    def valid_appliance_name?(appliance)
-      return false unless ( @available_appliances.include?( appliance ))
 
-      @appliance = appliance
-      return true
-    end
 
   end
 end

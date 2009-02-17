@@ -3,8 +3,8 @@ require 'rake/tasklib'
 module JBossCloud
   class Topdir < Rake::TaskLib
 
-    def initialize(topdir, arches)
-      @topdir = topdir
+    def initialize(arches)
+      @topdir = Config.get.dir_top
       @arches = arches
       define
     end
@@ -33,7 +33,7 @@ module JBossCloud
         task "rpm:topdir" => [ "#{@topdir}/RPMS/#{arch}" ]
       end
 
-      JBossCloud::Repodata.new( @topdir, @arches )
+      JBossCloud::Repodata.new( @arches )
     end
   end
 end

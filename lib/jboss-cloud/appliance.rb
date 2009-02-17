@@ -10,14 +10,15 @@ module JBossCloud
 
   class Appliance < Rake::TaskLib
 
-    def initialize(build_dir, topdir, rpms_cache_dir, appliance_def, version, release, arch)
-      @build_dir        = build_dir
-      @topdir           = topdir
-      @rpms_cache_dir   = rpms_cache_dir
+    def initialize( appliance_def, appliance_config )
+      @build_dir        = Config.get.dir_build
+      @topdir           = Config.get.dir_top
+      @rpms_cache_dir   = Config.get.dir_rpms_cache
       @appliance_def    = appliance_def
-      @version          = version
-      @release          = release
-      @arch             = arch
+      @version          = Config.get.version
+      @release          = Config.get.release
+      @arch             = appliance_config.arch
+      @appliance_config = appliance_config
       define
     end
 
@@ -30,7 +31,7 @@ module JBossCloud
       JBossCloud::ApplianceSource.new( @build_dir, @topdir, File.dirname( @appliance_def ), @version, @release, @arch )
       JBossCloud::ApplianceSpec.new( @build_dir, @topdir, simple_name, @version, @release, @arch )
       JBossCloud::ApplianceRPM.new( @topdir, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/#{simple_name}.spec", @version, @release )
-      JBossCloud::ApplianceKickstart.new( @build_dir, @topdir, simple_name, @arch, [ simple_name ] )
+      JBossCloud::ApplianceKickstart.new( @appliance_config, [ simple_name ] )
       JBossCloud::ApplianceImage.new( @build_dir, @rpms_cache_dir, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/#{simple_name}.ks", @version, @release, @arch )
     end
 

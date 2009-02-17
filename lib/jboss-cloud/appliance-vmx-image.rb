@@ -57,7 +57,7 @@ module JBossCloud
       vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::Config.get.target.arch == "x86_64" ? "otherlinux-64" : "linux"}" )
 
       # network name
-      network_name = ENV['NETWORK_NAME'].nil? ? "NAT" : ENV['NETWORK_NAME']
+      network_name = ENV['NETWORK_NAME'].nil? ? Config.get.target.network_name : ENV['NETWORK_NAME']
       vmx_data += "\nethernet0.networkName = \"#{network_name}\""
 
       return vmx_data

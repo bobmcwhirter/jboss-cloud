@@ -21,8 +21,6 @@ module JBossCloudWizard
         exit(0)
       end
       
-      puts "\n###\r\n### Welcome to JBoss Cloud appliance builder wizard\r\n###\r\n"
-
       wizard = JBossCloudWizard::Wizard.new(@options)
       wizard.start
     end

@@ -6,13 +6,14 @@ module JBossCloud
 
   class ApplianceKickstart < Rake::TaskLib
 
-    def initialize(build_dir, topdir, simple_name, arch, appliance_names=[])
-      @build_dir         = build_dir
-      @topdir            = topdir
-      @simple_name       = simple_name
+    def initialize( appliance_config, appliance_names=[] )
+      @build_dir         = Config.get.dir_build
+      @topdir            = Config.get.dir_top
+      @simple_name       = appliance_config.name
       @super_simple_name = File.basename( @simple_name, '-appliance' )
       @appliance_names   = appliance_names
-      @arch              = arch
+      @arch              = appliance_config.arch
+      @appliance_config  = appliance_config
       define
     end
 
@@ -20,10 +21,10 @@ module JBossCloud
 
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
-      definition['disk_size']            = Config.get.target.disk_size
+      definition['disk_size']            = @appliance_config.disk_size
 
       # if we're building meta-appliance and disk size is less than 10GB
-      if @simple_name == "meta-appliance" and Config.get.target.disk_size < 10240
+      if @simple_name == "meta-appliance" and @appliance_config.disk_size < 10240
         definition['disk_size'] = 10240
       end
 
@@ -85,9 +86,9 @@ module JBossCloud
     def read_repositories(appliance_definition)
 
       defs = { }
-      defs['arch'] = JBossCloud::Config.get.target.arch
-      defs['os_name'] = JBossCloud::Config.get.target.os.name
-      defs['os_version'] = JBossCloud::Config.get.target.os.version
+      defs['arch'] = Config.get.build_arch
+      defs['os_name'] = @appliance_config.os_name
+      defs['os_version'] = @appliance_config.os_version
 
       def defs.method_missing(sym,*args)
         self[ sym.to_s ]

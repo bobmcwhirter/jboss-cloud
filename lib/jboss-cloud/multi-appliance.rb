@@ -35,8 +35,8 @@ module JBossCloud
 
       definition = YAML.load_file( @multi_appliance_def )
       appliance_names = definition['appliances']
-      JBossCloud::ApplianceKickstart.new( @build_dir, @topdir, simple_name, @arch, appliance_names )
-      JBossCloud::ApplianceImage.new( @build_dir, @rpms_cache_dir, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/#{simple_name}.ks", @version, @release, @arch )
+      #JBossCloud::ApplianceKickstart.new( @build_dir, @topdir, simple_name, @arch, appliance_names )
+      #JBossCloud::ApplianceImage.new( @build_dir, @rpms_cache_dir, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/#{simple_name}.ks", @version, @release, @arch )
     end
 
   end

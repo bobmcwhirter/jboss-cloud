@@ -11,10 +11,9 @@ module JBossCloud
       @provides_rpm_path ||= {}
     end
 
-    def initialize(topdir, spec_file, arch)
-      @topdir = topdir
+    def initialize(spec_file)
+      @topdir = Config.get.dir_top
       @spec_file = spec_file
-      @arch = arch
       define
     end
 
@@ -29,7 +28,7 @@ module JBossCloud
         is_noarch = `rpm --specfile #{simple_name}.spec -q --qf '%{arch}\\n' 2> /dev/null`.split("\n").first == "noarch"
       end
 
-      arch = is_noarch ? "noarch" : @arch
+      arch = is_noarch ? "noarch" : Config.get.build_arch
 
       rpm_file = "#{@topdir}/RPMS/#{arch}/#{simple_name}-#{version}-#{release}.#{arch}.rpm"
       JBossCloud::RPM.provides[simple_name] = "#{simple_name}-#{version}-#{release}"
