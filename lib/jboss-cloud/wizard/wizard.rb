@@ -66,7 +66,7 @@ module JBossCloudWizard
     def display_configs
       return if @appliance_configs.size == 0
 
-      puts "### Saved configs:"
+      puts "### Saved configs:\r\n\r\n"
 
       i = 0
 
@@ -77,26 +77,30 @@ module JBossCloudWizard
     end
 
     def select_config
-      
-
-      return if @appliance_configs.size == 0
-
       display_configs
 
       print "\n### Select saved config or press ENTER to create a fresh one (1-#{@appliance_configs.size}) "
 
-      selected_config = gets.chomp
+      config = gets.chomp
+      return if config.length == 0 # enter pressed, no config selected, run wizard
+      select_config unless valid_config?(config)
 
-      selected_config
+      @appliance_configs.keys[config.to_i - 1]
+    end
+
+    def valid_config?(config)
+      return false if config.to_i == 0
+      return false unless config.to_i >= 1 and config.to_i <= @appliance_configs.size
+      return true
     end
 
     def start
 
       puts "\n###\r\n### Welcome to JBoss Cloud appliance builder wizard\r\n###\r\n\r\n"
-
       read_configs
+      @selected_config = select_config unless @appliance_configs.size == 0
 
-      puts select_config
+      puts @selected_config
 
       abort
 
