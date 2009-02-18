@@ -238,8 +238,7 @@ module JBossCloudWizard
         save_config
       end
 
-      # build
-      puts "BAAAAAAAAAAAH, building"
+      build
     end
 
     protected
@@ -273,15 +272,17 @@ module JBossCloudWizard
     end
 
     def build
-      puts "\nBuilding #{@appliance}... (this may take a while)"
+      puts "\n    Building #{@appliance}... (this may take a while)"
+      puts "\n    Wizard runs in quiet mode, messages are not shown. Add '-V' for verbose.\r\n\r\n" unless @options.verbose
 
-      puts "Wizard runs in quiet mode, messages are not shown. Add '-V' for verbose.\r\n\r\n" unless @options.verbose
+      command = "DISK_SIZE=\"#{@config.disk_size.to_i * 1024}\" NETWORK_NAME=\"#{@config.network_name}\" ARCH=\"#{@config.arch}\" OS_NAME=\"#{@config.os_name}\" OS_VERSION=\"#{@config.os_version}\" VCPU=\"#{@config.vcpu}\" MEM_SIZE=\"#{@config.mem_size}\" "
 
-      command = "DISK_SIZE=\"#{@disk_size}\" NETWORK_NAME=\"#{@network}\" "
+      puts command
+      abort
 
-      command += "rake appliance:#{@appliance}" if @output_format.to_i == 1
-      command += "rake appliance:#{@appliance}:vmware:enterprise" if @output_format.to_i == 2
-      command += "rake appliance:#{@appliance}:vmware:personal" if @output_format.to_i == 3
+      command += "rake appliance:#{@config.name}" if @config.output_format.to_i == 1
+      command += "rake appliance:#{@config.name}:vmware:enterprise" if @config.output_format.to_i == 2
+      command += "rake appliance:#{@config.name}:vmware:personal" if @config.output_format.to_i == 3
 
       unless execute("#{command}", @options.verbose)
         puts "Build failed"
