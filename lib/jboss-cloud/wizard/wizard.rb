@@ -59,7 +59,7 @@ module JBossCloudWizard
     def display_configs
       return if @configs.size == 0
 
-      puts "### Available configs:\r\n\r\n"
+      puts "\n### Available configs:\r\n\r\n"
 
       i = 0
 
@@ -95,6 +95,14 @@ module JBossCloudWizard
       puts "\n    You have selected config '#{config}'\r\n\r\n"
 
       case ask_config_manage
+      when "v"
+        display_config(YAML.load_file("#{@config_dir}/#{config}.cfg"))
+
+        print "\n    Press ENTER to continue... "
+        gets
+        
+        start
+        abort
       when "e"
         edit_config(config)
       when "d"
@@ -135,30 +143,50 @@ module JBossCloudWizard
     end
 
     def ask_config_manage
-      print "### What do you want to do? ([e]dit, [d]elete, [u]se) "
+      print "### What do you want to do? ([v]iew, [e]dit, [d]elete, [u]se) [u] "
       answer = gets.chomp
+
+      answer = "u" if answer.length == 0
 
       ask_config_manage unless valid_config_manage_answer?(answer)
       answer
     end
 
     def valid_config_manage_answer?(answer)
-      return false if answer.length == 0
-      return true if answer.downcase == "e" or answer.downcase == "d" or answer.downcase == "u"
+      return true if answer.downcase == "e" or answer.downcase == "d" or answer.downcase == "u" or answer.downcase == "v"
       return false
     end
 
 
     def init
-      puts "\n###\r\n### Welcome to JBoss Cloud appliance builder wizard\r\n###\r\n\r\n"
+      puts "\n###\r\n### Welcome to JBoss Cloud appliance builder wizard\r\n###"
       self
     end
 
+    def ask_for_configuration_name
+      print "\n### Please enter name for this configuration: "
+
+      name = gets.chomp
+      ask_for_configuration_name unless valid_configuration_name?(name)
+      name
+    end
+
     def save_config
-      print "\n### Do you want to save your configuration? [Y/n] "
+      print "\n### Do you want to save this configuration? [Y/n] "
+      answer = gets.chomp
+      answer = "y" if answer.length == 0
 
+      name = ask_for_configuration_name if answer.downcase == "y"
 
+      filename = "#{@config_dir}/#{name}.cfg"
 
+      File.new(filename, "w+").puts( @config.to_yaml )
+    end
+
+    def valid_configuration_name?(name)
+      return false if name.length == 0
+      return true unless name.match(/^\w+$/) == nil
+      return false
     end
 
     def start
@@ -173,45 +201,25 @@ module JBossCloudWizard
         @config = StepMemory.new(@config).start
         @config = StepOutputFormat.new(@config, AVAILABLE_OUTPUT_FORMATS).start
 
-        # step output type
-        # step network name (if VMware output type)
-
-        #save_config
-
-        display_config
-
+        display_config(@config)
+        save_config
       end
 
-      abort
-    
-      # network
-      #
-      # VMware
-      if (@output_format.to_i == 2 or @output_format.to_i == 3)
-        step5
-      end
-
-      display_config
-
-      unless is_correct?
-        start
-        exit(0)
-      end
-      
-      build
+      # build
+      puts "BAAAAAAAAAAAH, building"
     end
 
     protected
 
 
-    def display_config
+    def display_config(config)
       puts "\n### Selected options:\r\n"
 
-      puts "\n    Appliance:\t\t#{@config.name}"
-      puts "    Memory:\t\t#{@config.mem_size}MB"
-      puts "    Network:\t\t#{@config.network_name}" if (@config.output_format.to_i == 2 or @config.output_format.to_i == 3)
-      puts "    Disk:\t\t#{@config.disk_size}GB"
-      puts "    Output format:\t#{AVAILABLE_OUTPUT_FORMATS[@config.output_format.to_i-1]}"
+      puts "\n    Appliance:\t\t#{config.name}"
+      puts "    Memory:\t\t#{config.mem_size}MB"
+      puts "    Network:\t\t#{config.network_name}" if (config.output_format.to_i == 2 or config.output_format.to_i == 3)
+      puts "    Disk:\t\t#{config.disk_size}GB"
+      puts "    Output format:\t#{AVAILABLE_OUTPUT_FORMATS[config.output_format.to_i-1]}"
 
     end
 
