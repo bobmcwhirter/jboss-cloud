@@ -186,9 +186,9 @@ module JBossCloudWizard
     def save_config
       display_config(@config)
 
-      print "\n### Do you want to save this configuration? [Y/n] "
+      print "\n### Do you want to save this configuration? [y/N] "
       answer = gets.chomp
-      answer = "y" if answer.length == 0
+      answer = "n" if answer.length == 0
 
       return unless answer == "y"
 
@@ -277,12 +277,11 @@ module JBossCloudWizard
 
       command = "DISK_SIZE=\"#{@config.disk_size.to_i * 1024}\" NETWORK_NAME=\"#{@config.network_name}\" ARCH=\"#{@config.arch}\" OS_NAME=\"#{@config.os_name}\" OS_VERSION=\"#{@config.os_version}\" VCPU=\"#{@config.vcpu}\" MEM_SIZE=\"#{@config.mem_size}\" "
 
-      puts command
-      abort
-
       command += "rake appliance:#{@config.name}" if @config.output_format.to_i == 1
       command += "rake appliance:#{@config.name}:vmware:enterprise" if @config.output_format.to_i == 2
       command += "rake appliance:#{@config.name}:vmware:personal" if @config.output_format.to_i == 3
+
+      puts command
 
       unless execute("#{command}", @options.verbose)
         puts "Build failed"

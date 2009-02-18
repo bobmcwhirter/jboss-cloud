@@ -16,6 +16,13 @@ module JBossCloudWizard
       config.name = @appliance
       config.arch = @arch
 
+      # default settings
+      config.vcpu = 1
+      
+      # TODO: change this
+      config.os_name = "fedora"
+      config.os_version = 10
+
       config
     end
 
