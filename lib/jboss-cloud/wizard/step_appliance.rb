@@ -8,10 +8,9 @@ module JBossCloudWizard
       @arches = arches
     end
 
-    def ask
+    def start
       ask_for_appliance
       ask_for_architecture
-
 
       config = JBossCloud::ApplianceConfig.new
       config.name = @appliance
@@ -24,9 +23,10 @@ module JBossCloudWizard
       current_arch = (-1.size) == 8 ? "x86_64" : "i386"
 
       if current_arch == "i386"
-        #puts "Current architecture is i386, you can build only 32bit appliances"
-        #@arch = "i386"
-        #else
+        # puts "Current architecture is i386, you can build only 32bit appliances"
+        @arch = "i386"
+        return
+      else
 
         list_architectures
 
@@ -81,6 +81,8 @@ module JBossCloudWizard
       return false unless appliance >= 1 and appliance <= @appliances.size
 
       @appliance = @appliances[appliance - 1]
+      puts "\n    You have selected #{@appliance}"
+      
       return true
     end
 
@@ -92,6 +94,8 @@ module JBossCloudWizard
       return false unless arch >= 1 and arch <= @arches.size
 
       @arch = @arches[arch - 1]
+      puts "\n    You have selected #{@arch} architecture"
+
       return true
     end
   end

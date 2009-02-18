@@ -6,15 +6,17 @@ module JBossCloudWizard
       @config = config
     end
 
-    def ask
+    def start
       ask_for_disk
+
+      @config
     end
 
     def default_disk_size(appliance)
       if appliance == "meta-appliance"
-        disk_size = 10240
+        disk_size = 10
       else
-        disk_size = 2048
+        disk_size = 2
       end
 
       disk_size
@@ -24,7 +26,7 @@ module JBossCloudWizard
 
       disk_size = default_disk_size(@config.name)
 
-      print "\n#{banner} How big should be the disk (in MB)? [#{disk_size}] "
+      print "\n#{banner} How big should be the disk (in GB)? [#{disk_size}] "
 
       disk_size = gets.chomp
 
@@ -37,21 +39,18 @@ module JBossCloudWizard
       end
 
       if disk_size.to_i == 0
-        puts "Sorry, #{disk_size} is not a valid value" unless disk_size.length == 0
+        puts "\n    Sorry, '#{disk_size}' is not a valid value" unless disk_size.length == 0
         return false
       end
 
       min_disk_size = default_disk_size(@config.name)
 
-      if (disk_size.to_i % 1024 > 0)
-        puts "Disk size should be multiplicity of 1024MB"
+      if (disk_size.to_i < min_disk_size)
+        puts "\n    Sorry, #{disk_size}GB is not enough for #{@config.name}, please give >= #{min_disk_size}GB"
         return false
       end
 
-      if (disk_size.to_i < min_disk_size)
-        puts "Sorry, #{disk_size}MB is not enough for #{@config.name}, please give >= #{min_disk_size}MB"
-        return false
-      end
+      puts "\n    You have selected #{disk_size}GB disk"
 
       @config.disk_size = disk_size
       return true

@@ -2,6 +2,7 @@ require 'jboss-cloud/exec'
 require 'jboss-cloud/config'
 require 'jboss-cloud/wizard/step_appliance'
 require 'jboss-cloud/wizard/step_disk'
+require 'jboss-cloud/wizard/step_memory'
 require 'yaml'
 require 'fileutils'
 
@@ -159,8 +160,13 @@ module JBossCloudWizard
       manage_configs unless @configs.size == 0
 
       if (@config == nil)
-        @config = StepAppliance.new(@appliances, AVAILABLE_ARCHES).ask
-        @config = StepDisk.new(@config).ask
+        @config = StepAppliance.new(@appliances, AVAILABLE_ARCHES).start
+        @config = StepDisk.new(@config).start
+        @config = StepMemory.new(@config).start
+
+        puts @config.name
+        puts @config.disk_size
+        puts @config.arch
       end
 
       abort

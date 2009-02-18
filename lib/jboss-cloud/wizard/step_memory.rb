@@ -2,50 +2,71 @@ require 'jboss-cloud/wizard/step'
 
 module JBossCloudWizard
   class StepMemory < Step
-    def initialize(appliance_config, previous_appliance_config)
-      @appliance_config = appliance_config
-      @previous_appliance_config = previous_appliance_config
+    def initialize(config)
+      @config = config
     end
 
-    def ask
-      ask_for_disk
+    def start
+      ask_for_memory
+
+      @config
     end
 
-    def ask_for_disk
-      print "\n#{banner} How big should be the disk (in MB)? [2048] "
-
-      disk_size = gets.chomp
-
-      ask_for_disk unless valid_disk_size?( disk_size )
-    end
-
-    def valid_disk_size?( disk_size )
-      if (disk_size.length == 0)
-        disk_size = 2048
-      end
-
-      if disk_size.to_i == 0
-        puts "Sorry, #{disk_size} is not a valid value" unless disk_size.length == 0
-        return false
-      end
-
-      if @appliance == "meta-appliance"
-        min_disk_size = 10240
+    def minimum_mem_size(appliance)
+      if appliance == "postgis-appliance" or appliance == "httpd-appliance" or appliance == "jboss-jgroups-appliance"
+        mem_size = 256
       else
-        min_disk_size = 2048
+        mem_size = 512
       end
 
-      if (disk_size.to_i % 1024 > 0)
-        puts "Disk size should be multiplicity of 1024MB"
+      mem_size
+    end
+
+    def default_mem_size(appliance)
+      if appliance == "postgis-appliance" or appliance == "httpd-appliance" or appliance == "jboss-jgroups-appliance"
+        mem_size = 512
+      else
+        mem_size = 1024
+      end
+
+      mem_size
+    end
+
+    def ask_for_memory
+      mem_size = default_mem_size(@config.name)
+
+      print "\n#{banner} How much RAM do you want (in MB)? [#{mem_size}] "
+
+      mem_size = gets.chomp
+
+      ask_for_memory unless valid_mem_size?( mem_size )
+    end
+
+    def valid_mem_size?( mem_size )
+      if (mem_size.length == 0)
+        mem_size = default_mem_size(@config.name)
+      end
+
+      if mem_size.to_i == 0
+        puts "\n    Sorry, '#{mem_size}' is not a valid value"
         return false
       end
 
-      if (disk_size.to_i < min_disk_size)
-        puts "Sorry, #{disk_size}MB is not enough for #{@appliance}, please give >= #{min_disk_size}MB"
+      min_mem_size = minimum_mem_size(@config.name)
+
+      if (mem_size.to_i % 128 > 0)
+        puts "\n    Memory size should be multiplicity of 128MB"
         return false
       end
 
-      @appliance_config.disk_size = disk_size
+      if (mem_size.to_i < min_mem_size)
+        puts "\n    Sorry, #{mem_size}MB is not enough for #{@config.name}, please give >= #{min_mem_size}MB"
+        return false
+      end
+
+      puts "\n    You have selected #{mem_size}MB memory"
+
+      @config.mem_size = mem_size
       return true
     end
 

@@ -4,7 +4,7 @@ module JBossCloudWizard
       "###"
     end
 
-    def ask
+    def start
       puts "Not implemented"
     end
 
