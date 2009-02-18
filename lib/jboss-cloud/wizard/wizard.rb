@@ -92,23 +92,26 @@ module JBossCloudWizard
       return if @configs.size == 0
       return if (config = select_config) == nil
 
-      puts "\n    You have selected config '#{config}'\r\n\r\n"
+      stop = false
 
-      case ask_config_manage
-      when "v"
-        display_config(YAML.load_file("#{@config_dir}/#{config}.cfg"))
-
-        print "\n    Press ENTER to continue... "
-        gets
+      until stop
         
-        start
-        abort
-      when "e"
-        edit_config(config)
-      when "d"
-        delete_config(config)
-      when "u"
-        @config = @configs[config]
+        case ask_config_manage(config)
+        when "v"
+          display_config(@configs[config])
+
+          pause
+        when "e"
+          edit_config(config)
+          stop = true
+        when "d"
+          delete_config(config)
+          stop = true
+        when "u"
+          @config = @configs[config]
+          stop = true
+        end
+
       end
       
     end
@@ -116,7 +119,7 @@ module JBossCloudWizard
     def edit_config(config)
       puts "NotImplemented"
 
-      start
+      #start
       abort
     end
 
@@ -129,7 +132,7 @@ module JBossCloudWizard
         return
       end
 
-      print "### You are going to delete config '#{config}'. Are you sure? [Y/n]"
+      print "\n### You are going to delete config '#{config}'. Are you sure? [Y/n] "
       answer = gets.chomp
 
       delete_config(config) unless answer.downcase == "y" or answer.downcase == "n" or answer.length == 0
@@ -138,17 +141,28 @@ module JBossCloudWizard
         FileUtils.rm_f(config_file)
       end
 
+      puts "\n    Configuration #{config} deleted"
+
+      pause
+
       start
       abort
     end
 
-    def ask_config_manage
+    def pause
+      print "\n### Press ENTER to continue... "
+      gets
+    end
+
+    def ask_config_manage(config)
+      puts "\n    You have selected config '#{config}'\r\n\r\n"
+
       print "### What do you want to do? ([v]iew, [e]dit, [d]elete, [u]se) [u] "
       answer = gets.chomp
 
       answer = "u" if answer.length == 0
 
-      ask_config_manage unless valid_config_manage_answer?(answer)
+      ask_config_manage(config) unless valid_config_manage_answer?(answer)
       answer
     end
 
@@ -181,6 +195,8 @@ module JBossCloudWizard
       filename = "#{@config_dir}/#{name}.cfg"
 
       File.new(filename, "w+").puts( @config.to_yaml )
+
+      puts "\n    Configuration #{name} saved"
     end
 
     def valid_configuration_name?(name)
@@ -190,6 +206,8 @@ module JBossCloudWizard
     end
 
     def start
+
+      #system("clear")
       @config = nil
 
       read_configs
