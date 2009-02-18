@@ -40,8 +40,6 @@ module JBossCloudWizard
     end
 
     def read_configs
-      read_available_appliances
-
       @configs.clear
 
       puts "\nReading saved configurations..." if @options.verbose
@@ -186,13 +184,29 @@ module JBossCloudWizard
     end
 
     def save_config
+      display_config(@config)
+
       print "\n### Do you want to save this configuration? [Y/n] "
       answer = gets.chomp
       answer = "y" if answer.length == 0
 
-      name = ask_for_configuration_name if answer.downcase == "y"
+      return unless answer == "y"
+
+      name = ask_for_configuration_name
 
       filename = "#{@config_dir}/#{name}.cfg"
+
+      if (File.exists?(filename))
+        print "\n### Configuration #{name} already exists. Overwrite? [Y/n] "
+
+        answer = gets.chomp
+        answer = "y" if answer.length == 0
+
+        unless answer.downcase == "y"
+          save_config
+          return
+        end
+      end
 
       File.new(filename, "w+").puts( @config.to_yaml )
 
@@ -214,12 +228,13 @@ module JBossCloudWizard
       manage_configs unless @configs.size == 0
 
       if (@config == nil)
+        read_available_appliances
+
         @config = StepAppliance.new(@appliances, AVAILABLE_ARCHES).start
         @config = StepDisk.new(@config).start
         @config = StepMemory.new(@config).start
         @config = StepOutputFormat.new(@config, AVAILABLE_OUTPUT_FORMATS).start
-
-        display_config(@config)
+        
         save_config
       end
 
