@@ -21,8 +21,7 @@ module JBossCloudWizard
         exit(0)
       end
       
-      wizard = JBossCloudWizard::Wizard.new(@options)
-      wizard.start
+      JBossCloudWizard::Wizard.new(@options).init.start
     end
 
     protected

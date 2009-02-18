@@ -14,7 +14,7 @@ module JBossCloudWizard
     def initialize(options)
       @options = options
       @available_appliances = Array.new
-      @appliance_configs = Hash.new
+      @configs = Hash.new
 
       @config_dir = "/home/#{ENV['USER']}/.jboss-cloud/configs"
 
@@ -40,18 +40,18 @@ module JBossCloudWizard
     def read_configs
       read_available_appliances
 
-      @appliance_configs.clear
+      @configs.clear
 
       puts "\nReading saved configurations..." if @options.verbose
 
       Dir[ "#{@config_dir}/*.cfg" ].each do |config_def|
         config_name = File.basename( config_def, '.cfg' )
 
-        @appliance_configs.store( config_name, YAML.load_file( config_def ))
+        @configs.store( config_name, YAML.load_file( config_def ))
       end
 
-      puts "No saved configs found" if @options.verbose and @appliance_configs.size == 0
-      puts "Found #{@appliance_configs.size} saved #{@appliance_configs.size > 1 ? "configs" : "config"} (#{@appliance_configs.keys.join(", ")})" if @options.verbose and @appliance_configs.size > 0
+      puts "No saved configs found" if @options.verbose and @configs.size == 0
+      puts "Found #{@configs.size} saved #{@configs.size > 1 ? "configs" : "config"} (#{@configs.keys.join(", ")})" if @options.verbose and @configs.size > 0
     end
 
     def step_appliance
@@ -64,41 +64,109 @@ module JBossCloudWizard
     end
 
     def display_configs
-      return if @appliance_configs.size == 0
+      return if @configs.size == 0
 
-      puts "### Saved configs:\r\n\r\n"
+      puts "### Available configs:\r\n\r\n"
 
       i = 0
 
-      @appliance_configs.keys.each do |config|
+      @configs.keys.sort.each do |config|
         puts "    #{i+=1}. #{config}"
       end
 
+      puts
     end
 
     def select_config
-      display_configs
-
-      print "\n### Select saved config or press ENTER to create a fresh one (1-#{@appliance_configs.size}) "
+      print "### Select saved config or press ENTER to run wizard (1-#{@configs.size}) "
 
       config = gets.chomp
       return if config.length == 0 # enter pressed, no config selected, run wizard
       select_config unless valid_config?(config)
 
-      @appliance_configs.keys[config.to_i - 1]
+      @configs.keys.sort[config.to_i - 1]
     end
 
     def valid_config?(config)
       return false if config.to_i == 0
-      return false unless config.to_i >= 1 and config.to_i <= @appliance_configs.size
+      return false unless config.to_i >= 1 and config.to_i <= @configs.size
       return true
     end
 
-    def start
+    def manage_configs
+      display_configs
+      
+      return if @configs.size == 0
+      return if (config = select_config) == nil
 
+      puts "\nYou have selected config '#{config}'\r\n\r\n"
+
+      case ask_config_manage
+      when "e"
+        puts "Edit"
+        puts "NotImplemented"
+        abort
+      when "d"
+        delete_config(config)
+      when "u"
+        puts "Use"
+      end
+
+      
+    end
+
+    def delete_config(config)
+
+      config_file = "#{@config_dir}/#{config}.cfg"
+
+      unless File.exists?(config_file)
+        puts "Config file doesn't exists!"
+        return
+      end
+
+      print "### You are going to delete config '#{config}'. Are you sure? [Y/n]"
+      answer = gets.chomp
+
+      delete_config(config) unless answer.downcase == "y" or answer.downcase == "n" or answer.length == 0
+
+      if (answer.length == 0 or answer.downcase == "y")
+        FileUtils.rm_f(config_file)
+      end
+      
+    end
+
+    def ask_config_delete
+      print "Are you sure to delete config '#{@config}'? [Y/n]"
+      answer = gets.chomp
+      
+      ask_config_delete unless answer.downcase == "y" or answer.downcase == "n"
+      answer
+    end
+
+    def ask_config_manage
+      print "### What do you want to do? ([e]dit, [d]elete, [u]se) "
+      answer = gets.chomp
+
+      ask_config_manage unless valid_config_manage_answer?(answer)
+      answer
+    end
+
+    def valid_config_manage_answer?(answer)
+      return false if answer.length == 0
+      return true if answer.downcase == "e" or answer.downcase == "d" or answer.downcase == "u"
+      return false
+    end
+
+
+    def init
       puts "\n###\r\n### Welcome to JBoss Cloud appliance builder wizard\r\n###\r\n\r\n"
+      self
+    end
+
+    def start
       read_configs
-      @selected_config = select_config unless @appliance_configs.size == 0
+
+      manage_configs unless @configs.size == 0
 
       puts @selected_config
 
