@@ -13,6 +13,13 @@ module JBossCloudWizard
     end
 
     def minimum_mem_size(appliance)
+      # Minimal amount of RAM for appliances:
+      # meta-appliance            - 512
+      # jboss-as5-appliance       - 512
+      # postgis-appliance         - 256
+      # httpd-appliance           - 256
+      # jboss-jgroups-appliance   - 256
+
       if appliance == "postgis-appliance" or appliance == "httpd-appliance" or appliance == "jboss-jgroups-appliance"
         mem_size = 256
       else

@@ -3,6 +3,7 @@ require 'jboss-cloud/config'
 require 'jboss-cloud/wizard/step_appliance'
 require 'jboss-cloud/wizard/step_disk'
 require 'jboss-cloud/wizard/step_memory'
+require 'jboss-cloud/wizard/step_output_format'
 require 'yaml'
 require 'fileutils'
 
@@ -153,6 +154,13 @@ module JBossCloudWizard
       self
     end
 
+    def save_config
+      print "\n### Do you want to save your configuration? [Y/n] "
+
+
+
+    end
+
     def start
       @config = nil
 
@@ -163,35 +171,19 @@ module JBossCloudWizard
         @config = StepAppliance.new(@appliances, AVAILABLE_ARCHES).start
         @config = StepDisk.new(@config).start
         @config = StepMemory.new(@config).start
+        @config = StepOutputFormat.new(@config, AVAILABLE_OUTPUT_FORMATS).start
 
-        puts @config.name
-        puts @config.disk_size
-        puts @config.arch
+        # step output type
+        # step network name (if VMware output type)
+
+        #save_config
+
+        display_config
+
       end
 
       abort
-
-
-      
-
-      
-
-      abort
-      # appliance
-      
-      #puts @appliances[@appliance.to_i]
-
-      
-      # memory - currently commented - we're using 1024 for now
-      #step2
-
-      abort
-      # disk
-      step3
-
-      # output type
-      step4
-
+    
       # network
       #
       # VMware
@@ -199,7 +191,9 @@ module JBossCloudWizard
         step5
       end
 
-      unless verified?
+      display_config
+
+      unless is_correct?
         start
         exit(0)
       end
@@ -209,59 +203,16 @@ module JBossCloudWizard
 
     protected
 
-    # selecting appliance to build
-    def step1
 
-    end
-
-    # selecting memory size for appliance
-    def step2
-      puts_question "How much RAM (in MB) do you want in your appliance? [1024]"
-
-      memsize = gets.chomp
-
-      step2 unless valid_memsize?( memsize )
-    end
-
-    #selecting disk size
-
-
-    # selecting right network name/type
-    def step5
-      puts "\n### Specify your network name"
-
-      network = gets.chomp
-      
-      # should be the best value
-      if network.length == 0
-        @network = "NAT"
-      else
-        @network = network
-      end
-
-    end
-
-    # selecting output format
-    def step4
-      list_output_formats
-
-      print "\n### Specify output format (1-3) [1] "
-
-      output_format = gets.chomp
-
-      step4 unless valid_output_format?( output_format )
-    end
-
-    def verified?
+    def display_config
       puts "\n### Selected options:\r\n"
 
-      puts "\nAppliance:\t#{@appliance}"
-      puts "Memory:\t\t#{@mem_size}MB"
-      puts "Network:\t#{@network}" if (@output_format.to_i == 2 or @output_format.to_i == 3)
-      puts "Disk:\t\t#{@disk_size.to_i/1024}GB"
-      puts "Output format:\t#{AVAILABLE_OUTPUT_FORMATS[@output_format.to_i-1]}"
+      puts "\n    Appliance:\t\t#{@config.name}"
+      puts "    Memory:\t\t#{@config.mem_size}MB"
+      puts "    Network:\t\t#{@config.network_name}" if (@config.output_format.to_i == 2 or @config.output_format.to_i == 3)
+      puts "    Disk:\t\t#{@config.disk_size}GB"
+      puts "    Output format:\t#{AVAILABLE_OUTPUT_FORMATS[@config.output_format.to_i-1]}"
 
-      return is_correct?
     end
 
     def is_correct?
@@ -298,74 +249,6 @@ module JBossCloudWizard
 
       puts "Build was successful. Check #{Dir.pwd}/build/appliances/ folder for output files."
     end
-
-    def list_output_formats
-      puts "\nAvailable output formats:"
-
-      nb = 0
-
-      AVAILABLE_OUTPUT_FORMATS.each do |output_format|
-        puts "#{nb += 1}. #{output_format}"
-      end
-    end
-
-    def valid_output_format? ( output_format )
-      # default - RAW
-      if output_format.length == 0
-        @output_format = 1
-        return true
-      end
-
-      if output_format.to_i == 0
-        puts "#{output_format} is not a valid value"
-        return false
-      end
-
-      if output_format.to_i >= 1 and output_format.to_i <= 3
-        @output_format = output_format
-        return true
-      end
-
-      return false
-    end
-
-    def valid_memsize?( memsize )
-
-      if memsize.to_i == 0
-        puts "#{memsize} is not a valid value" unless memsize.length == 0
-        return false
-      end
-
-      if @appliance == "jboss-as5-appliance" or @appliance == "meta-appliance"
-        min_memsize = 512
-      else
-        min_memsize = 128
-      end
-
-      if (memsize.to_i % 128 > 0)
-        puts "Memory size should be multiplicity of 128"
-        return false
-      end
-
-      # todo add reconfiguration of JBoss AS run.conf file
-
-      # Minimal amount of RAM for appliances:
-      # meta-appliance            - 512
-      # jboss-as5-appliance       - 512
-      # postgis-appliance         - 128
-      # httpd-appliance           - 128
-      # jboss-jgroups-appliance   - 128
-      
-      if (memsize.to_i < min_memsize)
-        puts "#{memsize}MB is not enough for #{@appliance}, please give >= #{min_memsize}"
-        return false
-      end
-
-      @mem_size = memsize
-      return true
-    end
-
-
 
   end
 end

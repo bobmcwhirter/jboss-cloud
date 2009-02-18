@@ -12,6 +12,7 @@ module JBossCloud
     attr_accessor :mem_size
     attr_accessor :disk_size
     attr_accessor :network_name
+    attr_accessor :output_format
 
   end
   class Config
