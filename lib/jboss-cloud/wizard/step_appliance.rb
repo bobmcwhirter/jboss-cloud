@@ -3,19 +3,21 @@ require 'jboss-cloud/wizard/step'
 module JBossCloudWizard
   class StepAppliance < Step
 
-    AVAILABLE_ARCHES = [ "i386", "x86_64" ]
-
-    def initialize(available_appliances)
-      @available_appliances = available_appliances
+    def initialize(appliances, arches)
+      @appliances = appliances
+      @arches = arches
     end
 
     def ask
-      puts banner
-
       ask_for_appliance
       ask_for_architecture
 
-      return JBossCloud::ApplianceConfig.new(@appliance, @arch)
+
+      config = JBossCloud::ApplianceConfig.new
+      config.name = @appliance
+      config.arch = @arch
+
+      config
     end
 
     def ask_for_architecture
@@ -28,7 +30,7 @@ module JBossCloudWizard
 
         list_architectures
 
-        print "#{banner} Which architecture do you want to select? (1-#{AVAILABLE_ARCHES.size}) "
+        print "#{banner} Which architecture do you want to select? (1-#{@arches.size}) "
 
         arch = gets.chomp
 
@@ -40,7 +42,7 @@ module JBossCloudWizard
     def ask_for_appliance
       list_appliances
 
-      print "#{banner} Which appliance do you want to build? (1-#{@available_appliances.size}) "
+      print "#{banner} Which appliance do you want to build? (1-#{@appliances.size}) "
 
       appliance = gets.chomp
 
@@ -53,7 +55,7 @@ module JBossCloudWizard
       i = 0
 
       puts
-      AVAILABLE_ARCHES.each do |arch|
+      @arches.each do |arch|
         puts "    #{i += 1}. " + arch
       end
       puts
@@ -65,7 +67,7 @@ module JBossCloudWizard
       i = 0
       
       puts
-      @available_appliances.each do |appliance|
+      @appliances.each do |appliance|
         puts "    #{i += 1}. " + appliance
       end
       puts
@@ -76,9 +78,9 @@ module JBossCloudWizard
 
       appliance = appliance.to_i
 
-      return false unless appliance >= 1 and appliance <= @available_appliances.size
+      return false unless appliance >= 1 and appliance <= @appliances.size
 
-      @appliance = @available_appliances[appliance - 1]
+      @appliance = @appliances[appliance - 1]
       return true
     end
 
@@ -87,9 +89,9 @@ module JBossCloudWizard
 
       arch = arch.to_i
 
-      return false unless arch >= 1 and arch <= AVAILABLE_ARCHES.size
+      return false unless arch >= 1 and arch <= @arches.size
 
-      @arch = AVAILABLE_ARCHES[arch - 1]
+      @arch = @arches[arch - 1]
       return true
     end
   end

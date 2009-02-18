@@ -13,7 +13,7 @@ module JBossCloudWizard
 
     def initialize(options)
       @options = options
-      @available_appliances = Array.new
+      @appliances = Array.new
       @configs = Hash.new
 
       @config_dir = "/home/#{ENV['USER']}/.jboss-cloud/configs"
@@ -25,16 +25,16 @@ module JBossCloudWizard
     end
 
     def read_available_appliances
-      @available_appliances.clear
+      @appliances.clear
 
       puts "\nReading available appliances..." if @options.verbose
 
       Dir[ "appliances/*/*.appl" ].each do |appliance_def|
-        @available_appliances.push( File.basename( appliance_def, '.appl' ))
+        @appliances.push( File.basename( appliance_def, '.appl' ))
       end
 
-      puts "No appliances found" if @options.verbose and @available_appliances.size == 0
-      puts "Found #{@available_appliances.size} #{@available_appliances.size > 1 ? "appliances" : "appliance"} (#{@available_appliances.join(", ")})" if @options.verbose and @available_appliances.size > 0
+      puts "No appliances found" if @options.verbose and @appliances.size == 0
+      puts "Found #{@appliances.size} #{@appliances.size > 1 ? "appliances" : "appliance"} (#{@appliances.join(", ")})" if @options.verbose and @appliances.size > 0
     end
 
     def read_configs
@@ -52,15 +52,6 @@ module JBossCloudWizard
 
       puts "No saved configs found" if @options.verbose and @configs.size == 0
       puts "Found #{@configs.size} saved #{@configs.size > 1 ? "configs" : "config"} (#{@configs.keys.join(", ")})" if @options.verbose and @configs.size > 0
-    end
-
-    def step_appliance
-      @current_appliance_config = StepAppliance.new(@available_appliances).ask
-      @previous_appliance_config = @previous_appliance_configs[@current_appliance_config.name + "-" + @current_appliance_config.arch]
-    end
-
-    def step_disk
-      StepDisk.new(@current_appliance_config, @previous_appliance_config).ask
     end
 
     def display_configs
@@ -107,7 +98,7 @@ module JBossCloudWizard
       when "d"
         delete_config(config)
       when "u"
-        @config = config
+        @config = @configs[config]
       end
       
     end
@@ -124,7 +115,7 @@ module JBossCloudWizard
       config_file = "#{@config_dir}/#{config}.cfg"
 
       unless File.exists?(config_file)
-        puts "Config file doesn't exists!"
+        puts "    Config file doesn't exists!"
         return
       end
 
@@ -139,14 +130,6 @@ module JBossCloudWizard
 
       start
       abort
-    end
-
-    def ask_config_delete
-      print "    Are you sure to delete config '#{@config}'? [Y/n]"
-      answer = gets.chomp
-      
-      ask_config_delete unless answer.downcase == "y" or answer.downcase == "n"
-      answer
     end
 
     def ask_config_manage
@@ -170,16 +153,19 @@ module JBossCloudWizard
     end
 
     def start
-      read_configs
+      @config = nil
 
+      read_configs
       manage_configs unless @configs.size == 0
 
-      puts @configs[@config].arch
+      if (@config == nil)
+        @config = StepAppliance.new(@appliances, AVAILABLE_ARCHES).ask
+        @config = StepDisk.new(@config).ask
+      end
 
       abort
 
-      step_appliance
-      step_disk
+
       
 
       
@@ -187,7 +173,7 @@ module JBossCloudWizard
       abort
       # appliance
       
-      #puts @available_appliances[@appliance.to_i]
+      #puts @appliances[@appliance.to_i]
 
       
       # memory - currently commented - we're using 1024 for now

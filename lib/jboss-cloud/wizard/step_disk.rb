@@ -2,22 +2,27 @@ require 'jboss-cloud/wizard/step'
 
 module JBossCloudWizard
   class StepDisk < Step
-    def initialize(appliance_config, previous_appliance_config)
-      @appliance_config = appliance_config
-      @previous_appliance_config = previous_appliance_config
+    def initialize(config)
+      @config = config
     end
 
     def ask
       ask_for_disk
     end
 
+    def default_disk_size(appliance)
+      if appliance == "meta-appliance"
+        disk_size = 10240
+      else
+        disk_size = 2048
+      end
+
+      disk_size
+    end
+
     def ask_for_disk
 
-      disk_size = 2048
-
-      if @previous_appliance_config != nil
-        disk_size = @previous_appliance_config.disk_size
-      end
+      disk_size = default_disk_size(@config.name)
 
       print "\n#{banner} How big should be the disk (in MB)? [#{disk_size}] "
 
@@ -28,7 +33,7 @@ module JBossCloudWizard
 
     def valid_disk_size?( disk_size )
       if (disk_size.length == 0)
-        disk_size = 2048
+        disk_size = default_disk_size(@config.name)
       end
 
       if disk_size.to_i == 0
@@ -36,11 +41,7 @@ module JBossCloudWizard
         return false
       end
 
-      if @appliance == "meta-appliance"
-        min_disk_size = 10240
-      else
-        min_disk_size = 2048
-      end
+      min_disk_size = default_disk_size(@config.name)
 
       if (disk_size.to_i % 1024 > 0)
         puts "Disk size should be multiplicity of 1024MB"
@@ -48,11 +49,11 @@ module JBossCloudWizard
       end
 
       if (disk_size.to_i < min_disk_size)
-        puts "Sorry, #{disk_size}MB is not enough for #{@appliance}, please give >= #{min_disk_size}MB"
+        puts "Sorry, #{disk_size}MB is not enough for #{@config.name}, please give >= #{min_disk_size}MB"
         return false
       end
 
-      @appliance_config.disk_size = disk_size
+      @config.disk_size = disk_size
       return true
     end
 
