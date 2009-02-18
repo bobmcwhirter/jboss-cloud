@@ -99,20 +99,24 @@ module JBossCloudWizard
       return if @configs.size == 0
       return if (config = select_config) == nil
 
-      puts "\nYou have selected config '#{config}'\r\n\r\n"
+      puts "\n    You have selected config '#{config}'\r\n\r\n"
 
       case ask_config_manage
       when "e"
-        puts "Edit"
-        puts "NotImplemented"
-        abort
+        edit_config(config)
       when "d"
         delete_config(config)
       when "u"
-        puts "Use"
+        @config = config
       end
-
       
+    end
+
+    def edit_config(config)
+      puts "NotImplemented"
+
+      start
+      abort
     end
 
     def delete_config(config)
@@ -132,11 +136,13 @@ module JBossCloudWizard
       if (answer.length == 0 or answer.downcase == "y")
         FileUtils.rm_f(config_file)
       end
-      
+
+      start
+      abort
     end
 
     def ask_config_delete
-      print "Are you sure to delete config '#{@config}'? [Y/n]"
+      print "    Are you sure to delete config '#{@config}'? [Y/n]"
       answer = gets.chomp
       
       ask_config_delete unless answer.downcase == "y" or answer.downcase == "n"
@@ -168,7 +174,7 @@ module JBossCloudWizard
 
       manage_configs unless @configs.size == 0
 
-      puts @selected_config
+      puts @configs[@config].arch
 
       abort
 
