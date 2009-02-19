@@ -5,9 +5,11 @@ module JBossCloud
 
   class ApplianceVMXImage < Rake::TaskLib
 
-    def initialize( appliance_xml_file )
-      @appliance_xml_file   = appliance_xml_file
-      @simple_name = File.basename( appliance_xml_file, '.xml' )
+    def initialize( config )
+
+      @config                 = config
+      appliance_build_dir     = "#{Config.get.dir_build}/appliances/#{@config.arch}/#{@config.name}"
+      @appliance_xml_file     = "#{appliance_build_dir}/#{@config.name}.xml"
 
       define
     end
@@ -37,9 +39,9 @@ module JBossCloud
 
     def change_vmdk_values( vmdk_data )
       
-      c, h, s, total_sectors = generate_scsi_chs( JBossCloud::Config.get.target.disk_size )
+      c, h, s, total_sectors = generate_scsi_chs( @config.disk_size )
 
-      vmdk_data.gsub!( /#NAME#/ , @simple_name )
+      vmdk_data.gsub!( /#NAME#/ , @config.name )
       vmdk_data.gsub!( /#CYLINDERS#/ , c.to_s )
       vmdk_data.gsub!( /#HEADS#/ , h.to_s )
       vmdk_data.gsub!( /#SECTORS#/ , s.to_s )
@@ -52,19 +54,18 @@ module JBossCloud
       # replace version with current jboss cloud version
       vmx_data.gsub!( /#VERSION#/ , JBossCloud::Config.get.version_with_release )
       # change name
-      vmx_data.gsub!( /#NAME#/ , @simple_name )
+      vmx_data.gsub!( /#NAME#/ , @config.name )
       # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
-      vmx_data.gsub!( /#GUESTOS#/ , "#{JBossCloud::Config.get.target.arch == "x86_64" ? "otherlinux-64" : "linux"}" )
+      vmx_data.gsub!( /#GUESTOS#/ , "#{@config.arch == "x86_64" ? "otherlinux-64" : "linux"}" )
 
       # network name
-      network_name = ENV['NETWORK_NAME'].nil? ? Config.get.target.network_name : ENV['NETWORK_NAME']
-      vmx_data += "\nethernet0.networkName = \"#{network_name}\""
+      vmx_data += "\nethernet0.networkName = \"#{@config.network_name}\""
 
       return vmx_data
     end
 
     def define_precursors
-      super_simple_name = File.basename( @simple_name, '-appliance' )
+      super_simple_name = File.basename( @config.name, '-appliance' )
       vmware_personal_output_folder = File.dirname( @appliance_xml_file ) + "/vmware/personal"
       vmware_personal_vmx_file = vmware_personal_output_folder + "/" + File.basename( @appliance_xml_file, ".xml" ) + '.vmx'
       vmware_enterprise_output_folder = File.dirname( @appliance_xml_file ) + "/vmware/enterprise"
@@ -78,20 +79,21 @@ module JBossCloud
         description_elem = doc.root.elements['description']
         if ( description_elem.nil? )
           description_elem = REXML::Element.new( "description" )
-          description_elem.text = "#{@simple_name} Appliance\n Version: #{JBossCloud::Config.get.version_with_release}"
+          description_elem.text = "#{@config.name} Appliance\n Version: #{JBossCloud::Config.get.version_with_release}"
           doc.root.insert_after( name_elem, description_elem )
         end
         # update xml the file according to selected build architecture
         arch_elem = doc.elements["//arch"]
-        arch_elem.text = JBossCloud::Config.get.target.arch
+        arch_elem.text = @config.arch
         File.open( "#{@appliance_xml_file}.vmx-input", 'w' ) {|f| f.write( doc ) }
       end
 
       desc "Build #{super_simple_name} appliance for VMware personal environments (Server/Workstation/Fusion)"
-      task "appliance:#{@simple_name}:vmware:personal" => [ "#{@appliance_xml_file}.vmx-input" ] do
+      task "appliance:#{@config.name}:vmware:personal" => [ "#{@appliance_xml_file}.vmx-input" ] do
         FileUtils.mkdir_p vmware_personal_output_folder
 
         if ( !File.exists?( vmware_personal_vmx_file ) || File.new( "#{@appliance_xml_file}.vmx-input" ).mtime > File.new( vmware_personal_vmx_file ).mtime  )
+          puts "Creating VMware personal disk..."
           execute_command( "#{Dir.pwd}/lib/python-virtinst/virt-convert -o vmx -D vmdk #{@appliance_xml_file}.vmx-input #{vmware_personal_output_folder}/" )
         end
 
@@ -99,23 +101,24 @@ module JBossCloud
         vmx_data = change_common_vmx_values( vmx_data )
 
         # disk filename must match
-        vmx_data.gsub!(/#{@simple_name}.vmdk/, "#{@simple_name}-sda.vmdk")
+        vmx_data.gsub!(/#{@config.name}.vmdk/, "#{@config.name}-sda.vmdk")
 
         # write changes to file
         File.new( vmware_personal_vmx_file , "w+" ).puts( vmx_data )
       end
 
       desc "Build #{super_simple_name} appliance for VMware enterprise environments (ESX/ESXi)"
-      task "appliance:#{@simple_name}:vmware:enterprise" => [ @appliance_xml_file ] do
+      task "appliance:#{@config.name}:vmware:enterprise" => [ @appliance_xml_file ] do
         FileUtils.mkdir_p vmware_enterprise_output_folder
 
-        base_raw_file = File.dirname( @appliance_xml_file ) + "/#{@simple_name}-sda.raw"
-        vmware_raw_file = vmware_enterprise_output_folder + "/#{@simple_name}-sda.raw"
+        base_raw_file = File.dirname( @appliance_xml_file ) + "/#{@config.name}-sda.raw"
+        vmware_raw_file = vmware_enterprise_output_folder + "/#{@config.name}-sda.raw"
 
         # copy RAW disk to VMware enterprise destination folder
         # todo: consider moving this file
 
         if ( !File.exists?( vmware_raw_file ) || File.new( base_raw_file ).mtime > File.new( vmware_raw_file ).mtime )
+          puts "Creating VMware enterprise disk..."
           FileUtils.cp( base_raw_file , vmware_enterprise_output_folder )
         end
 
@@ -138,7 +141,7 @@ module JBossCloud
       end
 
       #desc "Build #{super_simple_name} appliance for VMware"
-      #task "appliance:#{@simple_name}:vmware" => [ "appliance:#{@simple_name}:vmware:personal", "appliance:#{@simple_name}:vmware:enterprise" ]
+      #task "appliance:#{@config.name}:vmware" => [ "appliance:#{@config.name}:vmware:personal", "appliance:#{@config.name}:vmware:enterprise" ]
     end
   end
 end
