@@ -73,7 +73,7 @@ module JBossCloud
       end
 
       file config_file => [ "appliance:#{@simple_name}:config" ] do
-        File.new( config_file, "w+").puts( @config.to_yaml )
+        File.new( config_file, "w") {|f| f.write( @config.to_yaml ) }
       end
 
       file "appliance:#{@simple_name}:config" do
@@ -90,7 +90,7 @@ module JBossCloud
         file kickstart_file => [ config_file, "#{appliance_build_dir}/base-pkgs.ks", "rpm:#{name}" ] do
           template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
 
-          File.open( kickstart_file, 'w+' ) {|f| f.write( ERB.new( File.read( template ) ).result( definition.send( :binding ) ) ) }
+          File.open( kickstart_file, 'w' ) {|f| f.write( ERB.new( File.read( template ) ).result( definition.send( :binding ) ) ) }
         end
       end
 
