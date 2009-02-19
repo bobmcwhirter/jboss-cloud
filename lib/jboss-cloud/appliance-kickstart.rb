@@ -16,10 +16,15 @@ module JBossCloud
       define
     end
 
+    def configure
+
+    end
+
     def define
 
-      kickstart_file         = "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks"
       appliance_build_dir    = "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}"
+      kickstart_file         = "#{appliance_build_dir}/#{@simple_name}.ks"
+      config_file            = "#{appliance_build_dir}/#{@simple_name}.cfg"
 
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
@@ -46,7 +51,7 @@ module JBossCloud
 
       definition['repos'] << "repo --name=extra-rpms --cost=1 --baseurl=file://#{Dir.pwd}/extra-rpms/noarch" if ( File.exist?( "extra-rpms" ) )
 
-      for  appliance_name in @appliance_names
+      for appliance_name in @appliance_names
         if ( File.exist?( "appliances/#{appliance_name}/#{appliance_name}.post" ) )
           definition['post_script'] += "\n## #{appliance_name}.post\n"
           definition['post_script'] += File.read( "appliances/#{appliance_name}/#{appliance_name}.post" )
@@ -67,31 +72,30 @@ module JBossCloud
         FileUtils.cp( "kickstarts/base-pkgs.ks", "#{appliance_build_dir}/base-pkgs.ks" )
       end
 
-      task "appliance:#{@simple_name}:config" do
-        config_file = "#{appliance_build_dir}/config.cfg"
-
-        if File.exists?( config_file )
-          unless !@config.eql?( YAML.load_file( config_file ) )
-            FileUtils.rm_rf appliance_build_dir
-            FileUtils.mkdir_p appliance_build_dir
-          end
-        else
-          FileUtils.mkdir_p appliance_build_dir
-        end
-
+      file config_file => [ "appliance:#{@simple_name}:config" ] do
         File.new( config_file, "w+").puts( @config.to_yaml )
       end
 
+      file "appliance:#{@simple_name}:config" do
+        if File.exists?( config_file )
+          unless @config.eql?( YAML.load_file( config_file ) )
+            FileUtils.rm_rf appliance_build_dir
+          end
+        end
+
+        FileUtils.mkdir_p appliance_build_dir
+      end
+
       for name in @appliance_names
-        file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{name}.ks"=>[ "rpm:#{name}" ]
+        file kickstart_file => [ config_file, "#{appliance_build_dir}/base-pkgs.ks", "rpm:#{name}" ] do
+          template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
+
+          File.open( kickstart_file, 'w+' ) {|f| f.write( ERB.new( File.read( template ) ).result( definition.send( :binding ) ) ) }
+        end
       end
 
       desc "Build kickstart for #{@super_simple_name} appliance"
-      task "appliance:#{@simple_name}:kickstart" => [ "appliance:#{@simple_name}:config", "#{appliance_build_dir}/base-pkgs.ks" ] do
-        template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
-        
-        File.open( kickstart_file, 'w' ) {|f| f.write( ERB.new( File.read( template ) ).result( definition.send( :binding ) ) ) }
-      end
+      task "appliance:#{@simple_name}:kickstart" => [ kickstart_file ]
 
     end
 
