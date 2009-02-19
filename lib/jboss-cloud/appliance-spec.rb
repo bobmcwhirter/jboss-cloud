@@ -6,14 +6,15 @@ module JBossCloud
 
   class ApplianceSpec < Rake::TaskLib
 
-    def initialize(build_dir, topdir, simple_name, version, release, arch)
-      @build_dir        = build_dir
-      @topdir           = topdir
-      @simple_name      = simple_name
-      @super_simple_name      = File.basename( simple_name, "-appliance" )
-      @version = version
-      @release = release
-      @arch = arch
+    def initialize( config, simple_name )
+      @config             = config
+      @build_dir          = Config.get.dir_build
+      @topdir             = Config.get.dir_top
+      @version            = Config.get.version
+      @release            = Config.get.release
+      @simple_name        = simple_name
+      @super_simple_name  = File.basename( simple_name, "-appliance" )
+
       define
     end
 
@@ -26,11 +27,11 @@ module JBossCloud
         self[ sym.to_s ]
       end
 
-      file "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.spec"=>[ "#{@build_dir}/appliances/#{@arch}/#{@simple_name}" ] do
+      file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.spec"=>[ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}" ] do
         template = File.dirname( __FILE__ ) + "/appliance.spec.erb"
 
         erb = ERB.new( File.read( template ) )
-        File.open( "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.spec", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
+        File.open( "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.spec", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
       end
 
       for p in definition['packages'] 
@@ -41,7 +42,7 @@ module JBossCloud
       end
  
       desc "Build RPM spec for #{@super_simple_name} appliance"
-      task "appliance:#{@simple_name}:spec" => [ "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.spec" ]
+      task "appliance:#{@simple_name}:spec" => [ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.spec" ]
     end
 
   end

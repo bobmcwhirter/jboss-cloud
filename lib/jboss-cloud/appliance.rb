@@ -42,7 +42,7 @@ module JBossCloud
 
     def define_precursors
       JBossCloud::ApplianceSource.new( @config, File.dirname( @appliance_def ) )
-      JBossCloud::ApplianceSpec.new( @build_dir, @topdir, @appliance_name, Config.get.version, Config.get.release, @config.arch )
+      JBossCloud::ApplianceSpec.new( @config, @appliance_name )
       JBossCloud::ApplianceRPM.new( @topdir, "#{@build_dir}/appliances/#{@config.arch}/#{@appliance_name}/#{@appliance_name}.spec", Config.get.version, Config.get.release )
       JBossCloud::ApplianceKickstart.new( @config, [ @appliance_name ] )
       JBossCloud::ApplianceImage.new( @config )
