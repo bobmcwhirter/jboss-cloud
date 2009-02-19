@@ -6,14 +6,13 @@ module JBossCloud
 
   class ApplianceKickstart < Rake::TaskLib
 
-    def initialize( appliance_config, appliance_names=[] )
+    def initialize( config, appliance_names=[] )
+      @config            = config
       @build_dir         = Config.get.dir_build
       @topdir            = Config.get.dir_top
-      @simple_name       = appliance_config.name
+      @simple_name       = config.name
       @super_simple_name = File.basename( @simple_name, '-appliance' )
       @appliance_names   = appliance_names
-      @arch              = appliance_config.arch
-      @appliance_config  = appliance_config
       define
     end
 
@@ -21,17 +20,17 @@ module JBossCloud
 
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
-      definition['disk_size']            = @appliance_config.disk_size
+      definition['disk_size']            = @config.disk_size
 
       # if we're building meta-appliance and disk size is less than 10GB
-      if @simple_name == "meta-appliance" and @appliance_config.disk_size < 10240
+      if @simple_name == "meta-appliance" and @config.disk_size < 10240
         definition['disk_size'] = 10240
       end
 
       definition['post_script']          = ''
       definition['exclude_clause']       = ''
       definition['appliance_names']      = @appliance_names
-      definition['arch']                 = @arch
+      definition['arch']                 = @config.arch
       
       def definition.method_missing(sym,*args)
         self[ sym.to_s ]
@@ -39,7 +38,7 @@ module JBossCloud
 
       definition['repos'] = [
         "repo --name=jboss-cloud --cost=10 --baseurl=file://#{@topdir}/RPMS/noarch",
-        "repo --name=jboss-cloud-#{@arch} --cost=10 --baseurl=file://#{@topdir}/RPMS/#{@arch}",
+        "repo --name=jboss-cloud-#{@config.arch} --cost=10 --baseurl=file://#{@topdir}/RPMS/#{@config.arch}",
       ]
 
       if ( File.exist?( "extra-rpms" ) )
@@ -66,29 +65,29 @@ module JBossCloud
         definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}"
       end
 
-      directory "#{@build_dir}/appliances/#{@arch}/#{@simple_name}"
+      directory "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}"
 
-      file "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "#{@build_dir}/appliances/#{@arch}/#{@simple_name}" ] do
+      file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}" ] do
         template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
 
         erb = ERB.new( File.read( template ) )
-        File.open( "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
+        File.open( "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
       end
 
       for appliance_name in @appliance_names
-        file "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "rpm:#{appliance_name}" ]
+        file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "rpm:#{appliance_name}" ]
       end
 
       desc "Build kickstart for #{@super_simple_name} appliance"
-      task "appliance:#{@simple_name}:kickstart" => [ "#{@build_dir}/appliances/#{@arch}/#{@simple_name}/#{@simple_name}.ks" ]
+      task "appliance:#{@simple_name}:kickstart" => [ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks" ]
     end
 
     def read_repositories(appliance_definition)
 
       defs = { }
       defs['arch'] = Config.get.build_arch
-      defs['os_name'] = @appliance_config.os_name
-      defs['os_version'] = @appliance_config.os_version
+      defs['os_name'] = @config.os_name
+      defs['os_version'] = @config.os_version
 
       def defs.method_missing(sym,*args)
         self[ sym.to_s ]

@@ -36,6 +36,7 @@ module JBossCloud
       @dir_top = dir_top
       @dir_build = dir_build
       @build_arch = build_arch
+
       @@config = self
     end
 

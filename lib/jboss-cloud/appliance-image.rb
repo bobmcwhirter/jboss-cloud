@@ -37,9 +37,7 @@ module JBossCloud
 
         command = "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{tmp_dir} --cache=#{@rpms_cache_dir}/#{@config.arch} --config #{@kickstart_file} -o #{@build_dir}/appliances/#{@config.arch} --name #{simple_name} --vmem #{@config.mem_size} --vcpu #{@config.vcpu}"
 
-        puts command
-
-        #execute_command(  )
+        execute_command( command )
       end
 
       ApplianceVMXImage.new( xml_file )
