@@ -40,8 +40,8 @@ module JBossCloud
       end
 
       definition['repos'] = [
-        "repo --name=jboss-cloud --cost=10 --baseurl=file://#{@topdir}/RPMS/noarch",
-        "repo --name=jboss-cloud-#{@config.arch} --cost=10 --baseurl=file://#{@topdir}/RPMS/#{@config.arch}",
+        "repo --name=jboss-cloud --cost=10 --baseurl=file://#{Config.get.dir_root}/#{@topdir}/RPMS/noarch",
+        "repo --name=jboss-cloud-#{@config.arch} --cost=10 --baseurl=file://#{Config.get.dir_root}/#{@topdir}/RPMS/#{@config.arch}",
       ]
 
       definition['repos'] << "repo --name=extra-rpms --cost=1 --baseurl=file://#{Dir.pwd}/extra-rpms/noarch" if ( File.exist?( "extra-rpms" ) )
