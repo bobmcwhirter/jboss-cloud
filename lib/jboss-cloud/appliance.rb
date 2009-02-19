@@ -10,16 +10,30 @@ module JBossCloud
 
   class Appliance < Rake::TaskLib
 
-    def initialize( appliance_def, appliance_config )
+    def initialize( appliance_def )
       @build_dir        = Config.get.dir_build
       @topdir           = Config.get.dir_top
       @rpms_cache_dir   = Config.get.dir_rpms_cache
       @appliance_def    = appliance_def
-      @version          = Config.get.version
-      @release          = Config.get.release
-      @arch             = appliance_config.arch
-      @appliance_config = appliance_config
+      @appliance_name   = File.basename( appliance_def, '.appl' )
+      @config           = build_config(@appliance_name)
+
       define
+    end
+
+    def build_config(name)
+      config = ApplianceConfig.new
+      
+      config.name           = name
+      config.arch           = ENV['ARCH'].nil? ? Config.get.build_arch : ENV['ARCH']
+      config.disk_size      = ENV['DISK_SIZE'].nil? ? 2048 : ENV['DISK_SIZE'].to_i
+      config.mem_size       = ENV['MEM_SIZE'].nil? ? 1024 : ENV['MEM_SIZE'].to_i
+      config.network_name   = ENV['NETWORK_NAME'].nil? ? "NAT" : ENV['NETWORK_NAME']
+      config.os_name        = ENV['OS_NAME'].nil? ? "fedora" : ENV['OS_NAME']
+      config.os_version     = ENV['OS_VERSION'].nil? ? "10" : ENV['OS_VERSION']
+      config.vcpu           = ENV['VCPU'].nil? ? 1 : ENV['VCPU'].to_i
+
+      config
     end
 
     def define
@@ -27,12 +41,11 @@ module JBossCloud
     end
 
     def define_precursors
-      simple_name = File.basename( @appliance_def, ".appl" )
-      JBossCloud::ApplianceSource.new( @build_dir, @topdir, File.dirname( @appliance_def ), @version, @release, @arch )
-      JBossCloud::ApplianceSpec.new( @build_dir, @topdir, simple_name, @version, @release, @arch )
-      JBossCloud::ApplianceRPM.new( @topdir, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/#{simple_name}.spec", @version, @release )
-      JBossCloud::ApplianceKickstart.new( @appliance_config, [ simple_name ] )
-      JBossCloud::ApplianceImage.new( @build_dir, @rpms_cache_dir, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/#{simple_name}.ks", @version, @release, @arch )
+      JBossCloud::ApplianceSource.new( @build_dir, @topdir, File.dirname( @appliance_def ), Config.get.version, Config.get.release, @config.arch )
+      JBossCloud::ApplianceSpec.new( @build_dir, @topdir, @appliance_name, Config.get.version, Config.get.release, @config.arch )
+      JBossCloud::ApplianceRPM.new( @topdir, "#{@build_dir}/appliances/#{@config.arch}/#{@appliance_name}/#{@appliance_name}.spec", Config.get.version, Config.get.release )
+      JBossCloud::ApplianceKickstart.new( @config, [ @appliance_name ] )
+      JBossCloud::ApplianceImage.new( @config )
     end
 
   end

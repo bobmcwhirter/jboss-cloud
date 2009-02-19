@@ -65,7 +65,7 @@ module JBossCloud
      
       Config.new.init(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build)
     end
-
+    
     def define_rules
 
       if Config.get.arch == "i386" and Config.get.build_arch == "x86_64"
@@ -86,12 +86,7 @@ module JBossCloud
       end
 
       Dir[ "appliances/*/*.appl" ].each do |appliance_def|
-        appliance_name = File.basename( appliance_def, '.appl' )
-
-        appliance_config = ApplianceConfig.new(appliance_name, Config.get.build_arch)
-        appliance_config.disk_size = ENV['DISK_SIZE'].nil? ? 2048 : ENV['DISK_SIZE'].to_i
-
-        JBossCloud::Appliance.new( appliance_def, appliance_config )
+        JBossCloud::Appliance.new( appliance_def )
       end
 
       Dir[ "appliances/*.mappl" ].each do |multi_appliance_def|
