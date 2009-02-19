@@ -57,7 +57,10 @@ module JBossCloud
       vmx_data.gsub!( /#NAME#/ , @config.name )
       # replace guestOS informations to: linux or otherlinux-64, this seems to be the savests values
       vmx_data.gsub!( /#GUESTOS#/ , "#{@config.arch == "x86_64" ? "otherlinux-64" : "linux"}" )
-
+      # memory size
+      vmx_data.gsub!( /#MEM_SIZE#/ , @config.mem_size.to_s )
+      # memory size
+      vmx_data.gsub!( /#VCPU#/ , @config.vcpu.to_s )
       # network name
       vmx_data += "\nethernet0.networkName = \"#{@config.network_name}\""
 
