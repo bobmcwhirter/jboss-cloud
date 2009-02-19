@@ -2,11 +2,11 @@
 module JBossCloud
   class ApplianceRPM < JBossCloud::RPM
 
-    def initialize(topdir, spec_file, version, release)
-      @topdir = topdir
-      @spec_file = spec_file
-      @version = version
-      @release = release
+    def initialize( spec_file )
+      @spec_file    = spec_file
+      @topdir       = Config.get.dir_top
+      @version      = Config.get.version
+      @release      = Config.get.release
       define
     end
 
@@ -19,7 +19,6 @@ module JBossCloud
       task "rpm:#{simple_name}"=>[ rpm_file ]
 
       file rpm_file => [ @spec_file, "#{@topdir}/SOURCES/#{simple_name}-#{@version}.tar.gz", 'rpm:topdir' ] do
-        puts File.exists?("#{@topdir}/SOURCES/#{simple_name}-#{@version}.tar.gz")
         Dir.chdir( File.dirname( @spec_file ) ) do
           exit_status = execute_command "rpmbuild --define '_topdir #{Config.get.dir_root}/#{@topdir}' --target noarch -ba #{simple_name}.spec"
           unless exit_status

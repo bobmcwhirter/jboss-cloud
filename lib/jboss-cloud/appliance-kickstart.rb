@@ -18,6 +18,9 @@ module JBossCloud
 
     def define
 
+      kickstart_file         = "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks"
+      appliance_build_dir    = "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}"
+
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
       definition['disk_size']            = @config.disk_size
@@ -41,19 +44,16 @@ module JBossCloud
         "repo --name=jboss-cloud-#{@config.arch} --cost=10 --baseurl=file://#{@topdir}/RPMS/#{@config.arch}",
       ]
 
-      if ( File.exist?( "extra-rpms" ) )
-        definition['repos'] << "repo --name=extra-rpms --cost=1 --baseurl=file://#{Dir.pwd}/extra-rpms/noarch"
-      end
+      definition['repos'] << "repo --name=extra-rpms --cost=1 --baseurl=file://#{Dir.pwd}/extra-rpms/noarch" if ( File.exist?( "extra-rpms" ) )
 
       for  appliance_name in @appliance_names
         if ( File.exist?( "appliances/#{appliance_name}/#{appliance_name}.post" ) )
           definition['post_script'] += "\n## #{appliance_name}.post\n"
           definition['post_script'] += File.read( "appliances/#{appliance_name}/#{appliance_name}.post" )
         end
-      end
 
-      all_excludes = []
-      for  appliance_name in @appliance_names
+        all_excludes = []
+
         if ( File.exist?( "appliances/#{appliance_name}/#{appliance_name}.appl" ) )
           repo_lines, repo_excludes = read_repositories( "appliances/#{appliance_name}/#{appliance_name}.appl" )
           definition['repos'] += repo_lines
@@ -61,25 +61,38 @@ module JBossCloud
         end
       end
 
-      unless ( all_excludes.empty? )
-        definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}"
+      definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}" unless ( all_excludes.empty? )
+
+      file "#{appliance_build_dir}/base-pkgs.ks" => [ "kickstarts/base-pkgs.ks" ] do
+        FileUtils.cp( "kickstarts/base-pkgs.ks", "#{appliance_build_dir}/base-pkgs.ks" )
       end
 
-      directory "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}"
+      task "appliance:#{@simple_name}:config" do
+        config_file = "#{appliance_build_dir}/config.cfg"
 
-      file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}" ] do
-        template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
+        if File.exists?( config_file )
+          unless !@config.eql?( YAML.load_file( config_file ) )
+            FileUtils.rm_rf appliance_build_dir
+            FileUtils.mkdir_p appliance_build_dir
+          end
+        else
+          FileUtils.mkdir_p appliance_build_dir
+        end
 
-        erb = ERB.new( File.read( template ) )
-        File.open( "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
+        File.new( config_file, "w+").puts( @config.to_yaml )
       end
 
-      for appliance_name in @appliance_names
-        file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks"=>[ "rpm:#{appliance_name}" ]
+      for name in @appliance_names
+        file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{name}.ks"=>[ "rpm:#{name}" ]
       end
 
       desc "Build kickstart for #{@super_simple_name} appliance"
-      task "appliance:#{@simple_name}:kickstart" => [ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.ks" ]
+      task "appliance:#{@simple_name}:kickstart" => [ "appliance:#{@simple_name}:config", "#{appliance_build_dir}/base-pkgs.ks" ] do
+        template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
+        
+        File.open( kickstart_file, 'w' ) {|f| f.write( ERB.new( File.read( template ) ).result( definition.send( :binding ) ) ) }
+      end
+
     end
 
     def read_repositories(appliance_definition)

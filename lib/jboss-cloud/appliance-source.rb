@@ -22,7 +22,7 @@ module JBossCloud
 
       source_files = FileList.new( "#{@appliance_dir}/*/**" )
 
-      file "#{Config.get.dir_root}/#{@topdir}/SOURCES/#{@simple_name}-#{@version}.tar.gz"=>[ @appliance_build_dir, source_files, 'rpm:topdir' ].flatten do
+      file "#{@topdir}/SOURCES/#{@simple_name}-#{@version}.tar.gz"=>[ @appliance_build_dir, source_files, 'rpm:topdir' ].flatten do
         stage_directory = "#{@appliance_build_dir}/sources/#{@simple_name}-#{@version}/appliances"
         FileUtils.rm_rf stage_directory
         FileUtils.mkdir_p stage_directory

@@ -14,6 +14,15 @@ module JBossCloud
     attr_accessor :network_name
     attr_accessor :output_format
 
+    def hash
+      # without output_format!
+      "#{@name}-#{@arch}-#{@os_name}-#{@os_version}-#{@vcpu}-#{@mem_size}-#{@disk_size}-#{@network_name}".hash
+    end
+
+    def eql?(other)
+      hash == other.hash
+    end
+
   end
   class Config
     @@config = nil
@@ -26,16 +35,16 @@ module JBossCloud
     end
 
     def init(name, version, release, arch, build_arch, dir_rpms_cache, dir_src_cache, dir_root, dir_top, dir_build )
-      @name = name
-      @version = version
-      @release = release
-      @arch = arch
-      @dir_rpms_cache = dir_rpms_cache
-      @dir_src_cache = dir_src_cache
-      @dir_root = dir_root
-      @dir_top = dir_top
-      @dir_build = dir_build
-      @build_arch = build_arch
+      @name             = name
+      @version          = version
+      @release          = release
+      @arch             = arch
+      @dir_rpms_cache   = dir_rpms_cache
+      @dir_src_cache    = dir_src_cache
+      @dir_root         = dir_root
+      @dir_top          = dir_top
+      @dir_build        = dir_build
+      @build_arch       = build_arch
 
       @@config = self
     end

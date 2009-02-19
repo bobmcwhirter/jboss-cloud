@@ -24,15 +24,12 @@ module JBossCloud
 
       desc "Build #{super_simple_name} appliance."
       task "appliance:#{simple_name}"=>[ xml_file ]
-      
-      file "#{@build_dir}/appliances/#{@config.arch}/#{simple_name}/base-pkgs.ks" => [ "kickstarts/base-pkgs.ks" ] do
-        FileUtils.cp( "kickstarts/base-pkgs.ks", "#{@build_dir}/appliances/#{@config.arch}/#{simple_name}/base-pkgs.ks" )
-      end
 
       tmp_dir = "#{Dir.pwd}/#{@build_dir}/tmp"
       directory tmp_dir
 
-      file xml_file => [ @kickstart_file, "#{@build_dir}/appliances/#{@config.arch}/#{simple_name}/base-pkgs.ks", tmp_dir ] do
+      # here
+      file xml_file => [ "appliance:#{simple_name}:kickstart", tmp_dir ] do
         Rake::Task[ 'rpm:repodata:force' ].invoke
 
         command = "sudo PYTHONUNBUFFERED=1 appliance-creator -d -v -t #{tmp_dir} --cache=#{@rpms_cache_dir}/#{@config.arch} --config #{@kickstart_file} -o #{@build_dir}/appliances/#{@config.arch} --name #{simple_name} --vmem #{@config.mem_size} --vcpu #{@config.vcpu}"
