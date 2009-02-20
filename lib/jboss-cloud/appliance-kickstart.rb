@@ -33,7 +33,7 @@ module JBossCloud
       definition['arch']                 = @config.arch
       definition['post_script']          = ''
       definition['exclude_clause']       = ''
-      definition['appliance_names']      = @appliance_names
+      definition['appliance_names']      = @appliance_names.empty? ? @config.name : @appliance_names
       
       def definition.method_missing(sym,*args)
         self[ sym.to_s ]
