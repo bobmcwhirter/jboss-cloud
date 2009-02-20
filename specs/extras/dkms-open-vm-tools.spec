@@ -4,9 +4,9 @@
 ##  http://www.poolshark.org/src/dkms-open-vm-tools/dkms-open-vm-tools-0-1.2008.10.10.fc10.src.rpm
 ##
 
-%define tname open-vm-tools
-%define builddate 2009.01.21
-%define buildver 142982
+%define name open-vm-tools
+%define builddate 2009.02.18
+%define buildver 148847
 
 Name:      dkms-open-vm-tools
 Version:   0
@@ -15,7 +15,7 @@ Summary:   VMware Tools
 Group:     Applications/Multimedia
 License:   LGPLv2+
 URL:       http://open-vm-tools.sourceforge.net/
-Source0:   http://downloads.sourceforge.net/open-vm-tools/open-vm-tools-2009.01.21-142982.tar.gz
+Source0:   http://downloads.sourceforge.net/open-vm-tools/open-vm-tools-2009.02.18-148847.tar.gz
 Source1:   vmware-guest.init
 BuildRoot: %{_tmppath}/%{name}-%{builddate}-%{release}-root-%(%{__id_u} -n)
 
@@ -189,8 +189,10 @@ fi
 %attr(4755,root,root) /sbin/mount.vmhgfs
 #%attr(4755,root,root) %{_bindir}/vmware-user-suid-wrapper
 
-
 %changelog
+* Fri Feb 20 2009 Marek Goldmann <marek.goldmann@gmail.com> - 0.1.2009.02.18
+- Update to upstream build 148847
+
 * Mon Feb 2 2009 Marek Goldmann <marek.goldmann@gmail.com> - 0.1.2009.01.21
 - Update to upstream build 142982
 

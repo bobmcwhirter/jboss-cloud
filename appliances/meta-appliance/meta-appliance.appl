@@ -16,3 +16,4 @@ packages:
   - libicu-devel
   - httpd-devel
   - jboss-cloud-environment
+  - glib2-devel
