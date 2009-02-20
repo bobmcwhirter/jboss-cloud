@@ -19,7 +19,6 @@ module JBossCloud
 
       appliance_build_dir     = "#{@build_dir}/appliances/#{@config.arch}/#{@config.name}"
       kickstart_file          = "#{appliance_build_dir}/#{@config.name}.ks"
-      config_file             = "#{appliance_build_dir}/#{@config.name}.cfg"
       xml_file                = "#{appliance_build_dir}/#{@config.name}.xml"
       super_simple_name       = File.basename( @config.name, '-appliance' )
 

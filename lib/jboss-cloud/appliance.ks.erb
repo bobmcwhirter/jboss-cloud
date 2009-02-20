@@ -44,12 +44,11 @@ repo --cost=40 --name=f10-updates --mirrorlist=http://mirrors.fedoraproject.org/
 # Add custom post scripts after the base post.
 # 
 %post
-	/sbin/chkconfig --level 345 ace on
-	mkdir /etc/sysconfig/ace
-	touch /etc/sysconfig/ace/appliancename
-        <% for appliance_name in appliance_names %>
-	  echo <%= appliance_name %> >> /etc/sysconfig/ace/appliancename
-        <% end %>
-        <%= post_script %>
+    /sbin/chkconfig --level 345 ace on
+    mkdir /etc/sysconfig/ace
+    touch /etc/sysconfig/ace/appliancename
+    echo <%= appl_name %> >> /etc/sysconfig/ace/appliancename
+
+    <%= post_script %>
 %end
 

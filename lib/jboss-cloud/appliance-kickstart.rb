@@ -35,6 +35,7 @@ module JBossCloud
         definition['disk_size'] = 10240
       end
 
+      definition['appl_name']            = @config.name
       definition['post_script']          = ''
       definition['exclude_clause']       = ''
       definition['appliance_names']      = @appliance_names

@@ -29,7 +29,7 @@ module JBossCloud
       #JBossCloud::ApplianceRPM.new( @topdir, "#{@build_dir}/appliances/#{simple_name}/#{simple_name}.spec", @version, @release )
 
       JBossCloud::ApplianceKickstart.new( @config, @config.appliances )
-      #JBossCloud::ApplianceImage.new( @build_dir, @rpms_cache_dir, "#{@build_dir}/appliances/#{@arch}/#{simple_name}/#{simple_name}.ks", @version, @release, @arch )
+      JBossCloud::ApplianceImage.new( @config )
     end
 
   end
