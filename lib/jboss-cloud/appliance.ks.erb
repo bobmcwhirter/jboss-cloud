@@ -34,10 +34,13 @@ repo --cost=40 --name=f10-updates --mirrorlist=http://mirrors.fedoraproject.org/
 #
 #
 %packages --excludedocs --nobase
-    %include base-pkgs.ks
-    <% for appliance_name in appliance_names %>
-      <%= appliance_name %>
-    <% end %>
+
+%include base-pkgs.ks
+
+<% for appliance_name in appliance_names %>
+  <%= appliance_name %>
+<% end %>
+
 %end
 
 #
@@ -47,7 +50,10 @@ repo --cost=40 --name=f10-updates --mirrorlist=http://mirrors.fedoraproject.org/
     /sbin/chkconfig --level 345 ace on
     mkdir /etc/sysconfig/ace
     touch /etc/sysconfig/ace/appliancename
-    echo <%= appl_name %> >> /etc/sysconfig/ace/appliancename
+    
+    <% for appliance_name in appliance_names %>
+      echo <%= appliance_name %> >> /etc/sysconfig/ace/appliancename
+    <% end %>
 
     <%= post_script %>
 %end
