@@ -4,7 +4,7 @@
 ##  http://www.poolshark.org/src/dkms-open-vm-tools/dkms-open-vm-tools-0-1.2008.10.10.fc10.src.rpm
 ##
 
-%define name open-vm-tools
+%define tname open-vm-tools
 %define builddate 2009.02.18
 %define buildver 148847
 
@@ -24,11 +24,11 @@ ExclusiveArch: i386 i586 i686 x86_64
 BuildRequires: libdnet-devel
 BuildRequires: libdnet
 BuildRequires: libicu-devel
+BuildRequires: glib2-devel
 
 Requires(post):    dkms gcc desktop-file-utils
 Requires(preun):   dkms gcc
 Requires(postun) : desktop-file-utils
-
 
 %description
 The open-vm-tools are a subset of the VMware Tools, currently composed
@@ -187,6 +187,9 @@ fi
 %{_sysconfdir}/modprobe.d/*
 %{_usrsrc}/%{tname}-%{builddate}
 %attr(4755,root,root) /sbin/mount.vmhgfs
+%attr(4755,root,root) %{_libdir}/%{tname}/plugins/vmsvc/*.so
+%attr(4755,root,root) /usr/bin/vmtoolsd
+
 #%attr(4755,root,root) %{_bindir}/vmware-user-suid-wrapper
 
 %changelog
