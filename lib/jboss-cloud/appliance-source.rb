@@ -11,7 +11,7 @@ module JBossCloud
       @version               = Config.get.version
       @release               = Config.get.release
       @appliance_dir         = appliance_dir
-      @simple_name           = File.basename( appliance_dir )
+      @simple_name           = @config.name
       @super_simple_name     = File.basename( @simple_name, '-appliance' )
       @appliance_build_dir   = "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}"
       define
@@ -29,9 +29,6 @@ module JBossCloud
         FileUtils.cp_r( "#{@appliance_dir}/", stage_directory  )
         Dir.chdir( "#{@appliance_build_dir}/sources" ) do
           command = "tar zcvf #{Config.get.dir_root}/#{@topdir}/SOURCES/#{@simple_name}-#{@version}.tar.gz #{@simple_name}-#{@version}/"
-
-          puts command
-
           execute_command( command )
         end
       end

@@ -86,12 +86,27 @@ module JBossCloud
       end
 
       Dir[ "appliances/*/*.appl" ].each do |appliance_def|
-        JBossCloud::Appliance.new( appliance_def )
+        JBossCloud::Appliance.new( build_config( File.basename( appliance_def, '.appl' ) ), appliance_def )
       end
 
       Dir[ "appliances/*.mappl" ].each do |multi_appliance_def|
-        JBossCloud::MultiAppliance.new( Config.get.dir_build, "#{Config.get.dir_root}/#{Config.get.dir_top}", Config.get.dir_rpms_cache, multi_appliance_def, Config.get.version, Config.get.release, Config.get.build_arch )
+        JBossCloud::MultiAppliance.new( build_config( File.basename( multi_appliance_def, '.mappl' ) ), multi_appliance_def )
       end
+    end
+
+    def build_config(name)
+      config = ApplianceConfig.new
+
+      config.name           = name
+      config.arch           = ENV['ARCH'].nil? ? Config.get.build_arch : ENV['ARCH']
+      config.disk_size      = ENV['DISK_SIZE'].nil? ? 2048 : ENV['DISK_SIZE'].to_i
+      config.mem_size       = ENV['MEM_SIZE'].nil? ? 1024 : ENV['MEM_SIZE'].to_i
+      config.network_name   = ENV['NETWORK_NAME'].nil? ? "NAT" : ENV['NETWORK_NAME']
+      config.os_name        = ENV['OS_NAME'].nil? ? "fedora" : ENV['OS_NAME']
+      config.os_version     = ENV['OS_VERSION'].nil? ? "10" : ENV['OS_VERSION']
+      config.vcpu           = ENV['VCPU'].nil? ? 1 : ENV['VCPU'].to_i
+
+      config
     end
   end
 end

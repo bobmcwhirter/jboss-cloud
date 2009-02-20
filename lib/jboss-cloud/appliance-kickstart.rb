@@ -73,7 +73,7 @@ module JBossCloud
       end
 
       file config_file => [ "appliance:#{@simple_name}:config" ] do
-        File.new( config_file, "w") {|f| f.write( @config.to_yaml ) }
+        File.open( config_file, "w") {|f| f.write( @config.to_yaml ) }
       end
 
       file "appliance:#{@simple_name}:config" do

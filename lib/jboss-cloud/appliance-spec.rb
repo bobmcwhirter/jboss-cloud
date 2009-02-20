@@ -12,7 +12,7 @@ module JBossCloud
       @topdir             = Config.get.dir_top
       @version            = Config.get.version
       @release            = Config.get.release
-      @simple_name        = simple_name
+      @simple_name        = @config.name
       @super_simple_name  = File.basename( simple_name, "-appliance" )
 
       define

@@ -1,7 +1,7 @@
 module JBossCloud
   class ApplianceConfig
     def initialize
-
+      @appliances = Array.new
     end
 
     attr_accessor :name
@@ -13,10 +13,12 @@ module JBossCloud
     attr_accessor :disk_size
     attr_accessor :network_name
     attr_accessor :output_format
+    attr_accessor :appliances
 
+    # used to checking if configuration diffiers from previous in appliance-kickstart
     def hash
       # without output_format!
-      "#{@name}-#{@arch}-#{@os_name}-#{@os_version}-#{@vcpu}-#{@mem_size}-#{@disk_size}-#{@network_name}".hash
+      "#{@name}-#{@arch}-#{@os_name}-#{@os_version}-#{@vcpu}-#{@mem_size}-#{@disk_size}-#{@network_name}-#{@appliances.join("-")}".hash
     end
 
     def eql?(other)
