@@ -1,6 +1,6 @@
 Summary: JBoss mod_cluster for Apache httpd
 Name: mod_cluster
-Version: 1.0.0.Beta3
+Version: 1.0.0.Beta4
 Release: 1
 License: LGPL
 BuildRoot: %{_tmppath}/%{name}-buildroot
@@ -99,6 +99,9 @@ popd > /dev/null
 /
 
 %changelog
+* Fri Feb 20 2009 Marek Goldmann 1.0.0.Beta4
+- Update to 1.0.0.Beta4
+
 * Wed Feb 04 2009 Marek Goldmann 1.0.0.Beta3
 - Commenting proxy_balancer_module
 

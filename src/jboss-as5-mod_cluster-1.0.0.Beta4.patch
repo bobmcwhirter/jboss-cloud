@@ -1,0 +1,44 @@
+diff -Naur mod_cluster-1.0.0.Beta4-src-ssl/srclib/mod_cluster/pom.xml mod_cluster-1.0.0.Beta4-src-ssl-work/srclib/mod_cluster/pom.xml
+--- mod_cluster-1.0.0.Beta4-src-ssl/srclib/mod_cluster/pom.xml	2009-02-13 16:29:12.000000000 +0100
++++ mod_cluster-1.0.0.Beta4-src-ssl-work/srclib/mod_cluster/pom.xml	2009-02-20 11:39:10.000000000 +0100
+@@ -18,7 +18,32 @@
+     <connection>scm:svn:https://svn.jboss.org/repos/jbossnative/tags/mod_cluster/1.0.0.Beta4</connection>
+     <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossnative/tags/mod_cluster/1.0.0.Beta4</developerConnection>
+   </scm>
+-  
++
++  <repositories>
++    <repository>
++      <id>repository.jboss.org</id>
++      <name>JBoss Releases Repository</name>
++      <url>http://repository.jboss.org/maven2</url>
++     <releases>
++        <enabled>true</enabled>
++      </releases>
++      <snapshots>
++        <enabled>false</enabled>
++      </snapshots>
++    </repository>
++    <repository>
++      <id>snapshots.jboss.org</id>
++      <name>JBoss Snapshots Repository</name>
++      <url>http://snapshots.jboss.org/maven2</url>
++      <releases>
++        <enabled>false</enabled>
++      </releases>
++      <snapshots>
++       <enabled>true</enabled>
++      </snapshots>
++    </repository>
++  </repositories>
++
+   <build>
+     <resources>
+       <resource>
+@@ -404,4 +429,4 @@
+       </build>
+     </profile>
+   </profiles>
+-</project>
+\ No newline at end of file
++</project>
