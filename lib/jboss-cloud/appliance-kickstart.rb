@@ -29,17 +29,11 @@ module JBossCloud
       definition = { }
       #definition['local_repository_url'] = "file://#{@topdir}/RPMS/noarch"
       definition['disk_size']            = @config.disk_size
-
-      # if we're building meta-appliance and disk size is less than 10GB
-      if @simple_name == "meta-appliance" and @config.disk_size < 10240
-        definition['disk_size'] = 10240
-      end
-
       definition['appl_name']            = @config.name
+      definition['arch']                 = @config.arch
       definition['post_script']          = ''
       definition['exclude_clause']       = ''
       definition['appliance_names']      = @appliance_names
-      definition['arch']                 = @config.arch
       
       def definition.method_missing(sym,*args)
         self[ sym.to_s ]
@@ -67,7 +61,7 @@ module JBossCloud
         end
       end
 
-      definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}" unless ( all_excludes.empty? )
+      definition['exclude_clause'] = "--excludepkgs=#{all_excludes.join(',')}" unless ( all_excludes.nil? or all_excludes.empty? )
 
       file "#{appliance_build_dir}/base-pkgs.ks" => [ "kickstarts/base-pkgs.ks" ] do
         FileUtils.cp( "kickstarts/base-pkgs.ks", "#{appliance_build_dir}/base-pkgs.ks" )
@@ -87,13 +81,11 @@ module JBossCloud
         FileUtils.mkdir_p appliance_build_dir
       end
 
-      for name in @appliance_names
-        file kickstart_file => [ config_file, "#{appliance_build_dir}/base-pkgs.ks", "rpm:#{name}" ] do
-          template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
+      file kickstart_file => [ config_file, "#{appliance_build_dir}/base-pkgs.ks" ] do
+        template = File.dirname( __FILE__ ) + "/appliance.ks.erb"
 
-          File.open( kickstart_file, 'w' ) {|f| f.write( ERB.new( File.read( template ) ).result( definition.send( :binding ) ) ) }
-        end
-      end
+        File.open( kickstart_file, 'w' ) {|f| f.write( ERB.new( File.read( template ) ).result( definition.send( :binding ) ) ) }
+      end      
 
       desc "Build kickstart for #{@super_simple_name} appliance"
       task "appliance:#{@simple_name}:kickstart" => [ kickstart_file ]
@@ -103,9 +95,9 @@ module JBossCloud
     def read_repositories(appliance_definition)
 
       defs = { }
-      defs['arch'] = Config.get.build_arch
-      defs['os_name'] = @config.os_name
-      defs['os_version'] = @config.os_version
+      defs['arch']        = @config.arch
+      defs['os_name']     = @config.os_name
+      defs['os_version']  = @config.os_version
 
       def defs.method_missing(sym,*args)
         self[ sym.to_s ]

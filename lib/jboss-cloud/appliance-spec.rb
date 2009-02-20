@@ -6,43 +6,41 @@ module JBossCloud
 
   class ApplianceSpec < Rake::TaskLib
 
-    def initialize( config, simple_name )
+    def initialize( config )
       @config             = config
-      @build_dir          = Config.get.dir_build
-      @topdir             = Config.get.dir_top
-      @version            = Config.get.version
-      @release            = Config.get.release
-      @simple_name        = @config.name
-      @super_simple_name  = File.basename( simple_name, "-appliance" )
+      @super_simple_name  = File.basename( @config.name, "-appliance" )
 
       define
     end
 
     def define
-      definition = YAML.load_file( "appliances/#{@simple_name}/#{@simple_name}.appl" )
-      definition['name']    = @simple_name
-      definition['version'] = @version
-      definition['release'] = @release
+
+      appliance_build_dir    = "#{Config.get.dir_build}/appliances/#{@config.arch}/#{@config.name}"
+
+      definition = YAML.load_file( "appliances/#{@config.name}/#{@config.name}.appl" )
+      definition['name']    = @config.name
+      definition['version'] = Config.get.version
+      definition['release'] = Config.get.release
       def definition.method_missing(sym,*args)
         self[ sym.to_s ]
       end
 
-      file "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.spec"=>[ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}" ] do
+      file "#{appliance_build_dir}/#{@config.name}.spec"=>[ appliance_build_dir ] do
         template = File.dirname( __FILE__ ) + "/appliance.spec.erb"
 
         erb = ERB.new( File.read( template ) )
-        File.open( "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.spec", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
+        File.open( "#{appliance_build_dir}/#{@config.name}.spec", 'w' ) {|f| f.write( erb.result( definition.send( :binding ) ) ) }
       end
 
       for p in definition['packages'] 
         if ( JBossCloud::RPM.provides.keys.include?( p ) )
 
-          file "#{@topdir}/RPMS/noarch/#{@simple_name}-#{@version}-#{@release}.noarch.rpm"=>[ "rpm:#{p}" ] 
+          file "#{Config.get.dir_top}/RPMS/noarch/#{@config.name}-#{Config.get.version_with_release}.noarch.rpm"=>[ "rpm:#{p}" ]
         end
       end
  
       desc "Build RPM spec for #{@super_simple_name} appliance"
-      task "appliance:#{@simple_name}:spec" => [ "#{@build_dir}/appliances/#{@config.arch}/#{@simple_name}/#{@simple_name}.spec" ]
+      task "appliance:#{@config.name}:spec" => [ "#{appliance_build_dir}#{@config.name}.spec" ]
     end
 
   end

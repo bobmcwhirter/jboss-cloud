@@ -28,8 +28,8 @@ module JBossCloud
       #JBossCloud::ApplianceSpec.new( @config, @multi_appliance_def )
       #JBossCloud::ApplianceRPM.new( @topdir, "#{@build_dir}/appliances/#{simple_name}/#{simple_name}.spec", @version, @release )
 
-      JBossCloud::ApplianceKickstart.new( @config, @config.appliances )
-      JBossCloud::ApplianceImage.new( @config )
+      JBossCloud::ApplianceKickstart.new( @config, [ @config.appliances ] )
+      JBossCloud::ApplianceImage.new( @config, [ @config.appliances ] )
     end
 
   end
