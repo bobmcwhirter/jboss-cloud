@@ -13,6 +13,5 @@ trap("INT"){
 JBossCloudWizard::App.new(
   :name            => JBossCloudConfig.config.name,
   :version         => JBossCloudConfig.config.version,
-  :release         => JBossCloudConfig.config.release,
-  :dir_appliances  => "/home/goldmann/jboss-cloud/appliances"
+  :release         => JBossCloudConfig.config.release
 ).run
