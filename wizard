@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby 
 
-require 'jboss-cloud'
+require 'jboss-cloud-config'
 
 $: << 'lib/jboss-cloud-support/lib'
 
@@ -10,5 +10,9 @@ trap("INT"){
   exit(0)
 }
 
-app = JBossCloudWizard::App.new(ARGV, STDIN)
-app.run
+JBossCloudWizard::App.new(
+  :name            => JBossCloudConfig.config.name,
+  :version         => JBossCloudConfig.config.version,
+  :release         => JBossCloudConfig.config.release,
+  :dir_appliances  => "/home/goldmann/jboss-cloud/appliances"
+).run
