@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby 
 
-$: << 'lib'
+require 'jboss-cloud'
 
-require 'jboss-cloud/wizard/app'
+$: << 'lib/jboss-cloud-support/lib'
+
+require 'wizard/app'
 
 trap("INT"){
   exit(0)
