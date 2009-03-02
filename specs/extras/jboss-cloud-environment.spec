@@ -1,13 +1,13 @@
-%define maven_version 2.0.9
+%define maven_version 2.0.10
 
 Summary: JBoss Cloud environment
 Name: jboss-cloud-environment
-Version: 1.0.0.Beta2
+Version: 1.0.0.Beta3
 Release: dev
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://www.apache.org/dist/maven/binaries/apache-maven-2.0.9-bin.tar.gz
+Source0: http://www.apache.org/dist/maven/binaries/apache-maven-2.0.10-bin.tar.gz
 Source1: jboss-cloud-environment-sudo-oddthesis-user.patch
 BuildRoot: /tmp/%{name}
 
@@ -50,4 +50,6 @@ patch -s /etc/sudoers < /opt/jboss-cloud/patches/jboss-cloud-environment-sudo-od
 %defattr(-,root,root)
 /
 
-
+%changelog
+* Mon Mar 02 2009 Marek Goldmann 1.0.0.Beta3
+- Maven version upgrade
