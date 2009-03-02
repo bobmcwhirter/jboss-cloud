@@ -4,7 +4,7 @@ require 'jboss-cloud-config'
 
 $: << 'lib/jboss-cloud-support/lib'
 
-require 'wizard/app'
+require 'jboss-cloud-wizard/app'
 
 trap("INT"){
   exit(0)
