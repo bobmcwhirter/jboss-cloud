@@ -1,16 +1,16 @@
 
-#%define version 5.0.0.GA
+#%define version 5.0.1.GA
 
 Summary: JBoss 
 Name: jboss-as5
-Version: 5.0.0.GA
+Version: 5.0.1.GA
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
 Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
 Source1: jboss-as5.init
-Patch: jboss-as5-cloud-gossip.patch
+Patch: jboss-as5-%{version}-cloud-gossip.patch
 BuildRoot: /tmp/jboss-%{version}
 
 %define runuser jboss
@@ -52,4 +52,6 @@ JBOSS_SHELL=/bin/bash
 #%attr(0755,root,root) %{_initrddir}/%{name}
 #%attr(0755,root,root) /etc/jboss-as5.conf
 
-
+%changelog
+* Tue Mar 03 2009 Marek Goldmann 5.0.1.GA-1
+- JBoss AS version upgrade to 5.0.1.GA

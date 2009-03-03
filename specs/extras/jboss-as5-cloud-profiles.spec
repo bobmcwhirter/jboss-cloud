@@ -1,15 +1,15 @@
 
-%define jboss_version 5.0.0.GA
+%define jboss_version 5.0.1.GA
 %define __jar_repack %{nil}
 
 Summary: JBoss Cloud profiles
 Name: jboss-as5-cloud-profiles
-Version: 1.0.0.Beta2
+Version: 1.0.0.Beta3
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-5.0.0.GA-jdk6.zip
+Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-5.0.1.GA-jdk6.zip
 Requires: jboss-as5
 BuildRoot: /tmp/jboss-cloud-profiles-%{jboss_version}
 
@@ -36,4 +36,6 @@ rm -Rf $RPM_BUILD_ROOT
 %defattr(-,jboss,jboss)
 /
 
-
+%changelog
+* Tue Mar 03 2009 Marek Goldmann 5.0.1.GA-1
+- JBoss AS version upgrade to 5.0.1.GA
