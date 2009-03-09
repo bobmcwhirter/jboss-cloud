@@ -4,7 +4,7 @@ $: << 'lib/jboss-cloud-support/lib'
 
 require 'jboss-cloud/image-builder'
 
-JBossCloud::ImageBuilder.setup(
+JBossCloud::ImageBuilder.new(
   :name    => JBossCloudConfig.config.name,
   :version => JBossCloudConfig.config.version,
   :release => JBossCloudConfig.config.release
