@@ -5,4 +5,6 @@ sources-cache
 extra-rpms
 build
 *.pyc
+.project
+.loadpath
 

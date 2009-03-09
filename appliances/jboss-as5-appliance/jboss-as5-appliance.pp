@@ -23,20 +23,18 @@
 import "appliance_base"
 import "banners"
 import "firewall"
-import "console"
 import "ssh"
 import "jboss-as5-appliance"
 
 # Information about our appliance
-$appliance_name = "JBoss AS5 Appliance"
-$appliance_version = "1.0.0.Beta2"
+$appliance_name = "<%= appliance_summary %>"
+$appliance_version = "<%= appliance_version %>"
 
 # Configuration
 appliance_base::setup{$appliance_name:}
 appliance_base::enable_updates{$appliance_name:}
 banners::all{$appliance_name:}
 firewall::setup{$appliance_name: status=>"disabled"}
-console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
 include jboss-as5::appliance

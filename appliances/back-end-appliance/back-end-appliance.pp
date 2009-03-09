@@ -16,11 +16,8 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
 # Author: Bryan Kearney <bkearney@redhat.com>
+# Author: Marek Goldmann <marek.goldmann@jboss.org>
 #--
-
-#
-# base thincrust appliance
-#
 
 # Modules used by the appliance
 import "appliance_base"

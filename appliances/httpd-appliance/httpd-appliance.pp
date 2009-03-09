@@ -26,20 +26,18 @@
 import "appliance_base"
 import "banners"
 import "firewall"
-import "console"
 import "ssh"
 import "httpd-appliance"
 
 # Information about our appliance
-$appliance_name = "Apache httpd with JBoss mod_cluster Appliance"
-$appliance_version = "1.0.0.Beta2"
+$appliance_name = "<%= appliance_summary %>"
+$appliance_version = "<%= appliance_version %>"
 
 # Configuration
 appliance_base::setup{$appliance_name:}
 appliance_base::enable_updates{$appliance_name:}
 banners::all{$appliance_name:}
 firewall::setup{$appliance_name: status=>"disabled"}
-console::site{$appliance_name: content_template=>"content.erb"}
 ssh::setup{$appliance_name:}
 
 include httpd::appliance

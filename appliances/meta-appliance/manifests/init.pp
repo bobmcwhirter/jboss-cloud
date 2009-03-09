@@ -1,2 +1,0 @@
-
-import "meta-appliance/appliance"
