@@ -1,1 +1,3 @@
 /sbin/chkconfig --level 234 jboss-as5 on
+/bin/sed "s/-Xmx512m/-Xmx#JBOSS_XMX#m/" -i /opt/jboss-as5/bin/run.conf
+/bin/sed "s/-Xms128m/-Xms#JBOSS_XMS#m/" -i /opt/jboss-as5/bin/run.conf
