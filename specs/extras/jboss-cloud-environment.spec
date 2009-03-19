@@ -20,6 +20,9 @@ JBoss Cloud environment. Required tools and source code for building appliances.
 
 %install
 /usr/bin/git clone git://github.com/bobmcwhirter/jboss-cloud.git $RPM_BUILD_ROOT/opt/jboss-cloud/sources
+cd $RPM_BUILD_ROOT/opt/jboss-cloud/sources
+/usr/bin/git submodule init
+/usr/bin/git submodule update
 
 mkdir -p $RPM_BUILD_ROOT/opt/jboss-cloud/tools/apache-maven-%{maven_version}
 mkdir -p $RPM_BUILD_ROOT/opt/jboss-cloud/patches
