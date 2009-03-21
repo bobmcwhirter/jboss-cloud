@@ -4,6 +4,8 @@ summary: PostGIS
 repos:
   postgresql:
     baseurl: http://yum.pgsqlrpms.org/8.3/<%= os_name %>/<%= os_name %>-<%= os_version_stable %>-<%= arch %>/
+    filters:
+      - postgresql*
 
 packages:
   - postgresql
