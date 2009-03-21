@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby 
 
-require 'jboss-cloud-config'
-
 $: << 'lib/jboss-cloud-support/lib'
 
 require 'jboss-cloud-wizard/app'
@@ -10,8 +8,4 @@ trap("INT"){
   exit(0)
 }
 
-JBossCloudWizard::App.new(
-  :name            => JBossCloudConfig.config.name,
-  :version         => JBossCloudConfig.config.version,
-  :release         => JBossCloudConfig.config.release
-).run
+JBossCloudWizard::App.new.run
