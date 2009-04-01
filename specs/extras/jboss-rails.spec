@@ -1,12 +1,12 @@
 
 Summary: JBoss Rails
 Name: jboss-rails
-Version: 1.0.0.Beta4
+Version: 1.0.0.Beta5
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://repo.oddthesis.org/maven2/org/jboss/rails/jboss-rails/1.0.0.Beta4/jboss-rails-%{version}-deployer.jar
+Source0: http://repo.oddthesis.org/maven2/org/jboss/rails/jboss-rails/%{version}/jboss-rails-%{version}-deployer.jar
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
