@@ -1,13 +1,13 @@
-%define maven_version 2.0.10
+%define maven_version 2.1.0
 
-Summary:        JBoss Cloud environment
+Summary:        JBoss-Cloud environment
 Name:           jboss-cloud-environment
 Version:        1.0.0.Beta3
-Release:        dev
+Release:        1
 License:        LGPL
 BuildArch:      noarch
 Group:          Applications/System
-Source0:        http://www.apache.org/dist/maven/binaries/apache-maven-2.0.10-bin.tar.gz
+Source0:        http://www.apache.org/dist/maven/binaries/apache-maven-2.1.0-bin.tar.gz
 Source1:        jboss-cloud-environment-sudo-oddthesis-user.patch
 Source2:        http://rubyforge.org/frs/download.php/52301/net-ssh-2.0.11.gem
 Source3:        http://rubyforge.org/frs/download.php/51130/net-sftp-2.0.2.gem     
@@ -16,7 +16,7 @@ Requires:       git
 Requires:       rubygems
 
 %description
-JBoss Cloud environment. Required tools and source code for building appliances.
+JBoss-Cloud environment. Required tools and source code for building appliances.
 
 %prep
 %setup -n apache-maven-%{maven_version}
@@ -64,5 +64,8 @@ patch -s /etc/sudoers < /opt/jboss-cloud/patches/jboss-cloud-environment-sudo-od
 /
 
 %changelog
+* Fri Apr 03 2009 Marek Goldmann 1.0.0.Beta3-1
+- Maven version upgrade to 2.1.0
+
 * Mon Mar 02 2009 Marek Goldmann 1.0.0.Beta3
 - Maven version upgrade
