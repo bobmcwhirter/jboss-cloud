@@ -4,6 +4,7 @@ summary: Appliance build environment
 packages:
   - git
   - gcc-c++
+  - make
   - wget
   - rpmdevtools
   - java-1.6.0-openjdk-devel

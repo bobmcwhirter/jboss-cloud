@@ -10,7 +10,12 @@ Group:          Applications/System
 Source0:        http://www.apache.org/dist/maven/binaries/apache-maven-2.1.0-bin.tar.gz
 Source1:        jboss-cloud-environment-sudo-oddthesis-user.patch
 Source2:        http://rubyforge.org/frs/download.php/52301/net-ssh-2.0.11.gem
-Source3:        http://rubyforge.org/frs/download.php/51130/net-sftp-2.0.2.gem     
+Source3:        http://rubyforge.org/frs/download.php/51130/net-sftp-2.0.2.gem
+Source4:        http://rubyforge.org/frs/download.php/52464/xml-simple-1.0.12.gem
+Source5:        http://rubyforge.org/frs/download.php/21724/builder-2.1.2.gem
+Source6:        http://rubyforge.org/frs/download.php/52548/mime-types-1.16.gem
+Source7:        http://rubyforge.org/frs/download.php/39375/aws-s3-0.5.1.gem
+Source8:        http://rubyforge.org/frs/download.php/52588/amazon-ec2-0.3.6.gem
 BuildRoot:      /tmp/%{name}
 Requires:       git
 Requires:       rubygems
@@ -36,6 +41,11 @@ cp -R %{_topdir}/BUILD/apache-maven-%{maven_version} $RPM_BUILD_ROOT/opt/jboss-c
 cp %{SOURCE1} $RPM_BUILD_ROOT/opt/jboss-cloud/patches/
 cp %{SOURCE2} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
 cp %{SOURCE3} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
+cp %{SOURCE4} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
+cp %{SOURCE5} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
+cp %{SOURCE6} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
+cp %{SOURCE7} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
+cp %{SOURCE8} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
 
 %clean
 rm -Rf $RPM_BUILD_ROOT
@@ -48,6 +58,11 @@ rm -Rf $RPM_BUILD_ROOT
 # install additional gems
 /usr/bin/gem install -q /opt/jboss-cloud/tools/gems/net-ssh-2.0.11.gem
 /usr/bin/gem install -q /opt/jboss-cloud/tools/gems/net-sftp-2.0.2.gem
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/xml-simple-1.0.12.gem
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/builder-2.1.2.gem
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/mime-types-1.16.gem
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/aws-s3-0.5.1.gem
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/amazon-ec2-0.3.6.gem
 
 patch -s /etc/sudoers < /opt/jboss-cloud/patches/jboss-cloud-environment-sudo-oddthesis-user.patch
 
