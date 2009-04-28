@@ -10,6 +10,7 @@ BuildArch: noarch
 Group: Applications/System
 Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
 Source1: jboss-as5.init
+Requires: shadow-utils
 Patch: jboss-as5-%{version}-cloud-gossip.patch
 BuildRoot: /tmp/jboss-%{version}
 
