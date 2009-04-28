@@ -1,76 +1,58 @@
+%define mod_cluster_arch 32
+
+%ifarch x86_64
+	%define mod_cluster_arch 64
+%endif
+
 Summary: JBoss mod_cluster for Apache httpd
 Name: mod_cluster
 Version: 1.0.0.CR1
-Release: 1
+Release: 2
 License: LGPL
 BuildRoot: %{_tmppath}/%{name}-buildroot
 Group: Applications/System
 BuildRequires: httpd-devel >= 2.2.8
 Requires: httpd-devel >= 2.2.8
-Source0: http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-src-ssl.tar.gz
-Source1: mod_cluster.conf
-
-%define __jar_repack %{nil}
+Source: http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/1.0.0.CR1/mod_cluster-%{version}-linux2-x86-so.tar.gz
+Source1: http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/1.0.0.CR1/mod_cluster-%{version}-linux2-x64-so.tar.gz
+Source2: mod_cluster.conf
 
 %description
 JBoss mod_cluster for Apache httpd
 
 %prep
-cd %{_topdir}/BUILD
-rm -rf mod_cluster-%{version}-src-ssl
-tar zxvf %{_topdir}/SOURCES/mod_cluster-%{version}-src-ssl.tar.gz mod_cluster-%{version}-src-ssl/srclib/mod_cluster/native
-
-if [ $? -ne 0 ]; then
-  exit $?
-fi
-cd mod_cluster-%{version}-src-ssl
-chmod -R a+rX,g-w,o-w .
+%setup -T -b 0 -c -n %{name}-32
+%setup -T -b 1 -c -n %{name}-64
 
 %install
 
-%define apxs_file /usr/sbin/apxs
+cd %{_topdir}/BUILD
+
 %define httpd_modules_dir /usr/lib/httpd/modules
 
 %ifarch x86_64
 	%define httpd_modules_dir /usr/lib64/httpd/modules
 %endif
 
-cd mod_cluster-%{version}-src-ssl
-cd srclib/mod_cluster/native/
+modules=( mod_advertise mod_manager mod_proxy_cluster mod_slotmem )
 
-modules=( mod_manager mod_proxy_cluster mod_slotmem )
-allmodules=( advertise mod_manager mod_proxy_cluster mod_slotmem )
+# mod_proxy_ajp mod_proxy_http
 
-# mod_advertise
-cd advertise
-/bin/sh buildconf --enable-advertise
-./configure --with-apxs=%{apxs_file}
-make
-
-cd ..
-
-# rest of modules
-for module in ${modules[@]} ; do
-  pushd ${module}
-  /bin/sh buildconf
-  ./configure --with-apxs=%{apxs_file}
-  make
-  popd
-done
+pushd %{name}-%{mod_cluster_arch}
 
 install -d -m 755 $RPM_BUILD_ROOT%{httpd_modules_dir}
-for module in ${allmodules[@]} ; do
-  pushd ${module}
-  cp *.so $RPM_BUILD_ROOT%{httpd_modules_dir}
-  popd
+
+for module in ${modules[@]} ; do
+  cp ${module}.so $RPM_BUILD_ROOT%{httpd_modules_dir}
 done
 
+popd
+
 install -d -m 755 $RPM_BUILD_ROOT/etc/httpd/conf.d
-cp %{SOURCE1} $RPM_BUILD_ROOT/etc/httpd/conf.d/
+cp %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/conf.d/
 
 %clean
 rm -Rf $RPM_BUILD_ROOT
-
 
 %pre
 
@@ -98,6 +80,9 @@ popd > /dev/null
 /
 
 %changelog
+* Tue Apr 28 2009 Marek Goldmann 1.0.0.CR1
+- Using compiled modules
+
 * Thu Mar 26 2009 Marek Goldmann 1.0.0.CR1
 - Update to 1.0.0.CR1
 
