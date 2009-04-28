@@ -6,6 +6,7 @@ packages:
   - gcc-c++
   - make
   - wget
+  - expect
   - rpmdevtools
   - java-1.6.0-openjdk-devel
   - autoconf
