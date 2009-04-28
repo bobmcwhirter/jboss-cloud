@@ -1,12 +1,12 @@
-
 Summary: JBoss Rails
 Name: jboss-rails
-Version: 1.0.0.Beta5
+Version: 1.0.0.Beta6
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
 Source0: http://repo.oddthesis.org/maven2/org/jboss/rails/jboss-rails/%{version}/jboss-rails-%{version}-deployer.jar
+Requires: jboss-as5
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
@@ -35,4 +35,6 @@ rm -Rf $RPM_BUILD_ROOT
 %defattr(-,jboss,jboss)
 /
 
-
+%changelog
+* Tue Apr 28 2009 Marek Goldmann 1.0.0.Beta6
+- Upgrade to Beta6
