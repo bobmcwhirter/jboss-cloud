@@ -2,7 +2,7 @@
 
 Summary:        JBoss-Cloud environment
 Name:           jboss-cloud-environment
-Version:        1.0.0.Beta4
+Version:        1.0.0.Beta3
 Release:        1
 License:        LGPL
 BuildArch:      noarch
@@ -29,8 +29,8 @@ JBoss-Cloud environment. Required tools and source code for building appliances.
 /bin/rm -rf %{_topdir}/BUILD/jboss-cloud/sources
 
 %install
-/usr/bin/git clone git://github.com/bobmcwhirter/jboss-cloud.git $RPM_BUILD_ROOT/mnt/jboss-cloud
-cd $RPM_BUILD_ROOT/mnt/jboss-cloud
+/usr/bin/git clone git://github.com/bobmcwhirter/jboss-cloud.git $RPM_BUILD_ROOT/opt/jboss-cloud/sources
+cd $RPM_BUILD_ROOT/opt/jboss-cloud/sources
 /usr/bin/git submodule init
 /usr/bin/git submodule update
 
