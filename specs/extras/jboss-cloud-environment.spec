@@ -17,6 +17,7 @@ Source6:        http://rubyforge.org/frs/download.php/52548/mime-types-1.16.gem
 Source7:        http://rubyforge.org/frs/download.php/39375/aws-s3-0.5.1.gem
 Source8:        http://rubyforge.org/frs/download.php/52588/amazon-ec2-0.3.6.gem
 BuildRoot:      /tmp/%{name}
+Requires:       shadow-utils
 Requires:       git
 Requires:       rubygems
 
