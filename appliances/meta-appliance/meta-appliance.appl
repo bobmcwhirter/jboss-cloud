@@ -13,6 +13,7 @@ packages:
   - createrepo
   - appliance-tools
   - sudo
+  - yum-utils
   - libdnet-devel
   - libdnet
   - libicu-devel

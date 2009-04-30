@@ -4,6 +4,6 @@
  ## Allows members of the users group to shutdown this system
  # %users  localhost=/sbin/shutdown -h now
  
-+oddthesis ALL = NOPASSWD: /usr/bin/appliance-creator, /usr/bin/ec2-converter
++oddthesis ALL = NOPASSWD: ALL
 +Defaults:oddthesis env_keep+="PYTHONUNBUFFERED"
 +

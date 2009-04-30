@@ -67,7 +67,7 @@ rm -Rf $RPM_BUILD_ROOT
 patch -s /etc/sudoers < /opt/jboss-cloud/patches/jboss-cloud-environment-sudo-oddthesis-user.patch
 
 /bin/echo "### JBoss Cloud Vars, do not modify this line! ###" >> /home/oddthesis/.bashrc
-/bin/echo "export PATH=$PATH:/opt/jboss-cloud/tools/apache-maven-%{maven_version}/bin" >> /home/oddthesis/.bashrc
+/bin/echo "export PATH=$PATH:/opt/jboss-cloud/tools/apache-maven-%{maven_version}/bin:/usr/local/bin" >> /home/oddthesis/.bashrc
 /bin/echo "export JAVA_HOME=/usr/lib/jvm/java-openjdk" >> /home/oddthesis/.bashrc
 
 %preun
