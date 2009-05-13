@@ -20,3 +20,8 @@ packages:
   - httpd-devel
   - jboss-cloud-environment
   - glib2-devel
+
+gems:
+  - aws-s3
+  - net-sftp
+  
