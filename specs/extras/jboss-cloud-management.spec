@@ -1,6 +1,6 @@
 Summary:        JBoss Cloud management support for management appliance
 Name:           jboss-cloud-management
-Version:        1.0.0.Beta1
+Version:        1.0.0.Beta2
 Release:        1
 License:        LGPL
 BuildArch:      noarch
@@ -27,13 +27,21 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/useradd -r -g thin thin 2>/dev/null || :
 
 %post
+/bin/ln 
 /bin/mkdir -p /var/log/jboss-cloud-management
 /bin/chown thin:thin /var/log/jboss-cloud-management
+/usr/bin/thin install
+/bin/ln -s /usr/share/jboss-cloud-management/config/config.yaml /etc/thin/config.yaml
+/sbin/chkconfig --add thin
+/sbin/chkconfig --level 345 thin on
 
 %files
 %defattr(-,root,root)
 /
 
 %changelog
+* Thu May 14 2009 Marek Goldmann 1.0.0.Beta2-1
+- Added thin
+
 * Sat May 09 2009 Marek Goldmann 1.0.0.Beta1-1
 - Initial release
