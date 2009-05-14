@@ -3,8 +3,6 @@ summary: Appliance build environment
 
 packages:
   - git
-  - gcc-c++
-  - make
   - wget
   - expect
   - rpmdevtools
