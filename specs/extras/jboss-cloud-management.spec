@@ -30,10 +30,6 @@ rm -rf $RPM_BUILD_ROOT
 /bin/ln 
 /bin/mkdir -p /var/log/jboss-cloud-management
 /bin/chown thin:thin /var/log/jboss-cloud-management
-/usr/bin/thin install
-/bin/ln -s /usr/share/jboss-cloud-management/config/config.yaml /etc/thin/config.yaml
-/sbin/chkconfig --add thin
-/sbin/chkconfig --level 345 thin on
 
 %files
 %defattr(-,root,root)
