@@ -24,7 +24,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 /usr/sbin/groupadd -r thin 2>/dev/null || :
-/usr/sbin/useradd -r -g thin thin 2>/dev/null || :
+/usr/sbin/useradd -m -r -g thin thin 2>/dev/null || :
 
 %post
 /bin/ln 
