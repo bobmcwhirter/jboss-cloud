@@ -16,8 +16,6 @@ JBoss Cloud management support for management appliance.
 
 %install
 /usr/bin/git clone git://github.com/goldmann/jboss-cloud-management.git $RPM_BUILD_ROOT/usr/share/%{name}
-/bin/rm -rf $RPM_BUILD_ROOT/usr/share/%{name}/.git
-/bin/rm -rf $RPM_BUILD_ROOT/usr/share/%{name}/.gitignore
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -27,9 +25,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/useradd -m -r -g thin thin 2>/dev/null || :
 
 %post
-/bin/ln 
 /bin/mkdir -p /var/log/jboss-cloud-management
 /bin/chown thin:thin /var/log/jboss-cloud-management
+echo "sh /usr/share/%{name}/src/network-setup.sh" >> /etc/rc.local
 
 %files
 %defattr(-,root,root)
