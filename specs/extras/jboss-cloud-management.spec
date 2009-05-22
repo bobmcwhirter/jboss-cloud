@@ -5,7 +5,7 @@ Release:        1
 License:        LGPL
 Requires:       git
 Requires:       shadow-utils
-BuildRequires:  make, ruby, gcc-c++
+Requires:       ruby
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
