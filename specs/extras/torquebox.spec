@@ -1,21 +1,21 @@
-Summary: JBoss Rails
-Name: jboss-rails
-Version: 1.0.0.Beta6
+Summary: TorqueBox
+Name: torquebox
+Version: 1.0.0.Beta11
 Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
-Source0: http://repo.oddthesis.org/maven2/org/jboss/rails/jboss-rails/%{version}/jboss-rails-%{version}-deployer.jar
+Source0: http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/%{version}/torquebox-core-%{version}-deployer.jar 
 Requires: jboss-as5
 BuildRoot: /tmp/%{name}
 
 %define __jar_repack %{nil}
 
 %description
-The JBoss Rails deployer for AS5
+The Torquebox deployer for AS5
 
 %prep
-%setup -c jboss-rails.deployer -T
+%setup -c torquebox.deployer -T
 
 %install
 ## every config but minimal
@@ -36,5 +36,8 @@ rm -Rf $RPM_BUILD_ROOT
 /
 
 %changelog
+* Fri May 22 2009 Marek Goldmann 1.0.0.Beta11
+- Update after project name change to TorqueBox
+
 * Tue Apr 28 2009 Marek Goldmann 1.0.0.Beta6
 - Upgrade to Beta6

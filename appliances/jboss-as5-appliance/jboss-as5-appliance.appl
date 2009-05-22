@@ -3,7 +3,7 @@ summary: JBoss AS5
 
 packages:
   - jboss-as5
-  - jboss-rails
+  - torquebox
   - jboss-as5-cloud-profiles
   - jboss-as5-cloud-mod_cluster
   - java-1.6.0-openjdk
