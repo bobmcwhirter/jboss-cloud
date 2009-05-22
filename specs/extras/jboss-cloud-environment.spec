@@ -9,9 +9,13 @@ BuildArch:      noarch
 Group:          Applications/System
 Source0:        http://www.apache.org/dist/maven/binaries/apache-maven-2.1.0-bin.tar.gz
 Source1:        jboss-cloud-environment-sudo-oddthesis-user.patch
+Source2:        http://rubyforge.org/frs/download.php/52464/xml-simple-1.0.12.gem
+Source3:        http://rubyforge.org/frs/download.php/52548/mime-types-1.16.gem
+Source4:        http://rubyforge.org/frs/download.php/21724/builder-2.1.2.gem
 BuildRoot:      /tmp/%{name}
 Requires:       shadow-utils
 Requires:       git
+Requires:       rubygems
 
 %description
 JBoss-Cloud environment. Required tools and source code for building appliances.
@@ -28,9 +32,13 @@ cd $RPM_BUILD_ROOT/opt/jboss-cloud/sources
 
 mkdir -p $RPM_BUILD_ROOT/opt/jboss-cloud/tools/apache-maven-%{maven_version}
 mkdir -p $RPM_BUILD_ROOT/opt/jboss-cloud/patches
+mkdir -p $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems
 
 cp -R %{_topdir}/BUILD/apache-maven-%{maven_version} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/
 cp %{SOURCE1} $RPM_BUILD_ROOT/opt/jboss-cloud/patches/
+cp %{SOURCE2} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
+cp %{SOURCE3} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
+cp %{SOURCE4} $RPM_BUILD_ROOT/opt/jboss-cloud/tools/gems/
 
 %clean
 rm -Rf $RPM_BUILD_ROOT
@@ -39,6 +47,12 @@ rm -Rf $RPM_BUILD_ROOT
 
 /usr/sbin/useradd -m -p '$1$rJT7v$rovvIw9nHJQdLZBvZJNPa0' oddthesis
 /bin/chown oddthesis:oddthesis /opt/jboss-cloud -R
+
+# install additional gems
+
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/xml-simple-1.0.12.gem
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/builder-2.1.2.gem
+/usr/bin/gem install -q /opt/jboss-cloud/tools/gems/mime-types-1.16.gem
 
 patch -s /etc/sudoers < /opt/jboss-cloud/patches/jboss-cloud-environment-sudo-oddthesis-user.patch
 

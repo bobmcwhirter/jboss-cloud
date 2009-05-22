@@ -1,11 +1,11 @@
 Summary:        JBoss Cloud management support for management appliance
 Name:           jboss-cloud-management
-Version:        1.0.0.Beta2
+Version:        1.0.0.Beta3
 Release:        1
 License:        LGPL
-BuildArch:      noarch
 Requires:       git
 Requires:       shadow-utils
+BuildRequires:  make, ruby, gcc-c++
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
@@ -16,6 +16,17 @@ JBoss Cloud management support for management appliance.
 
 %install
 /usr/bin/git clone git://github.com/goldmann/jboss-cloud-management.git $RPM_BUILD_ROOT/usr/share/%{name}
+
+cd $RPM_BUILD_ROOT/usr/share/%{name}
+/usr/bin/git submodule init
+/usr/bin/git submodule update
+
+# now we must build thin_parser
+cd lib/thin/ext/thin_parser
+/usr/bin/ruby extconf.rb
+/usr/bin/make
+/bin/cp -f thin_parser.so ../../lib
+/usr/bin/make clean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -34,6 +45,9 @@ echo "sh /usr/share/%{name}/src/network-setup.sh" >> /etc/rc.local
 /
 
 %changelog
+* Fri May 22 2009 Marek Goldmann 1.0.0.Beta3-1
+- Submodules and building thin_parser
+
 * Thu May 14 2009 Marek Goldmann 1.0.0.Beta2-1
 - Added thin
 
