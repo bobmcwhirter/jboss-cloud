@@ -3,4 +3,5 @@ summary: JBoss Cloud management appliance
 
 packages:
   - dhcp
+  - sudo
 
