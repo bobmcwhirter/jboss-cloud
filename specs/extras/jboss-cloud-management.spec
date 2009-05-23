@@ -5,8 +5,7 @@ Release:        1
 License:        LGPL
 Requires:       git
 Requires:       shadow-utils
-Requires:       patch
-BuildRequires:  ruby
+Requires:       ruby
 Source0:        thin-ruby-env.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -16,7 +15,6 @@ JBoss Cloud management support for management appliance.
 %prep
 /bin/rm -rf $RPM_BUILD_ROOT
 
-%install
 /usr/bin/git clone git://github.com/goldmann/jboss-cloud-management.git $RPM_BUILD_ROOT/usr/share/%{name}
 
 pushd $RPM_BUILD_ROOT/usr/share/%{name}
@@ -24,24 +22,25 @@ pushd $RPM_BUILD_ROOT/usr/share/%{name}
 /usr/bin/git submodule update
 
 pushd lib
-#/usr/bin/patch -p0 < %{SOURCE0}
+patch -p0 < %{SOURCE0}
+popd
 
-# now we must build thin_parser
-pushd thin/ext/thin_parser
+popd
 
+%build
+
+pushd $RPM_BUILD_ROOT/usr/share/%{name}/lib/thin/ext/thin_parser
 /usr/bin/ruby extconf.rb
 /usr/bin/make
 /bin/cp -f thin_parser.so ../../lib
 /usr/bin/make clean
-
-popd
-popd
 popd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
+#/bin/ln -s /usr/bin/ruby /usr/local/bin/ruby
 /usr/sbin/groupadd -r thin 2>/dev/null || :
 /usr/sbin/useradd -m -r -g thin thin 2>/dev/null || :
 

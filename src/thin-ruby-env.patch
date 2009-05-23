@@ -1,0 +1,27 @@
+diff -Naur thin/spec/rails_app/public/dispatch.cgi thin-working/spec/rails_app/public/dispatch.cgi
+--- thin/spec/rails_app/public/dispatch.cgi	2009-05-22 13:08:27.000000000 +0200
++++ thin-working/spec/rails_app/public/dispatch.cgi	2009-05-22 13:09:25.000000000 +0200
+@@ -1,4 +1,4 @@
+-#!/usr/local/bin/ruby
++#!/usr/bin/env ruby
+ 
+ require File.dirname(__FILE__) + "/../config/environment" unless defined?(RAILS_ROOT)
+ 
+diff -Naur thin/spec/rails_app/public/dispatch.fcgi thin-working/spec/rails_app/public/dispatch.fcgi
+--- thin/spec/rails_app/public/dispatch.fcgi	2009-05-22 13:08:27.000000000 +0200
++++ thin-working/spec/rails_app/public/dispatch.fcgi	2009-05-23 10:17:39.000000000 +0200
+@@ -1,4 +1,4 @@
+-#!/usr/local/bin/ruby
++#!/usr/bin/env ruby
+ #
+ # You may specify the path to the FastCGI crash log (a log of unhandled
+ # exceptions which forced the FastCGI instance to exit, great for debugging)
+diff -Naur thin/spec/rails_app/public/dispatch.rb thin-working/spec/rails_app/public/dispatch.rb
+--- thin/spec/rails_app/public/dispatch.rb	2009-05-22 13:08:27.000000000 +0200
++++ thin-working/spec/rails_app/public/dispatch.rb	2009-05-22 13:09:34.000000000 +0200
+@@ -1,4 +1,4 @@
+-#!/usr/local/bin/ruby
++#!/usr/bin/env ruby
+ 
+ require File.dirname(__FILE__) + "/../config/environment" unless defined?(RAILS_ROOT)
+ 
