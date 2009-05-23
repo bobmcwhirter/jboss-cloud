@@ -43,9 +43,9 @@ popd
 %install
 
 mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}-gems
+cp %{SOURCE1} $RPM_BUILD_ROOT/usr/share/%{name}-gems
 cp %{SOURCE2} $RPM_BUILD_ROOT/usr/share/%{name}-gems
 cp %{SOURCE3} $RPM_BUILD_ROOT/usr/share/%{name}-gems
-cp %{SOURCE4} $RPM_BUILD_ROOT/usr/share/%{name}-gems
 
 %clean
 rm -rf $RPM_BUILD_ROOT
