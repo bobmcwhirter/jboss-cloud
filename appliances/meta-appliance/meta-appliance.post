@@ -1,2 +1,3 @@
 #/usr/sbin/useradd -m -p '$1$rJT7v$rovvIw9nHJQdLZBvZJNPa0' oddthesis
 /bin/chown oddthesis:oddthesis /opt/jboss-cloud -R
+/bin/echo "mv /opt/jboss-cloud/sources/ /mnt/jboss-cloud" >> /etc/rc.local
