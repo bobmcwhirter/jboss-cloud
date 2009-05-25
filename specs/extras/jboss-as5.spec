@@ -3,7 +3,7 @@
 
 Summary: JBoss 
 Name: jboss-as5
-Version: 5.0.1.GA
+Version: 5.1.0.GA
 Release: 1
 License: LGPL
 BuildArch: noarch
@@ -54,5 +54,8 @@ JBOSS_SHELL=/bin/bash
 #%attr(0755,root,root) /etc/jboss-as5.conf
 
 %changelog
+* Mon May 25 2009 Marek Goldmann 5.1.0.GA-1
+- JBoss AS version upgrade to 5.1.0.GA
+
 * Tue Mar 03 2009 Marek Goldmann 5.0.1.GA-1
 - JBoss AS version upgrade to 5.0.1.GA
