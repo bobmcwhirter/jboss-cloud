@@ -20,5 +20,6 @@ packages:
   - httpd-devel
   - jboss-cloud-environment
   - glib2-devel
+  - ruby-devel
 
   
