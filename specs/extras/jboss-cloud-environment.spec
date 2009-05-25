@@ -26,6 +26,10 @@ cd $RPM_BUILD_ROOT/opt/jboss-cloud/sources
 /usr/bin/git submodule init
 /usr/bin/git submodule update
 
+cd lib/jboss-cloud-support
+/usr/bin/git submodule init
+/usr/bin/git submodule update
+
 mkdir -p $RPM_BUILD_ROOT/opt/jboss-cloud/tools/apache-maven-%{maven_version}
 mkdir -p $RPM_BUILD_ROOT/opt/jboss-cloud/patches
 
