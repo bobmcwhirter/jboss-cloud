@@ -38,7 +38,7 @@ rm -Rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue May 26 2009 Marek Goldmann 5.1.0.GA-1
-- JBoss AS version upgrade to 5.1..GA
+- JBoss AS version upgrade to 5.1.0.GA
 
 * Tue Mar 03 2009 Marek Goldmann 5.0.1.GA-1
 - JBoss AS version upgrade to 5.0.1.GA
