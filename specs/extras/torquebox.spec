@@ -1,6 +1,6 @@
 Summary: TorqueBox
 Name: torquebox
-Version: 1.0.0.Beta11
+Version: 1.0.0.Beta12
 Release: 1
 License: LGPL
 BuildArch: noarch

@@ -1,6 +1,6 @@
 %define maven_version 2.1.0
 
-Summary:        JBoss-Cloud environment
+Summary:        JBoss Cloud environment
 Name:           jboss-cloud-environment
 Version:        1.0.0.Beta4
 Release:        1
@@ -14,7 +14,7 @@ Requires:       shadow-utils
 Requires:       git
 
 %description
-JBoss-Cloud environment. Required tools and source code for building appliances.
+JBoss Cloud environment. Required tools and source code for building appliances.
 
 %prep
 %setup -n apache-maven-%{maven_version}

@@ -1,4 +1,4 @@
-Summary:        JBoss Cloud management support for management appliance
+Summary:        JBoss Cloud management support for appliances
 Name:           jboss-cloud-management
 Version:        1.0.0.Beta3
 Release:        1
@@ -14,7 +14,7 @@ Source3:        http://rubyforge.org/frs/download.php/21724/builder-2.1.2.gem
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
-JBoss Cloud management support for management appliance.
+JBoss Cloud management support for appliances.
 
 %prep
 /bin/rm -rf $RPM_BUILD_ROOT
