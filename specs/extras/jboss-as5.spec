@@ -1,34 +1,29 @@
-
-#%define version 5.0.1.GA
-
-Summary: JBoss 
+Summary: JBoss Application Server 
 Name: jboss-as5
 Version: 5.1.0.GA
-Release: 1
+Release: 2
 License: LGPL
 BuildArch: noarch
 Group: Applications/System
 Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
 Source1: jboss-as5.init
 Requires: shadow-utils
-Patch: jboss-as5-%{version}-cloud-gossip.patch
+
 BuildRoot: /tmp/jboss-%{version}
 
 %define runuser jboss
 %define __jar_repack %{nil}
 
 %description
-The JBossAS 5 Java Application Server
+The JBoss Application Server
 
 %prep
 %setup -n jboss-%{version}
-%patch -p1
 
 %install
 mkdir -p $RPM_BUILD_ROOT/opt
 cp -R . $RPM_BUILD_ROOT/opt/jboss-as5
 rm -Rf $RPM_BUILD_ROOT/opt/jboss-as5/server/*/deploy/ROOT.war
-
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}

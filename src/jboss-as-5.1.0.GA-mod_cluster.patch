@@ -1,0 +1,50 @@
+diff -Naur jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml
+--- jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-22 16:37:30.000000000 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-27 12:28:37.000000000 +0200
+@@ -10,6 +10,7 @@
+            is enabled in the tomcat server.xml file.
+       -->
+       <depends>jboss.jca:service=CachedConnectionManager</depends>
++      <depends>HAModClusterService</depends>
+ 
+       <!-- Transaction manager for unfinished transaction checking in the CachedConnectionValve -->      
+       <depends>jboss:service=TransactionManager</depends>
+diff -Naur jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/server.xml
+--- jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml	2009-05-22 16:37:30.000000000 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/server.xml	2009-05-27 12:26:08.000000000 +0200
+@@ -6,6 +6,10 @@
+    <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
+    <Listener className="org.apache.catalina.core.JasperListener" />
+ 
++   <!-- Initialize the mod-cluster integration listener -->
++   <Listener className="org.jboss.web.tomcat.service.deployers.MicrocontainerIntegrationLifecycleListener"
++      delegateBeanName="HAModClusterService"/>
++
+    <Service name="jboss.web">
+ 
+       <!-- A HTTP/1.1 Connector on port 8080 -->
+diff -Naur jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml
+--- jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-22 16:37:46.000000000 +0200
++++ jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-27 12:28:07.000000000 +0200
+@@ -10,6 +10,7 @@
+            is enabled in the tomcat server.xml file.
+       -->
+       <depends>jboss.jca:service=CachedConnectionManager</depends>
++      <depends>ModClusterService</depends>
+ 
+       <!-- Transaction manager for unfinished transaction checking in the CachedConnectionValve -->      
+       <depends>jboss:service=TransactionManager</depends>
+diff -Naur jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/server.xml
+--- jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml	2009-05-22 16:37:46.000000000 +0200
++++ jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/server.xml	2009-05-27 12:26:51.000000000 +0200
+@@ -6,6 +6,10 @@
+    <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
+    <Listener className="org.apache.catalina.core.JasperListener" />
+ 
++   <!-- Initialize the mod-cluster integration listener -->
++   <Listener className="org.jboss.web.tomcat.service.deployers.MicrocontainerIntegrationLifecycleListener"
++      delegateBeanName="ModClusterService"/>
++
+    <Service name="jboss.web">
+ 
+       <!-- A HTTP/1.1 Connector on port 8080 -->
