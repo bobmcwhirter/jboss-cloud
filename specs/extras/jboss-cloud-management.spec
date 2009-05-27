@@ -1,7 +1,7 @@
 Summary:        JBoss Cloud management support for appliances
 Name:           jboss-cloud-management
 Version:        1.0.0.Beta3
-Release:        1
+Release:        2
 License:        LGPL
 Requires:       git
 Requires:       shadow-utils

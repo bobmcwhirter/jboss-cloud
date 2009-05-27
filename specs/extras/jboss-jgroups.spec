@@ -1,7 +1,6 @@
-
 Summary: JBoss JGroups
 Name: jboss-jgroups
-Version: 2.6.8.GA
+Version: 2.6.10.GA
 Release: 1
 License: LGPL
 BuildArch: noarch
