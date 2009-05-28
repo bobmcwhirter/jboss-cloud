@@ -1,7 +1,7 @@
 Summary: JBoss Application Server 
 Name: jboss-as5
 Version: 5.1.0.GA
-Release: 2
+Release: 1
 License: LGPL
 BuildArch: noarch
 Group: Applications/System

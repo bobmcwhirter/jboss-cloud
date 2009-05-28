@@ -4,6 +4,7 @@ summary: Appliance build environment
 packages:
   - git
   - wget
+  - gpg
   - make
   - gcc-c++
   - expect
