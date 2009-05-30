@@ -1,5 +1,5 @@
 
-summary: JBoss-Cloud back-end appliance
+summary: JBoss Cloud back-end appliance
 
 appliances:
   - jboss-as5-appliance

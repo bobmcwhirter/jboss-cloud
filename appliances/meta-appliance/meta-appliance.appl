@@ -1,5 +1,5 @@
 
-summary: Appliance build environment
+summary: JBoss Cloud appliance build environment
 
 packages:
   - git

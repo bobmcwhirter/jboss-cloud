@@ -1,5 +1,5 @@
 
-summary: JBoss-Cloud front-end appliance
+summary: JBoss Cloud front-end appliance
 
 appliances:
   - httpd-appliance
