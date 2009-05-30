@@ -1,6 +1,6 @@
 Summary: JBoss mod_cluster for JBoss AS5 cloud profiles
 Name: jboss-as5-cloud-mod_cluster
-Version: 1.0.0.CR2
+Version: 1.0.0.GA
 Release: 2
 License: LGPL
 BuildArch: noarch
@@ -59,4 +59,6 @@ grep -v '^JBOSS_PROXY_LIST' /etc/jboss-as5.conf.rpmsave | grep -v '^# Comma-sepa
 %defattr(-,jboss,jboss)
 /
 
-
+%changelog
+* Sat May 30 2009 Marek Goldmann 1.0.0.GA
+- Update to 1.0.0.GA
