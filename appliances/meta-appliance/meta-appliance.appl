@@ -4,7 +4,7 @@ summary: JBoss Cloud appliance build environment
 packages:
   - git
   - wget
-  - gpg
+  - gnupg2
   - make
   - gcc-c++
   - expect
