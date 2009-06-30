@@ -8,3 +8,4 @@ build
 .project
 .loadpath
 .idea
+*.log*
