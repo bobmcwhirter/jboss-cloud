@@ -8,9 +8,6 @@ Requires:       shadow-utils
 Requires:       ruby
 Requires:       rubygems
 Source0:        thin-ruby-env.patch
-Source1:        http://rubyforge.org/frs/download.php/52464/xml-simple-1.0.12.gem
-Source2:        http://rubyforge.org/frs/download.php/52548/mime-types-1.16.gem
-Source3:        http://rubyforge.org/frs/download.php/21724/builder-2.1.2.gem
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
@@ -40,13 +37,6 @@ pushd $RPM_BUILD_ROOT/usr/share/%{name}/lib/thin/ext/thin_parser
 /usr/bin/make clean
 popd
 
-%install
-
-mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}-gems
-cp %{SOURCE1} $RPM_BUILD_ROOT/usr/share/%{name}-gems
-cp %{SOURCE2} $RPM_BUILD_ROOT/usr/share/%{name}-gems
-cp %{SOURCE3} $RPM_BUILD_ROOT/usr/share/%{name}-gems
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -56,12 +46,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/useradd -m -r -g thin thin 2>/dev/null || :
 
 %post
-# install additional gems
-
-/usr/bin/gem install -q /usr/share/%{name}-gems/xml-simple-1.0.12.gem
-/usr/bin/gem install -q /usr/share/%{name}-gems/builder-2.1.2.gem
-/usr/bin/gem install -q /usr/share/%{name}-gems/mime-types-1.16.gem
-
 /bin/mkdir -p /var/log/jboss-cloud-management
 /bin/chown thin:thin /var/log/jboss-cloud-management
 echo "sh /usr/share/%{name}/src/network-setup.sh" >> /etc/rc.local

@@ -4,3 +4,6 @@ summary: JBoss Cloud front-end appliance
 appliances:
   - httpd-appliance
   - jboss-jgroups-appliance
+
+packages:
+  - jboss-cloud-management

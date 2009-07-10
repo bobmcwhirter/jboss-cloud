@@ -22,5 +22,6 @@ packages:
   - jboss-cloud-environment
   - glib2-devel
   - ruby-devel
+  - ruby-libguestfs
 
   
