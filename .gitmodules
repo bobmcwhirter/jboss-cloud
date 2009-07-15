@@ -1,0 +1,3 @@
+[submodule "lib/jboss-appliance-support"]
+	path = lib/jboss-appliance-support
+	url = git://github.com/goldmann/jboss-appliance-support.git

@@ -1,4 +1,4 @@
-$: << 'lib/jboss-cloud-support/lib'
+$: << 'lib/jboss-appliance-support/lib'
 
 require 'jboss-cloud/helpers/rake-helper'
 
