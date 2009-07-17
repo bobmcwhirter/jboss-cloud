@@ -26,7 +26,7 @@ cd $RPM_BUILD_ROOT/opt/jboss-cloud/sources
 /usr/bin/git submodule init
 /usr/bin/git submodule update
 
-cd lib/jboss-cloud-support
+cd lib/jboss-appliance-support
 /usr/bin/git submodule init
 /usr/bin/git submodule update
 
