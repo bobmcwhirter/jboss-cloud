@@ -9,7 +9,7 @@ BuildArch:      noarch
 Group:          Applications/System
 Source0:        http://www.apache.org/dist/maven/binaries/apache-maven-2.1.0-bin.tar.gz
 Source1:        jboss-cloud-environment-sudo-oddthesis-user.patch
-BuildRoot:      /tmp/%{name}
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:       shadow-utils
 Requires:       git
 
