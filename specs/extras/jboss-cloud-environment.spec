@@ -2,7 +2,7 @@
 
 Summary:        JBoss Cloud environment
 Name:           jboss-cloud-environment
-Version:        1.0.0.Beta4
+Version:        1.0.0.Beta6
 Release:        1
 License:        LGPL
 BuildArch:      noarch
