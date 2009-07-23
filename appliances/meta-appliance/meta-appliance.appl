@@ -25,3 +25,5 @@ packages:
   - ruby-libguestfs
   - gdb
   - qemu-stable
+  - zlib-devel
+  - SDL-devel
