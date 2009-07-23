@@ -23,4 +23,5 @@ packages:
   - glib2-devel
   - ruby-devel
   - ruby-libguestfs
-  - gdb  
+  - gdb
+  - qemu-stable
