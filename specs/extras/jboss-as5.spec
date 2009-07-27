@@ -8,8 +8,7 @@ Group: Applications/System
 Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
 Source1: jboss-as5.init
 Requires: shadow-utils
-
-BuildRoot: /tmp/jboss-%{version}
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define runuser jboss
 %define __jar_repack %{nil}
@@ -29,10 +28,12 @@ install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}
 
 touch $RPM_BUILD_ROOT/etc/jboss-as5.conf
-echo 'JBOSS_GOSSIP_PORT=12001'    >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
-echo 'JBOSS_GOSSIP_REFRESH=5000'  >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
-echo 'JBOSS_SERVER_PEER_ID='      >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 
+echo 'JBOSS_GOSSIP_PORT=12001'      >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
+echo 'JBOSS_GOSSIP_REFRESH=5000'    >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
+#echo 'JBOSS_SERVER_PEER_ID='        >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
+echo 'JBOSS_IP=0.0.0.0'             >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
+echo 'JAVA_HOME=/usr/lib/jvm/java/' >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 
 %clean
 rm -Rf $RPM_BUILD_ROOT

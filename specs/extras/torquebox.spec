@@ -7,7 +7,7 @@ BuildArch: noarch
 Group: Applications/System
 Source0: http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/%{version}/torquebox-core-%{version}-deployer.jar 
 Requires: jboss-as5
-BuildRoot: /tmp/%{name}
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define __jar_repack %{nil}
 

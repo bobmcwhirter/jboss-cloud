@@ -13,7 +13,7 @@ Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-5.1.0.GA-jdk
 Source1: jboss-as5-5.1.0.GA-cloud-gossip.patch
 Requires: jboss-as5
 BuildRequires: patch
-BuildRoot: /tmp/jboss-cloud-profiles-%{jboss_version}
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
 The JBoss AS 5 cloud profiles (cluster and group)

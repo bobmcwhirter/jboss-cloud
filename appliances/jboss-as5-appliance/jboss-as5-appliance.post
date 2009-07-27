@@ -1,4 +1,5 @@
-/sbin/chkconfig --level 234 jboss-as5 off
+/sbin/chkconfig --level 2345 jboss-as5 off
+/sbin/chkconfig --level 2345 ace off
 /bin/sed "s/-Xmx512m/-Xmx#JBOSS_XMX#m/" -i /opt/jboss-as5/bin/run.conf
 /bin/sed "s/-Xms128m/-Xms#JBOSS_XMS#m/" -i /opt/jboss-as5/bin/run.conf
 /bin/echo "thin ALL=(ALL) NOPASSWD: /bin/sh, /sbin/service" >> /etc/sudoers

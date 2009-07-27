@@ -8,6 +8,7 @@ License:        GPLv2+ and LGPLv2+ and BSD
 Group:          Development/Tools
 URL:            http://www.qemu.org/
 Source:         http://repo.oddthesis.org/dev/qemu-stable-23-07-2009.tar.gz
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
 QEMU is a generic and open source processor emulator which achieves a good

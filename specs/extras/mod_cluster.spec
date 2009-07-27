@@ -9,7 +9,7 @@ Name: mod_cluster
 Version: 1.0.0.GA
 Release: 1
 License: LGPL
-BuildRoot: %{_tmppath}/%{name}-buildroot
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Group: Applications/System
 BuildRequires: httpd-devel >= 2.2.8
 Requires: httpd-devel >= 2.2.8
