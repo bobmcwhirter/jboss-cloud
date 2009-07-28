@@ -11,7 +11,6 @@ Release: 1
 License: LGPL
 BuildRoot: %{_tmppath}/%{name}-buildroot
 Group: Applications/System
-BuildRequires: httpd-devel >= 2.2.8
 Requires: httpd-devel >= 2.2.8
 Source0: http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-linux2-x86-so.tar.gz
 Source1: http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-linux2-x64-so.tar.gz
