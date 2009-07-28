@@ -72,7 +72,7 @@ if [ $user_data_http_code -eq "200" ]
 then
         declare -a var
 
-        var=`curl -s -w '%{http_code}' http://169.254.169.254/1.0/user-data | tr ';' ' '`
+        var=`curl -s http://169.254.169.254/1.0/user-data | tr ';' ' '`
 
         #iterate over the array
         for s in ${var[@]}; do

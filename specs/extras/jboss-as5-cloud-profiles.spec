@@ -4,7 +4,7 @@
 
 Summary: JBoss Cloud profiles
 Name: jboss-as5-cloud-profiles
-Version: 1.0.0.Beta4
+Version: 1.0.0.Beta6
 Release: 1
 License: LGPL
 BuildArch: noarch
