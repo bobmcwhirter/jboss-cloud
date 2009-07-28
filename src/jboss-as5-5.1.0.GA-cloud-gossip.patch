@@ -1,6 +1,6 @@
 diff -Naur jboss-5.1.0.GA/server/cluster/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml jboss-5.1.0.GA-working/server/cluster/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml
---- jboss-5.1.0.GA/server/cluster/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml	2009-05-22 16:36:52.000000000 +0200
-+++ jboss-5.1.0.GA-working/server/cluster/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml	2009-05-27 13:18:11.000000000 +0200
+--- jboss-5.1.0.GA/server/cluster/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml	2009-07-27 10:28:06.996400392 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deploy/cluster/jgroups-channelfactory.sar/META-INF/jgroups-channelfactory-stacks.xml	2009-07-27 10:29:44.344402472 +0200
 @@ -8,6 +8,7 @@
  		     singleton_name="shared-udp"
  		     mcast_port="${jboss.jgroups.udp.mcast_port:45688}"
@@ -18,3 +18,27 @@ diff -Naur jboss-5.1.0.GA/server/cluster/deploy/cluster/jgroups-channelfactory.s
            <MERGE2 max_interval="100000" min_interval="20000"/>
            <FD_SOCK/>
            <FD timeout="6000" max_tries="5" shun="true"/>
+diff -Naur jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/server.xml
+--- jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml	2009-07-27 10:28:06.949402449 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/server.xml	2009-07-27 10:30:32.791401475 +0200
+@@ -29,7 +29,7 @@
+            keystorePass="rmi+ssl" sslProtocol = "TLS" />
+       -->
+
+-      <Engine name="jboss.web" defaultHost="localhost">
++      <Engine name="jboss.web" defaultHost="localhost" jvmRoute="${jboss.jvmRoute:nodeX}" backgroundProcessorDelay="10">
+
+          <!-- The JAAS based authentication and authorization realm implementation
+          that is compatible with the jboss 3.2.x realm implementation.
+diff -Naur jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/server.xml
+--- jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml	2009-07-27 10:31:17.265649637 +0200
++++ jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/server.xml	2009-07-27 10:31:04.021401297 +0200
+@@ -29,7 +29,7 @@
+            keystorePass="rmi+ssl" sslProtocol = "TLS" />
+       -->
+
+-      <Engine name="jboss.web" defaultHost="localhost">
++      <Engine name="jboss.web" defaultHost="localhost" jvmRoute="${jboss.jvmRoute:nodeX}" backgroundProcessorDelay="10">
+
+          <!-- The JAAS based authentication and authorization realm implementation
+          that is compatible with the jboss 3.2.x realm implementation.
