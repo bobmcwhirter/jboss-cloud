@@ -62,6 +62,34 @@ else
 	JBOSSCONF=${JBOSSCONF:-"all"}
 fi
 
+
+# get jvmRoute paramater if provided
+# this only works on EC2, but should be easy to use it in other envirnoments with a central management server
+
+user_data_http_code=`curl -o /dev/null -s -m 5 -w '%{http_code}' http://169.254.169.254/1.0/user-data`
+
+if [ $user_data_http_code -eq "200" ]
+then
+        declare -a var
+
+        var=`curl -s -w '%{http_code}' http://169.254.169.254/1.0/user-data | tr ';' ' '`
+
+        #iterate over the array
+        for s in ${var[@]}; do
+                key=`echo $s | cut -d '=' -f 1`
+                value=`echo $s | cut -d '=' -f 2`
+
+                if [ $key = "jvmRoute" ]; then
+                        JBOSS_JVM_ROUTE=$value
+                fi
+        done
+fi
+
+if [ "x$JBOSS_JVM_ROUTE" = "x" ]; then
+    JBOSS_JVM_ROUTE=$HOSTNAME
+    #`ip addr list eth0 | grep "inet " | cut -d' ' -f6 | cut -d/ -f1`
+fi
+
 #define the script to use to start jboss
 JBOSSSH=${JBOSSSH:-"$JBOSS_HOME/bin/run.sh -c $JBOSSCONF"}
 
@@ -138,6 +166,8 @@ JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3entitypartition.mcast_port=$JBOSS_UDP_PORT_EJB
 JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3sfsbpartition.mcast_port=$JBOSS_UDP_PORT_EJB3SFSB"
 [ "x$JBOSS_PROXY_LIST" != "x" ] && \
 JAVA_OPTS="$JAVA_OPTS -Djboss.modcluster.proxyList=$JBOSS_PROXY_LIST"
+[ "x$JBOSS_JVM_ROUTE" != "x" ] && \
+JAVA_OPTS="$JAVA_OPTS -Djboss.jvmRoute=$JBOSS_JVM_ROUTE"
 
 [ "x$JBOSS_GOSSIP_HOST" != "x" ] && \
 JAVA_OPTS="$JAVA_OPTS -Djboss.gossip_host=$JBOSS_GOSSIP_HOST"
