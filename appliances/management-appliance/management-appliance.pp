@@ -36,6 +36,4 @@ banners::all{$appliance_name:}
 firewall::setup{$appliance_name: status=>"disabled"}
 ssh::setup{$appliance_name:}
 
-include management::appliance
-
 
