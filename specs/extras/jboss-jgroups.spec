@@ -1,6 +1,6 @@
 Summary: JBoss JGroups
 Name: jboss-jgroups
-Version: 2.6.10.GA
+Version: 2.6.11.GA
 Release: 1
 License: LGPL
 BuildArch: noarch
@@ -8,7 +8,7 @@ Group: Applications/System
 Requires: shadow-utils
 Source0: http://heanet.dl.sourceforge.net/sourceforge/javagroups/JGroups-%{version}.bin.zip
 Source1: jgroups-gossip.init
-BuildRoot: /tmp/%{name}
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define __jar_repack %{nil}
 
