@@ -30,7 +30,7 @@ diff -Naur jboss-5.1.0.GA/server/cluster/deploy/mod-cluster.sar/META-INF/mod-clu
    <!-- Configure this node's communication with the load balancer -->
    <bean name="HAModClusterConfig" class="org.jboss.modcluster.config.ha.HAModClusterConfig" mode="On Demand">
      
-+    <property name="domain">${jboss.domain:DefaultDomain}</domain>
++    <property name="domain">${jboss.domain:DefaultDomain}</property>
      <!-- Comma separated list of address:port listing the httpd servers
           where mod_cluster is running. -->
      <property name="proxyList">${jboss.modcluster.proxyList:}</property>
@@ -39,7 +39,7 @@ diff -Naur jboss-5.1.0.GA/server/cluster/deploy/mod-cluster.sar/META-INF/mod-clu
        <parameter><inject bean="DynamicLoadBalanceFactorProvider"/></parameter>
      </constructor>
 +    
-+    <property name="domain">${jboss.domain:DefaultDomain}</domain>
++    <property name="domain">${jboss.domain:DefaultDomain}</property>
      <!-- Comma delimited list of address:port listing the httpd servers
           where mod_cluster is running. -->
      <property name="proxyList">${jboss.modcluster.proxyList:}</property>
@@ -75,7 +75,7 @@ diff -Naur jboss-5.1.0.GA/server/group/deploy/mod-cluster.sar/META-INF/mod-clust
    <!-- Configure this node's communication with the load balancer -->
    <bean name="HAModClusterConfig" class="org.jboss.modcluster.config.ha.HAModClusterConfig" mode="On Demand">
      
-+    <property name="domain">${jboss.domain:DefaultDomain}</domain>
++    <property name="domain">${jboss.domain:DefaultDomain}</property>
      <!-- Comma separated list of address:port listing the httpd servers
           where mod_cluster is running. -->
      <property name="proxyList">${jboss.modcluster.proxyList:}</property>
@@ -84,7 +84,7 @@ diff -Naur jboss-5.1.0.GA/server/group/deploy/mod-cluster.sar/META-INF/mod-clust
        <parameter><inject bean="DynamicLoadBalanceFactorProvider"/></parameter>
      </constructor>
 +    
-+    <property name="domain">${jboss.domain:DefaultDomain}</domain>
++    <property name="domain">${jboss.domain:DefaultDomain}</property>
      <!-- Comma delimited list of address:port listing the httpd servers
           where mod_cluster is running. -->
      <property name="proxyList">${jboss.modcluster.proxyList:}</property>
