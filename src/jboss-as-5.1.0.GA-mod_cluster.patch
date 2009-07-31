@@ -1,6 +1,6 @@
 diff -Naur jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml
---- jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-22 16:37:30.000000000 +0200
-+++ jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-27 12:28:37.000000000 +0200
+--- jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-07-31 13:28:27.480514693 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-07-31 13:29:07.961515460 +0200
 @@ -10,6 +10,7 @@
             is enabled in the tomcat server.xml file.
        -->
@@ -10,8 +10,8 @@ diff -Naur jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/META-INF/jboss-bean
        <!-- Transaction manager for unfinished transaction checking in the CachedConnectionValve -->      
        <depends>jboss:service=TransactionManager</depends>
 diff -Naur jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/server.xml
---- jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml	2009-05-22 16:37:30.000000000 +0200
-+++ jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/server.xml	2009-05-27 12:26:08.000000000 +0200
+--- jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml	2009-07-31 13:28:27.480514693 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deploy/jbossweb.sar/server.xml	2009-07-31 13:29:07.961515460 +0200
 @@ -6,6 +6,10 @@
     <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
     <Listener className="org.apache.catalina.core.JasperListener" />
@@ -23,9 +23,29 @@ diff -Naur jboss-5.1.0.GA/server/cluster/deploy/jbossweb.sar/server.xml jboss-5.
     <Service name="jboss.web">
  
        <!-- A HTTP/1.1 Connector on port 8080 -->
+diff -Naur jboss-5.1.0.GA/server/cluster/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml jboss-5.1.0.GA-working/server/cluster/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml
+--- jboss-5.1.0.GA/server/cluster/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml	2009-07-28 12:26:37.000000000 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml	2009-07-31 13:37:50.002516599 +0200
+@@ -19,6 +19,7 @@
+   <!-- Configure this node's communication with the load balancer -->
+   <bean name="HAModClusterConfig" class="org.jboss.modcluster.config.ha.HAModClusterConfig" mode="On Demand">
+     
++    <property name="domain">${jboss.domain:DefaultDomain}</domain>
+     <!-- Comma separated list of address:port listing the httpd servers
+          where mod_cluster is running. -->
+     <property name="proxyList">${jboss.modcluster.proxyList:}</property>
+@@ -114,6 +115,8 @@
+     <constructor>
+       <parameter><inject bean="DynamicLoadBalanceFactorProvider"/></parameter>
+     </constructor>
++    
++    <property name="domain">${jboss.domain:DefaultDomain}</domain>
+     <!-- Comma delimited list of address:port listing the httpd servers
+          where mod_cluster is running. -->
+     <property name="proxyList">${jboss.modcluster.proxyList:}</property>
 diff -Naur jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml
---- jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-22 16:37:46.000000000 +0200
-+++ jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-05-27 12:28:07.000000000 +0200
+--- jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-07-31 13:28:29.858519161 +0200
++++ jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.xml	2009-07-31 13:29:07.962518418 +0200
 @@ -10,6 +10,7 @@
             is enabled in the tomcat server.xml file.
        -->
@@ -35,8 +55,8 @@ diff -Naur jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/META-INF/jboss-beans.
        <!-- Transaction manager for unfinished transaction checking in the CachedConnectionValve -->      
        <depends>jboss:service=TransactionManager</depends>
 diff -Naur jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/server.xml
---- jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml	2009-05-22 16:37:46.000000000 +0200
-+++ jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/server.xml	2009-05-27 12:26:51.000000000 +0200
+--- jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml	2009-07-31 13:28:29.857514331 +0200
++++ jboss-5.1.0.GA-working/server/group/deploy/jbossweb.sar/server.xml	2009-07-31 13:29:07.963515599 +0200
 @@ -6,6 +6,10 @@
     <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
     <Listener className="org.apache.catalina.core.JasperListener" />
@@ -48,3 +68,23 @@ diff -Naur jboss-5.1.0.GA/server/group/deploy/jbossweb.sar/server.xml jboss-5.1.
     <Service name="jboss.web">
  
        <!-- A HTTP/1.1 Connector on port 8080 -->
+diff -Naur jboss-5.1.0.GA/server/group/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml jboss-5.1.0.GA-working/server/group/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml
+--- jboss-5.1.0.GA/server/group/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml	2009-07-28 12:26:37.000000000 +0200
++++ jboss-5.1.0.GA-working/server/group/deploy/mod-cluster.sar/META-INF/mod-cluster-jboss-beans.xml	2009-07-31 13:37:50.000000000 +0200
+@@ -19,6 +19,7 @@
+   <!-- Configure this node's communication with the load balancer -->
+   <bean name="HAModClusterConfig" class="org.jboss.modcluster.config.ha.HAModClusterConfig" mode="On Demand">
+     
++    <property name="domain">${jboss.domain:DefaultDomain}</domain>
+     <!-- Comma separated list of address:port listing the httpd servers
+          where mod_cluster is running. -->
+     <property name="proxyList">${jboss.modcluster.proxyList:}</property>
+@@ -114,6 +115,8 @@
+     <constructor>
+       <parameter><inject bean="DynamicLoadBalanceFactorProvider"/></parameter>
+     </constructor>
++    
++    <property name="domain">${jboss.domain:DefaultDomain}</domain>
+     <!-- Comma delimited list of address:port listing the httpd servers
+          where mod_cluster is running. -->
+     <property name="proxyList">${jboss.modcluster.proxyList:}</property>
