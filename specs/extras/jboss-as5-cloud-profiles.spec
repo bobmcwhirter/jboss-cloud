@@ -1,4 +1,4 @@
-%define jgroups_version 2.6.12.Beta1
+%define jgroups_version 2.6.12.Beta2
 %define jboss_version 5.1.0.GA
 
 Summary:        JBoss Cloud profiles

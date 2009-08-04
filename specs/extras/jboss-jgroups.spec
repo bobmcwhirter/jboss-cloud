@@ -1,6 +1,6 @@
 Summary: JBoss JGroups
 Name: jboss-jgroups
-Version: 2.6.12.Beta1
+Version: 2.6.12.Beta2
 Release: 1
 License: LGPL
 BuildArch: noarch
