@@ -1,3 +1,4 @@
 #/usr/sbin/useradd -m -p '$1$rJT7v$rovvIw9nHJQdLZBvZJNPa0' oddthesis
 /bin/chown oddthesis:oddthesis /opt/jboss-cloud -R
 /bin/echo -e "if [ -d '/opt/jboss-cloud/sources/' ]\nthen\n\tmv /opt/jboss-cloud/sources/ /mnt/jboss-cloud\nfi" >> /etc/rc.local
+/bin/echo "options loop max_loop=64" >> /etc/modprobe.d/loop.conf
