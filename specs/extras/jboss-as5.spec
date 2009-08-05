@@ -1,15 +1,14 @@
-Summary: JBoss Application Server 
-Name: jboss-as5
-Version: 5.1.0.GA
-Release: 1
-License: LGPL
-BuildArch: noarch
-Group: Applications/System
-Source0: http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
-Source1: jboss-as5.init
-Requires: shadow-utils
-
-BuildRoot: /tmp/jboss-%{version}
+Summary:        JBoss Application Server
+Name:           jboss-as5
+Version:        5.1.0.GA
+Release:        2
+License:        LGPL
+BuildArch:      noarch
+Group:          Applications/System
+Source0:        http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
+Source1:        jboss-as5.init
+Requires:       shadow-utils
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define runuser jboss
 %define __jar_repack %{nil}
@@ -32,7 +31,8 @@ touch $RPM_BUILD_ROOT/etc/jboss-as5.conf
 echo 'JBOSS_GOSSIP_PORT=12001'    >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 echo 'JBOSS_GOSSIP_REFRESH=5000'  >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 echo 'JBOSS_SERVER_PEER_ID='      >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
-
+echo 'JBOSS_IP=0.0.0.0'           >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
+echo 'JAVA_HOME=/usr/lib/jvm/jre' >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 
 %clean
 rm -Rf $RPM_BUILD_ROOT
@@ -49,6 +49,9 @@ JBOSS_SHELL=/bin/bash
 #%attr(0755,root,root) /etc/jboss-as5.conf
 
 %changelog
+* Wed Aug 5 2009 Marek Goldmann 5.1.0.GA-2
+- New defaults in /etc/jboss-as5.conf
+
 * Mon May 25 2009 Marek Goldmann 5.1.0.GA-1
 - JBoss AS version upgrade to 5.1.0.GA
 
