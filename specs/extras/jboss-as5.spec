@@ -43,7 +43,7 @@ JBOSS_SHELL=/bin/bash
 /usr/sbin/useradd -c JBossAS -r -s $JBOSS_SHELL -d /opt/jboss-as5 -g jboss jboss 2>/dev/null || :
 
 %post
-/bin/echo "echo JBOSS_SERVER_PEER_ID=\`ifconfig eth0 | awk '/inet addr/ {split (\$2,A,\":\"); print A[2]}' | sed 's/\.//g'\` >> /etc/jboss-as5.conf" >> /etc/rc.local
+/bin/echo "echo JBOSS_SERVER_PEER_ID=\`ifconfig eth0 | awk '/inet addr/ {split (\$2,A,\":\"); print A[2]}' | awk -F\. '{ print \$4}'\` >> /etc/jboss-as5.conf" >> /etc/rc.local
 
 %files
 %defattr(-,jboss,jboss)
