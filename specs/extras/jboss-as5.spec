@@ -31,7 +31,7 @@ touch $RPM_BUILD_ROOT/etc/jboss-as5.conf
 echo 'JBOSS_GOSSIP_PORT=12001'    >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 echo 'JBOSS_GOSSIP_REFRESH=5000'  >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 #echo 'JBOSS_SERVER_PEER_ID='      >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
-echo 'JBOSS_IP=0.0.0.0'           >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
+#echo 'JBOSS_IP=0.0.0.0'           >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 echo 'JAVA_HOME=/usr/lib/jvm/jre' >> $RPM_BUILD_ROOT/etc/jboss-as5.conf
 
 %clean
@@ -44,6 +44,7 @@ JBOSS_SHELL=/bin/bash
 
 %post
 /bin/echo "echo JBOSS_SERVER_PEER_ID=\`ifconfig eth0 | awk '/inet addr/ {split (\$2,A,\":\"); print A[2]}' | awk -F\. '{ print ((\$1+\$2)*\$3*\$4)%255 }'\` >> /etc/jboss-as5.conf" >> /etc/rc.local
+/bin/echo "echo JBOSS_IP=\`ifconfig eth0 | awk '/inet addr/ {split (\$2,A,\":\"); print A[2]}'\` >> /etc/jboss-as5.conf" >> /etc/rc.local
 
 %files
 %defattr(-,jboss,jboss)
