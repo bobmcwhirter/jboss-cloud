@@ -1,2 +1,0 @@
-
-import "postgis-appliance/appliance"
