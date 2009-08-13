@@ -76,6 +76,8 @@ then
     JBOSS_ADDITIONAL_PARAMS=`curl -s http://169.254.169.254/1.0/user-data`
 fi
 
+IP_ADDRESS=`ip addr list eth0 | grep "inet " | cut -d' ' -f6 | cut -d/ -f1`
+
 #define the script to use to start jboss
 JBOSSSH=${JBOSSSH:-"$JBOSS_HOME/bin/run.sh -c $JBOSSCONF"}
 
@@ -152,9 +154,7 @@ JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3sfsbpartition.mcast_port=$JBOSS_UDP_PORT_EJB3S
 [ "x$JBOSS_PROXY_LIST" != "x" ] && \
 JAVA_OPTS="$JAVA_OPTS -Djboss.modcluster.proxyList=$JBOSS_PROXY_LIST"
 
-# `ip addr list eth0 | grep "inet " | cut -d' ' -f6 | cut -d/ -f1`
-# TODO: what if we're on Xen/VMware where all hosts have $HOSTNAME set to localhost.localdomain, maybe some mix with IP address?
-JAVA_OPTS="$JAVA_OPTS -Djboss.jvmRoute=$HOSTNAME"
+JAVA_OPTS="$JAVA_OPTS -Djboss.jvmRoute=$HOSTNAME-$IP_ADDRESS"
 
 [ "x$JBOSS_GOSSIP_HOST" != "x" ] && \
 JAVA_OPTS="$JAVA_OPTS -Djboss.gossip_host=$JBOSS_GOSSIP_HOST"
