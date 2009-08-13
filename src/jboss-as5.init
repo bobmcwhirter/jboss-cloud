@@ -1,44 +1,50 @@
 #!/bin/sh
 #
-# JBoss Control Script
+# jboss-as5             Start up the JBoss Application Server
 #
+# chkconfig: 2345 84 15
+# description: JBoss Application Server
+# processname: jboss-as5
+# config: /etc/jboss-as5.conf
+# pidfile: /var/run/jboss-as5.pid
+
 ### BEGIN INIT INFO
-# Provides: jbossas
+# Provides: jboss-as5
 # Required-Start: $network $syslog
-# Required-Stop: $network $syslog
+# Required-Stop: $network
 # Default-Start:
 # Default-Stop:
-# Description: JBoss J2EE Server
-# Short-Description: start and stop JBoss AS5
+# Short-Description: Start up the JBoss Application Server
+# Description: JBoss Application Server
 ### END INIT INFO
-# chkconfig: 345 98 10
-# description: JBoss J2EE Server
-# 
 
 # Source function library.
-if [ -x /etc/rc.d/init.d/functions ]; then
-   . /etc/rc.d/init.d/functions
-fi
+. /etc/init.d/functions
 
-NAME=`basename $0`
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+NAME="$(basename $0)"
 unset ISBOOT
-if [ ${NAME:0:1} = "S" -o ${NAME:0:1} = "K" ]
-then
-        NAME=${NAME:3}
-        ISBOOT=1
+if [ "${NAME:0:1}" = "S" -o "${NAME:0:1}" = "K" ]; then
+    NAME="${NAME:3}"
+    ISBOOT="1"
 fi
 
 # Source configuration.
 [ -f /etc/java/java.conf ] && . /etc/java/java.conf
 #read in system wide jboss configuration
-. /etc/jboss-as5.conf
+[ -f /etc/${NAME}.conf ] && . /etc/${NAME}.conf
+
 #read in service-specific jboss configuration
 [ -f /etc/sysconfig/${NAME} ] && . /etc/sysconfig/${NAME}
 
 export JAVA_HOME=${JAVA_HOME:-"/usr"}
 
 #define where jboss is - this is the directory containing directories log, bin, conf etc
-#JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss/jboss-as5"}
 JBOSS_HOME=${JBOSS_HOME:-"/opt/jboss-as5"}
 
 #make sure java is on your path
@@ -47,17 +53,17 @@ JAVAPTH=${JAVAPTH:-"$JAVA_HOME/bin"}
 #define the classpath for the shutdown class
 JBOSSCP=${JBOSSCP:-"$JBOSS_HOME/bin/shutdown.jar:$JBOSS_HOME/client/jbossall-client.jar"}
 
-#define jboss configuration to start
-#if 'cluster' and 'group' profiles are available
-
+# TODO: we should probably rewrite this
+# Define jboss configuration to start
+# If 'cluster' and 'group' profiles are available
 if [ -d "$JBOSS_HOME/server/cluster" ] && [ -d "$JBOSS_HOME/server/group" ]; then
-	#if JBOSS_GOSSIP_HOST is set, running profile will be 'cluster' in other case 'group'
+	# If JBOSS_GOSSIP_HOST is set, running profile will be 'cluster' in other case 'group'
 	if [ ${#JBOSS_GOSSIP_HOST} -gt 0 ]; then
 		JBOSSCONF=${JBOSSCONF:-"cluster"}
 	else
 		JBOSSCONF=${JBOSSCONF:-"group"}
 	fi
-#if JBOSS_GOSSIP_HOST is not set, running profile will be 'all'
+# If JBOSS_GOSSIP_HOST is not set, running profile will be 'all'
 else
 	JBOSSCONF=${JBOSSCONF:-"all"}
 fi
@@ -83,7 +89,7 @@ JBOSSGR=${JBOSSGR:-"jboss"}
 JBOSSLOCK=/var/lock/subsys/$NAME-$JBOSSCONF
 
 #define the pid file for this jboss instance
-JBOSSPID=/var/run/$NAME-$JBOSSCONF
+JBOSSPID=/var/run/${NAME}.pid
 
 # Set the defaults.
 LOGFILE=$JBOSS_HOME/server/$JBOSSCONF/log/console.log
@@ -92,7 +98,7 @@ LOGFILE=$JBOSS_HOME/server/$JBOSSCONF/log/console.log
 JBOSS_CONSOLE=${JBOSS_CONSOLE:-"$JBOSS_HOME/server/$JBOSSCONF/log/console.log"}
 
 #define what IP address for running jboss
-JBOSS_IP=${JBOSS_IP:-""}
+JBOSS_IP=${JBOSS_IP:-"0.0.0.0"}
 
 #define the jgroups UDP group (multicast address) for clustering
 JBOSS_UDP_GROUP=${JBOSS_UDP_GROUP:-"228.1.2.3"}
@@ -122,7 +128,6 @@ if [ ! -z $JBOSS_IP ]; then
    JBOSSSH="$JBOSSSH -b $JBOSS_IP"
 fi
 
-
 # Set the RUN_CONF to config specific, if it exists
 if [ -f $JBOSS_HOME/server/$JBOSSCONF/run.conf ]; then
    RUN_CONF=$JBOSS_HOME/server/$JBOSSCONF/run.conf
@@ -148,6 +153,7 @@ JAVA_OPTS="$JAVA_OPTS -Djboss.ejb3sfsbpartition.mcast_port=$JBOSS_UDP_PORT_EJB3S
 JAVA_OPTS="$JAVA_OPTS -Djboss.modcluster.proxyList=$JBOSS_PROXY_LIST"
 
 # `ip addr list eth0 | grep "inet " | cut -d' ' -f6 | cut -d/ -f1`
+# TODO: what if we're on Xen/VMware where all hosts have $HOSTNAME set to localhost.localdomain, maybe some mix with IP address?
 JAVA_OPTS="$JAVA_OPTS -Djboss.jvmRoute=$HOSTNAME"
 
 [ "x$JBOSS_GOSSIP_HOST" != "x" ] && \
@@ -188,6 +194,7 @@ if [ -z "`echo $PATH | grep $JAVAPTH`" ]; then
 fi
 
 mkdir -p $JBOSS_HOME/server/$JBOSSCONF/log/
+
 if [ "$JBOSSUS" != "RUNASIS" ]; then
     chown $JBOSSUS:$JBOSSGR $JBOSS_HOME/server/$JBOSSCONF/log/
 fi
@@ -199,7 +206,6 @@ if [ -a $JBOSS_HOME ] && [ ! -d "$JBOSS_HOME" ]; then
   fi
   exit 1
 fi
-
 
 RETVAL=0
 
@@ -216,17 +222,16 @@ function procrunning() {
 }
 
 start() {
-    echo -n $"Starting ${NAME}: "
+    echo -n "Starting ${NAME}: "
 
     # if lock file exists
     if [ -f $JBOSSLOCK ]; then
         procrunning
         if [ ! $pid = '0' ]; then
            failure $"${NAME} startup"
-	   echo -n -e "\nProcess already running"
-	   echo -n -e "\n"
+	   echo -n "Process already running"
 	   return 2
-        fi
+       fi
     fi
 
     # check if port 8080 is being used
@@ -330,13 +335,14 @@ start() {
     RETVAL=1
     while [ $sleep -lt $JBOSS_START_TIMEOUT -a $RETVAL -eq 1 ]; do
         #echo -n -e "\nwaiting for processes to start";
-        sleep 10
-        sleep=`expr $sleep + 10`
+        sleep 5
+        sleep=`expr $sleep + 5`
         # if server.log has been updated
         if [ $JBOSS_HOME/server/$JBOSSCONF/log/temp.file -ot $JBOSS_HOME/server/$JBOSSCONF/log/server.log ]; then
             #grep -q MicroKernel $JBOSS_HOME/server/$JBOSSCONF/log/server.log > /dev/null 2>&1
             grep -q Microcontainer $JBOSS_HOME/server/$JBOSSCONF/log/server.log > /dev/null 2>&1
             if [ $? -eq 0 ]; then
+                touch /var/lock/subsys/${NAME}
                 RETVAL=0
             fi
         fi
@@ -351,7 +357,7 @@ start() {
     done
     rm $JBOSS_HOME/server/$JBOSSCONF/log/temp.file
 
-    if [ -x /etc/rc.d/init.d/functions ]; then
+    if [ -r /etc/rc.d/init.d/functions ]; then
         if [ $RETVAL -eq 0 ]; then
             success $"${NAME} startup"
         else
@@ -410,13 +416,8 @@ stop() {
     
         sleep=0
         while [ $sleep -lt $JBOSS_STOP_TIMEOUT -a $RETVAL -eq 1 ]; do
-            echo -n -e "\nwaiting for processes to stop";
-            sleep 10
-            sleep=`expr $sleep + 10`
-            grep -q "Shutdown complete" $JBOSS_HOME/server/$JBOSSCONF/log/server.log > /dev/null 2>&1
-            if [ $? -eq 0 ]; then
-                RETVAL=0
-            fi
+            sleep 5
+            sleep=`expr $sleep + 5`
             pid=0
             procrunning
             if [ $pid == '0' ]; then
@@ -436,7 +437,8 @@ stop() {
         echo -e "\nTimeout: Shutdown command was sent, but process is still running with PID $jboss_java_pid"
         failure $"${NAME} shutdown"
     else
-        if [ -x /etc/rc.d/init.d/functions ]; then
+        rm -f /var/lock/subsys/${NAME}
+        if [ -r /etc/rc.d/init.d/functions ]; then
                 success $"${NAME} shutdown"
         fi
      fi
@@ -461,7 +463,7 @@ status() {
         echo "${NAME} is stopped";
         return 0
     else
-        echo "${NAME} (pid $pid) is running";
+        echo "${NAME} (pid $pid) is running...";
         return 0
     fi
 }
