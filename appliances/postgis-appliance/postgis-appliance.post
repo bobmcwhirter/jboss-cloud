@@ -1,2 +1,2 @@
-
 /bin/sh /etc/init.d/postgresql initdb
+/sbin/chkconfig postgresql on
