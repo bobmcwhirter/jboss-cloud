@@ -10,7 +10,7 @@ Source1:        preconfigure-jopr-agent.sh
 Source2:        agent-configuration.xml
 Source3:        jopr.init
 Requires:       shadow-utils
-Requires:       java
+Requires:       java-1.6.0-openjdk
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv:    0
 AutoReq:        0 

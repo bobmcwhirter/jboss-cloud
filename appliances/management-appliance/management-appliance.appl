@@ -11,5 +11,5 @@ packages:
   - dhcp
   - sudo
   - jboss-cloud-management
+  - java-1.6.0-openjdk
   - jopr
-
