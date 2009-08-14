@@ -23,10 +23,16 @@
 # agent installation.
 # =============================================================================
 
+export RHQ_AGENT_JAVA_EXE_FILE_PATH=/usr/lib/jvm/jre-1.6.0/bin/java
+export RHQ_AGENT_HOME=/opt/jopr-agent/rhq-agent
+
 [ -f /etc/sysconfig/jopr-agent ] && . /etc/sysconfig/jopr-agent
 
 # if Jopr server ip isn't injected, don't start the agent
-[ "x$JOPR_SERVER_IP" = "x" ] && exit 0
+if [ "x$JOPR_SERVER_IP" = "x" ]; then
+        echo "No JOPR_SERVER_IP specified..."
+        exit 0
+fi
 
 # ----------------------------------------------------------------------
 # Function that simply dumps a message iff debug mode is enabled

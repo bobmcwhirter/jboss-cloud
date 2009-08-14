@@ -81,8 +81,13 @@
 # RHQ_SERVER_ADDITIONAL_JAVA_OPTS=additional VM options
 # RHQ_SERVER_CMDLINE_OPTS=additional run.sh options
 
+RHQ_SERVER_USER=jopr
+RHQ_SERVER_HOME=/opt/jopr
+RHQ_AGENT_VERSION=1.2.1
+JAVA_HOME=/usr/lib/jvm/java-1.6.0/
+
 # lets preconfigure Jopr Agent
-/usr/share/jopr/preconfigure-jopr-agent.sh > /opt/jopr/agent-preconfigure.log
+[ -f $RHQ_SERVER_HOME/jbossas/server/default/deploy/rhq.ear.rej/rhq-downloads/rhq-agent/rhq-enterprise-agent-$RHQ_AGENT_VERSION.jar ] && /usr/share/jopr/preconfigure-jopr-agent.sh > /opt/jopr/agent-preconfigure.log
 
 # ----------------------------------------------------------------------
 # Make sure we unset any lingering JBossAS environment variables that
@@ -94,6 +99,13 @@ unset JBOSS_HOME
 unset RUN_CONF
 unset JAVAC_JAR
 unset JBOSS_CLASSPATH
+
+if [ -x /sbin/runuser ]
+then
+	SU=runuser
+else
+	SU=su
+fi
 
 # ----------------------------------------------------------------------
 # Dumps a message iff debug mode is enabled
@@ -356,9 +368,9 @@ case "$1" in
         # start the server, making sure its working directory is the JBossAS bin directory
         cd "${RHQ_SERVER_HOME}/jbossas/bin"
         if [ "x$RHQ_SERVER_DEBUG" != "x" ] && [ "$RHQ_SERVER_DEBUG" != "false" ]; then
-           "$_JBOSS_RUN_SCRIPT" $RHQ_SERVER_CMDLINE_OPTS &
+           $SU - $RHQ_SERVER_USER -s /bin/sh -c "$_JBOSS_RUN_SCRIPT $RHQ_SERVER_CMDLINE_OPTS" &
         else
-           "$_JBOSS_RUN_SCRIPT" $RHQ_SERVER_CMDLINE_OPTS > /dev/null 2>&1 &
+           $SU - $RHQ_SERVER_USER -s /bin/sh -c "$_JBOSS_RUN_SCRIPT $RHQ_SERVER_CMDLINE_OPTS" > /dev/null 2>&1 &
         fi
 
         echo "$!" > "$_SERVER_PIDFILE"

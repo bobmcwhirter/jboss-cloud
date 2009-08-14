@@ -3,3 +3,5 @@
 /bin/sed "s/-Xms128m/-Xms#JBOSS_XMS#m/" -i /opt/jboss-as5/bin/run.conf
 /bin/echo "thin ALL=(ALL) NOPASSWD: /bin/sh, /sbin/service" >> /etc/sudoers
 /bin/sed -i s/"Defaults    requiretty"/"#Defaults    requiretty"/ /etc/sudoers
+/sbin/chkconfig --add jopr-agent
+/sbin/chkconfig jopr-agent on

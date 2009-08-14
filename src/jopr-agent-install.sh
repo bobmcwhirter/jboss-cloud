@@ -17,7 +17,7 @@ mkdir -p $JOPR_AGENT_HOME
 
 sleep=0
 downloaded=0
-while [ $downloaded -eq 1 ]; do
+while [ "$downloaded" = "0" ]; do
     sleep 5
     sleep=`expr $sleep + 5`
 
