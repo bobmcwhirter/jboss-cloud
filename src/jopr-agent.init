@@ -23,7 +23,7 @@
 # agent installation.
 # =============================================================================
 
-[ -f /etc/sysconfig/jopr ] && . /etc/sysconfig/jopr
+[ -f /etc/sysconfig/jopr-agent ] && . /etc/sysconfig/jopr-agent
 
 # if Jopr server ip isn't injected, don't start the agent
 [ "x$JOPR_SERVER_IP" = "x" ] && exit 0

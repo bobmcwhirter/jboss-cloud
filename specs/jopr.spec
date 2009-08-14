@@ -25,17 +25,15 @@ Jopr is an enterprise management solution for JBoss middleware projects and othe
 %setup -n jopr-server-%{version}
 
 %install
-install -d -m 755 $RPM_BUILD_ROOT/opt/jopr
-cp -R . $RPM_BUILD_ROOT/opt/jopr
+install -d -m 755 $RPM_BUILD_ROOT/opt/%{name}
+cp -R . $RPM_BUILD_ROOT/opt/%{name}
 
-chmod +x %{SOURCE1}
-
-install -d -m 755 $RPM_BUILD_ROOT/usr/share/jopr
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/usr/share/jopr/preconfigure-jopr-agent.sh
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/share/jopr/agent-configuration.xml
+install -d -m 755 $RPM_BUILD_ROOT/usr/share/%{name}
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/usr/share/%{name}/preconfigure-jopr-agent.sh
+install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/share/%{name}/agent-configuration.xml
 
 install -d -m 755 $RPM_BUILD_ROOT/etc/sysconfig
-touch $RPM_BUILD_ROOT/etc/sysconfig/jopr 
+touch $RPM_BUILD_ROOT/etc/sysconfig/%{name} 
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -m 755 %{SOURCE3} $RPM_BUILD_ROOT%{_initrddir}/%{name}

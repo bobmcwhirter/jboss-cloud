@@ -7,7 +7,10 @@ Version:        1.2.1
 Release:        1
 License:        LGPL
 BuildArch:      noarch
+Source0:        jopr-agent.init
+Source1:        jopr-agent-install.sh
 Group:          Applications/System
+Requires:       java-1.6.0-openjdk
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define runuser jopr
@@ -17,13 +20,19 @@ Jopr is an enterprise management solution for JBoss middleware projects and othe
 
 %install
 install -d -m 755 $RPM_BUILD_ROOT/etc/sysconfig
-touch $RPM_BUILD_ROOT/etc/sysconfig/jopr
+touch $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+
+install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
+install -m 755 %{SOURCE0} $RPM_BUILD_ROOT%{_initrddir}/%{name}
+
+install -d -m 755 $RPM_BUILD_ROOT/usr/share/%{name}
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/usr/share/%{name}/jopr-agent-install.sh
 
 %clean
 rm -Rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,jopr,jopr)
+%defattr(-,root,root)
 /
 
 %changelog
