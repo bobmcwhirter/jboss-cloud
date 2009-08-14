@@ -27,3 +27,4 @@ packages:
   - qemu-stable
   - zlib-devel
   - SDL-devel
+  - rubygem-rake
