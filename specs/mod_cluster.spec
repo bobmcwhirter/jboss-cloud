@@ -50,6 +50,9 @@ popd
 install -d -m 755 $RPM_BUILD_ROOT/etc/httpd/conf.d
 cp %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/conf.d/
 
+install -d -m 755 $RPM_BUILD_ROOT/usr/share/%{name}
+echo "%{version}" > $RPM_BUILD_ROOT/usr/share/%{name}/VERSION
+
 %clean
 rm -Rf $RPM_BUILD_ROOT
 
