@@ -1,4 +1,4 @@
-%define jgroups_version 2.6.12.Beta2
+%define jgroups_version 2.6.12.GA
 %define jboss_version 5.1.0.GA
 
 Summary:        JBoss Cloud profiles
@@ -10,7 +10,7 @@ BuildArch:      noarch
 Group:          Applications/System
 Source0:        http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{jboss_version}-jdk6.zip
 Source1:        jboss-as5-5.1.0.GA-cloud-gossip.patch
-Source2:        http://repo.oddthesis.org/bundles/JGroups-%{jgroups_version}.bin.tar.gz
+Source2:        http://heanet.dl.sourceforge.net/sourceforge/javagroups/JGroups-%{jgroups_version}.bin.zip
 Requires:       jboss-as5
 BuildRequires:  patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)

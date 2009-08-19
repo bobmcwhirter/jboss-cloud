@@ -1,11 +1,5 @@
 
-summary: JBoss Cloud management appliance
-
-users:
-  - name:       jopr
-    group:      jopr
-    home:       /opt/jopr
-    comment:    JBoss JGroups
+summary: JBoss Cloud management and monitoring appliance
 
 packages:
   - dhcp

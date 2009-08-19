@@ -34,6 +34,8 @@ if [ "x$JOPR_SERVER_IP" = "x" ]; then
         exit 0
 fi
 
+[ ! -d $RHQ_AGENT_HOME ] && /usr/share/jopr-agent/jopr-agent-install.sh
+
 # ----------------------------------------------------------------------
 # Function that simply dumps a message iff debug mode is enabled
 # ----------------------------------------------------------------------

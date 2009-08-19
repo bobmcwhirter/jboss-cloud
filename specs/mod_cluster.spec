@@ -4,17 +4,17 @@
 	%define mod_cluster_arch 64
 %endif
 
-Summary: JBoss mod_cluster for Apache httpd
-Name: mod_cluster
-Version: 1.0.1.GA
-Release: 1
-License: LGPL
-BuildRoot: %{_tmppath}/%{name}-buildroot
-Group: Applications/System
-Requires: httpd-devel >= 2.2.8
-Source0: http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-linux2-x86-so.tar.gz
-Source1: http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-linux2-x64-so.tar.gz
-Source2: mod_cluster.conf
+Summary:    JBoss mod_cluster for Apache httpd
+Name:       mod_cluster
+Version:    1.0.1.GA
+Release:    1
+License:    LGPL
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Group:      Applications/System
+Requires:   httpd-devel >= 2.2.8
+Source0:    http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-linux2-x86-so.tar.gz
+Source1:    http://www.jboss.org/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod_cluster-%{version}-linux2-x64-so.tar.gz
+Source2:    mod_cluster.conf
 
 %description
 JBoss mod_cluster for Apache httpd

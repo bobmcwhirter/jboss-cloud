@@ -1,15 +1,15 @@
-Summary: JBoss mod_cluster for JBoss AS5 cloud profiles
-Name: jboss-as5-cloud-mod_cluster
-Version: 1.0.1.GA
-Release: 1
-License: LGPL
-BuildArch: noarch
-Group: Applications/System
-Requires: jboss-as5-cloud-profiles
-Requires: patch
-Source0: http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod-cluster-%{version}-bin.tar.gz
-Source1: jboss-as-5.1.0.GA-mod_cluster.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Summary:    JBoss mod_cluster for JBoss AS5 cloud profiles
+Name:       jboss-as5-cloud-mod_cluster
+Version:    1.0.1.GA
+Release:    1
+License:    LGPL
+BuildArch:  noarch
+Group:      Applications/System
+Requires:   jboss-as5-cloud-profiles
+Requires:   patch
+Source0:    http://labs.jboss.com/file-access/default/members/mod_cluster/freezone/dist/%{version}/mod-cluster-%{version}-bin.tar.gz
+Source1:    jboss-as-5.1.0.GA-mod_cluster.patch
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define __jar_repack %{nil}
 

@@ -44,7 +44,7 @@ rm -Rf $RPM_BUILD_ROOT
 
 %pre
 /usr/sbin/groupadd -r jopr 2>/dev/null || :
-/usr/sbin/useradd -c "JBoss JOPR" -r -s /bin/bash -d /opt/jboss-jopr -g jopr jopr 2>/dev/null || :
+/usr/sbin/useradd -c "JOPR" -r -s /bin/bash -d /opt/jboss-jopr -g jopr jopr 2>/dev/null || :
 
 %files
 %defattr(-,jopr,jopr)

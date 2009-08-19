@@ -1,13 +1,13 @@
-Summary: TorqueBox
-Name: torquebox
-Version: 1.0.0.Beta13
-Release: 1
-License: LGPL
-BuildArch: noarch
-Group: Applications/System
-Source0: http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/%{version}/torquebox-core-%{version}-deployer.jar 
-Requires: jboss-as5
-BuildRoot: /tmp/%{name}
+Summary:    TorqueBox
+Name:       torquebox
+Version:    1.0.0.Beta13
+Release:    1
+License:    LGPL
+BuildArch:  noarch
+Group:      Applications/System
+Source0:    http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/%{version}/torquebox-core-%{version}-deployer.jar
+Requires:   jboss-as5
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define __jar_repack %{nil}
 
