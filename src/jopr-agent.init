@@ -28,6 +28,8 @@ export RHQ_AGENT_HOME=/opt/jopr-agent/rhq-agent
 
 [ -f /etc/sysconfig/jopr-agent ] && . /etc/sysconfig/jopr-agent
 
+[ ! -d $RHQ_AGENT_HOME ] && /usr/share/jopr-agent/jopr-agent-install.sh
+
 # if Jopr server ip isn't injected, don't start the agent
 if [ "x$JOPR_SERVER_IP" = "x" ]; then
         echo "No JOPR_SERVER_IP specified..."
