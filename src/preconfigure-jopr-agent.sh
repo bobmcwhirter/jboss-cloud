@@ -22,3 +22,4 @@ sed s/#BIND_ADDRESS#/$IP_ADDRESS/g $JOPR_CONFIG > rhq-agent/conf/agent-configura
 jar uvf $JOPR_AGENT_NAME-$JOPR_AGENT_VERSION.zip rhq-agent/conf/agent-configuration.xml
 jar uvf $JOPR_HOME/jbossas/server/default/deploy/rhq.ear.rej/rhq-downloads/rhq-agent/$JOPR_AGENT_NAME-$JOPR_AGENT_VERSION.jar $JOPR_AGENT_NAME-$JOPR_AGENT_VERSION.zip
 
+chown jopr:jopr /opt/jopr/ -R

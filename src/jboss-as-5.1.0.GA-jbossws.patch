@@ -1,0 +1,38 @@
+diff -Naur jboss-5.1.0.GA/server/cluster/deployers/jbossws.deployer/META-INF/jboss-beans.xml jboss-5.1.0.GA-working/server/cluster/deployers/jbossws.deployer/META-INF/jboss-beans.xml
+--- jboss-5.1.0.GA/server/cluster/deployers/jbossws.deployer/META-INF/jboss-beans.xml	2009-08-17 19:14:50.000000000 +0200
++++ jboss-5.1.0.GA-working/server/cluster/deployers/jbossws.deployer/META-INF/jboss-beans.xml	2009-08-17 19:18:34.000000000 +0200
+@@ -12,7 +12,7 @@
+ 
+       If 'webServiceHost' is not set, JBossWS uses requesters protocol host when rewriting the <soap:address>.
+     -->
+-    <property name="webServiceHost">${jboss.bind.address}</property>
++    <!--<property name="webServiceHost">${jboss.bind.address}</property>-->
+     <property name="modifySOAPAddress">true</property>
+ 
+     <!--
+@@ -174,4 +174,4 @@
+     <depends>WSDeploymentAspectInstallerEndpointAPI</depends>
+   </bean>
+ 
+-</deployment> 
+\ No newline at end of file
++</deployment> 
+diff -Naur jboss-5.1.0.GA/server/group/deployers/jbossws.deployer/META-INF/jboss-beans.xml jboss-5.1.0.GA-working/server/group/deployers/jbossws.deployer/META-INF/jboss-beans.xml
+--- jboss-5.1.0.GA/server/group/deployers/jbossws.deployer/META-INF/jboss-beans.xml	2009-08-17 19:14:44.000000000 +0200
++++ jboss-5.1.0.GA-working/server/group/deployers/jbossws.deployer/META-INF/jboss-beans.xml	2009-08-17 19:18:10.000000000 +0200
+@@ -12,7 +12,7 @@
+ 
+       If 'webServiceHost' is not set, JBossWS uses requesters protocol host when rewriting the <soap:address>.
+     -->
+-    <property name="webServiceHost">${jboss.bind.address}</property>
++    <!--<property name="webServiceHost">${jboss.bind.address}</property>-->
+     <property name="modifySOAPAddress">true</property>
+ 
+     <!--
+@@ -174,4 +174,4 @@
+     <depends>WSDeploymentAspectInstallerEndpointAPI</depends>
+   </bean>
+ 
+-</deployment> 
+\ No newline at end of file
++</deployment> 

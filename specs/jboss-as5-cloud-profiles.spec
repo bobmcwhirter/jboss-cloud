@@ -11,6 +11,7 @@ Group:          Applications/System
 Source0:        http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{jboss_version}-jdk6.zip
 Source1:        jboss-as5-5.1.0.GA-cloud-gossip.patch
 Source2:        http://heanet.dl.sourceforge.net/sourceforge/javagroups/JGroups-%{jgroups_version}.bin.zip
+Source3:        jboss-as-5.1.0.GA-jbossws.patch
 Requires:       jboss-as5
 BuildRequires:  patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -44,6 +45,7 @@ rm -Rf $RPM_BUILD_ROOT/opt/jboss-as5/server/*/deploy/ROOT.war
 
 cd $RPM_BUILD_ROOT/opt/jboss-as5
 patch -p1 < %{SOURCE1}
+patch -p1 < %{SOURCE3}
 
 %clean
 rm -Rf $RPM_BUILD_ROOT
