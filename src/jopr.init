@@ -235,6 +235,8 @@ if [ ! -d "${_LOG_DIR_PATH}" ]; then
    mkdir "${_LOG_DIR_PATH}"
 fi
 
+chown $RHQ_SERVER_USER:$RHQ_SERVER_USER ${_LOG_DIR_PATH} -R
+
 # ----------------------------------------------------------------------
 # Find the Java executable and verify we have a VM available
 # ----------------------------------------------------------------------
