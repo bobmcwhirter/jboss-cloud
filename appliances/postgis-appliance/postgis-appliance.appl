@@ -12,3 +12,4 @@ packages:
   - postgresql-server
   - postgis
   - jboss-cloud-management
+  - jopr-agent

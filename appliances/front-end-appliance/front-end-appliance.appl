@@ -7,3 +7,4 @@ appliances:
 
 packages:
   - jboss-cloud-management
+  - jopr-agent
