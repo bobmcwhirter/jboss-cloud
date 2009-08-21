@@ -12,6 +12,7 @@ Source3:        jopr.init
 Requires:       shadow-utils
 Requires:       java-1.6.0-openjdk
 Requires:       unzip
+Requires:       urw-fonts
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv:    0
 AutoReq:        0 
