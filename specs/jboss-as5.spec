@@ -9,6 +9,8 @@ Source0:        http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{ver
 Source1:        jboss-as5.init
 Requires:       shadow-utils
 Requires:       coreutils
+Requires:       java-1.6.0-openjdk
+Requires:       initscripts
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define runuser jboss

@@ -7,6 +7,7 @@ Requires:       git
 Requires:       shadow-utils
 Requires:       ruby
 Requires:       rubygems
+Requires:       initscripts
 #Source0:        thin-ruby-env.patch
 BuildRequires:  ruby
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
