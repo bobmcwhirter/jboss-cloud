@@ -8,6 +8,7 @@ Group:          Applications/System
 Source0:        http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
 Source1:        jboss-as5.init
 Requires:       shadow-utils
+Requires:       coreutils
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %define runuser jboss
