@@ -1,9 +1,6 @@
 #!/bin/sh
 
 JOPR_AGENT_HOME=/opt/jopr-agent
-JOPR_AGENT_NAME=rhq-enterprise-agent
-JOPR_AGENT_VERSION=1.2.1
-JOPR_TMP_DIR=/tmp/jopr-2.2.1
 
 [ -f /etc/sysconfig/jopr-agent ] && . /etc/sysconfig/jopr-agent
 
@@ -11,8 +8,7 @@ JOPR_TMP_DIR=/tmp/jopr-2.2.1
 
 JOPR_AGENT_JAR_LOCATION=http://$JOPR_SERVER_IP:7080/agentupdate/download
 
-rm -rf $JOPR_TMP_DIR
-mkdir -p $JOPR_TMP_DIR
+rm -rf $JOPR_AGENT_HOME
 mkdir -p $JOPR_AGENT_HOME
 
 sleep=0
@@ -25,15 +21,11 @@ while [ "$downloaded" = "0" ]; do
 
     if [ $http_code -eq "200" ]
     then
-        wget $JOPR_AGENT_JAR_LOCATION -O $JOPR_AGENT_HOME/$JOPR_AGENT_NAME-$JOPR_AGENT_VERSION.jar
+        wget $JOPR_AGENT_JAR_LOCATION -O $JOPR_AGENT_HOME/jopr-agent.jar
         downloaded=1        
     fi
 done
 
 cd $JOPR_AGENT_HOME
 
-java -jar $JOPR_AGENT_NAME-$JOPR_AGENT_VERSION.jar --install
-
-
-
-
+java -jar jopr-agent.jar --install

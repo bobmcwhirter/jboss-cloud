@@ -20,7 +20,8 @@ Jopr is an enterprise management solution for JBoss middleware projects and othe
 
 %install
 install -d -m 755 $RPM_BUILD_ROOT/etc/sysconfig
-touch $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+
+echo "JOPR_AGENT_VERSION=%{version}"       > $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -m 755 %{SOURCE0} $RPM_BUILD_ROOT%{_initrddir}/%{name}

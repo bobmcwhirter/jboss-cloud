@@ -9,6 +9,8 @@ Source0:        http://downloads.sourceforge.net/project/rhq/jopr/jopr-%{version
 Source1:        preconfigure-jopr-agent.sh
 Source2:        agent-configuration.xml
 Source3:        jopr.init
+Source4:        preconfigure-jopr.sh
+Source5:        rhq-server.properties
 Requires:       shadow-utils
 Requires:       java-1.6.0-openjdk
 Requires:       unzip
@@ -33,9 +35,14 @@ cp -R . $RPM_BUILD_ROOT/opt/%{name}
 install -d -m 755 $RPM_BUILD_ROOT/usr/share/%{name}
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/usr/share/%{name}/preconfigure-jopr-agent.sh
 install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/share/%{name}/agent-configuration.xml
+install -m 755 %{SOURCE4} $RPM_BUILD_ROOT/usr/share/%{name}/preconfigure-jopr.sh
+install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/usr/share/%{name}/rhq-server.properties
 
 install -d -m 755 $RPM_BUILD_ROOT/etc/sysconfig
-touch $RPM_BUILD_ROOT/etc/sysconfig/%{name} 
+ 
+echo "JOPR_VERSION=%{version}"       > $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+echo "JOPR_HOME=/opt/jopr"          >> $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -m 755 %{SOURCE3} $RPM_BUILD_ROOT%{_initrddir}/%{name}

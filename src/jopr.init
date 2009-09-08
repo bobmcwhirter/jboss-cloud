@@ -81,12 +81,16 @@
 # RHQ_SERVER_ADDITIONAL_JAVA_OPTS=additional VM options
 # RHQ_SERVER_CMDLINE_OPTS=additional run.sh options
 
-RHQ_AGENT_VERSION=1.2.1
-RHQ_SERVER_HOME=/opt/jopr
+[ -f /etc/sysconfig/jopr ] && . /etc/sysconfig/jopr
+
+RHQ_SERVER_HOME=$JOPR_HOME
 RHQ_SERVER_JAVA_HOME=/usr/lib/jvm/java-1.6.0/
 
+# Configure Jopr so we don't need to use web configuration wizard
+/usr/share/jopr/preconfigure-jopr.sh
+
 # preconfigure Jopr Agent
-[ -f $RHQ_SERVER_HOME/jbossas/server/default/deploy/rhq.ear.rej/rhq-downloads/rhq-agent/rhq-enterprise-agent-$RHQ_AGENT_VERSION.jar ] && /usr/share/jopr/preconfigure-jopr-agent.sh > /opt/jopr/agent-preconfigure.log
+[ -d $RHQ_SERVER_HOME/jbossas/server/default/deploy/rhq.ear.rej ] && /usr/share/jopr/preconfigure-jopr-agent.sh > /opt/jopr/agent-preconfigure.log
 
 # ----------------------------------------------------------------------
 # Make sure we unset any lingering JBossAS environment variables that
