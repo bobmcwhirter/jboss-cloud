@@ -1,11 +1,11 @@
 #!/bin/sh
 
 JOPR_HOME=/opt/jopr
-JOPR_VERSION=2.2.1
+JOPR_VERSION=2.3.0
 JOPR_AGENT_NAME=rhq-enterprise-agent
-JOPR_AGENT_VERSION=1.2.1
+JOPR_AGENT_VERSION=1.3.0
 JOPR_CONFIG=/usr/share/jopr/agent-configuration.xml
-JOPR_TMP_DIR=/tmp/jopr-2.2.1
+JOPR_TMP_DIR=/tmp/jopr-$JOPR_VERSION
 
 IP_ADDRESS=`ip addr list eth0 | grep "inet " | cut -d' ' -f6 | cut -d/ -f1`
 

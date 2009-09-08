@@ -1,9 +1,9 @@
 %define agent_name rhq-enterprise-agent
-%define jopr_version 2.2.1
+%define jopr_version 2.3.0
 
 Summary:        JOPR Agent
 Name:           jopr-agent
-Version:        1.2.1
+Version:        1.3.0
 Release:        1
 License:        LGPL
 BuildArch:      noarch

@@ -1,11 +1,11 @@
 Summary:        JOPR
 Name:           jopr
-Version:        2.2.1
+Version:        2.3.0
 Release:        1
 License:        LGPL
 BuildArch:      noarch
 Group:          Applications/System
-Source0:        http://softlayer.dl.sourceforge.net/project/rhq/jopr/jopr-%{version}/jopr-server-%{version}.zip
+Source0:        http://downloads.sourceforge.net/project/rhq/jopr/jopr-%{version}/jopr-server-%{version}.zip
 Source1:        preconfigure-jopr-agent.sh
 Source2:        agent-configuration.xml
 Source3:        jopr.init
@@ -52,5 +52,8 @@ rm -Rf $RPM_BUILD_ROOT
 /
 
 %changelog
+* Tue Sep 08 2009 Marek Goldmann 2.3.0
+- Upgrade to Jopr 2.3.0
+
 * Sat Jul 25 2009 Marek Goldmann 2.2.1
 - Initial packaging
