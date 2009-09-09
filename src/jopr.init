@@ -86,6 +86,11 @@
 RHQ_SERVER_HOME=$JOPR_HOME
 RHQ_SERVER_JAVA_HOME=/usr/lib/jvm/java-1.6.0/
 
+POSTGRESQL_PACKAGES=`rpm -qa | grep postgresql | wc -l`
+
+# exit if there is no postgresql installed
+[ $POSTGRESQL_PACKAGES -eq "0" ] && exit
+
 # Configure Jopr so we don't need to use web configuration wizard
 /usr/share/jopr/preconfigure-jopr.sh
 

@@ -1,2 +1,4 @@
 /sbin/chkconfig --add jopr
 /sbin/chkconfig jopr on
+/sbin/chkconfig postgresql on
+/sbin/service postgresql initdb
