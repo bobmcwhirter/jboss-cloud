@@ -95,9 +95,8 @@ commands named "config", "setconfig" and "setup" and the command line options
                this if the agent platform's FQDN cannot be reliably determined
                at runtime.
                -->
-               <!--
-               <entry key="rhq.agent.name" value="my.hostname.com"/>
-               -->
+
+               <entry key="rhq.agent.name" value="#AGENT_NAME#"/>
 
                <!--
                _______________________________________________________________

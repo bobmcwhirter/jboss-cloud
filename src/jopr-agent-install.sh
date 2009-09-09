@@ -1,5 +1,7 @@
 #!/bin/sh
 
+[ -f /etc/sysconfig/jboss-cloud ] && . /etc/sysconfig/jboss-cloud
+
 JOPR_AGENT_HOME=/opt/jopr-agent
 
 [ -f /etc/sysconfig/jopr-agent ] && . /etc/sysconfig/jopr-agent
@@ -29,3 +31,5 @@ done
 cd $JOPR_AGENT_HOME
 
 java -jar jopr-agent.jar --install
+
+sed -i s/#AGENT_NAME#/$APPLIANCE_NAME-$HOSTNAME/g $JOPR_AGENT_HOME/rhq-agent/conf/agent-configuration.xml
