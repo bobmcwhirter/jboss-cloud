@@ -32,7 +32,7 @@ export RHQ_AGENT_HOME=/opt/jopr-agent/rhq-agent
 
 # if Jopr server ip isn't injected, don't start the agent
 if [ "x$JOPR_SERVER_IP" = "x" ]; then
-        echo "No JOPR_SERVER_IP specified..." > $RHQ_AGENT_HOME/agent-error.log
+        # No JOPR_SERVER_IP specified...
         exit 0
 fi
 

@@ -8,6 +8,8 @@ Requires:       shadow-utils
 Requires:       ruby
 Requires:       rubygems
 Requires:       initscripts
+Requires:       sed
+Requires:       sudo
 #Source0:        thin-ruby-env.patch
 BuildRequires:  ruby
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -49,6 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 /bin/mkdir -p /var/log/jboss-cloud-management
 /bin/chown thin:thin /var/log/jboss-cloud-management
 echo "sh /usr/share/%{name}/src/network-setup.sh" >> /etc/rc.local
+echo -e "thin ALL = NOPASSWD: ALL\n" >> /etc/sudoers
+/bin/sed -i s/"Defaults    requiretty"/"#Defaults    requiretty"/ /etc/sudoers
 
 /usr/bin/gem install -ql /usr/share/%{name}-gems/*.gem
 
