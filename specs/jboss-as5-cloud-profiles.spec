@@ -1,5 +1,6 @@
 %define jgroups_version 2.6.12.GA
 %define jboss_version 5.1.0.GA
+%define jboss_cache_version 3.2.1.GA
 
 Summary:        JBoss Cloud profiles
 Name:           jboss-as5-cloud-profiles
@@ -12,6 +13,7 @@ Source0:        http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{jbo
 Source1:        jboss-as5-5.1.0.GA-cloud-gossip.patch
 Source2:        http://heanet.dl.sourceforge.net/sourceforge/javagroups/JGroups-%{jgroups_version}.bin.zip
 Source3:        jboss-as-5.1.0.GA-jbossws.patch
+Source4:        http://downloads.sourceforge.net/project/jboss/JBossCache/JBossCache%20%{jboss_cache_version}/jbosscache-core-%{jboss_cache_version}-bin.zip
 Requires:       jboss-as5
 BuildRequires:  patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -24,6 +26,7 @@ The JBoss AS 5 cloud profiles (cluster and group)
 %prep
 %setup -T -b 0 -n jboss-%{jboss_version}
 %setup -T -b 2 -n JGroups-%{jgroups_version}.bin
+%setup -T -b 4 -n jbosscache-core-%{jboss_cache_version}
 
 %install
 rm -Rf $RPM_BUILD_ROOT
@@ -40,6 +43,9 @@ cp -R jboss-%{jboss_version}/server/all/* $RPM_BUILD_ROOT/opt/jboss-as5/server/c
 
 # install jgroups
 cp JGroups-%{jgroups_version}.bin/jgroups-all.jar $RPM_BUILD_ROOT/opt/jboss-as5/server/cluster/lib/jgroups.jar
+
+# install JBoss Cache
+cp jbosscache-core-%{jboss_cache_version}/jbosscache-core.jar $RPM_BUILD_ROOT/opt/jboss-as5/server/cluster/lib/jbosscache-core.jar
 
 rm -Rf $RPM_BUILD_ROOT/opt/jboss-as5/server/*/deploy/ROOT.war
 

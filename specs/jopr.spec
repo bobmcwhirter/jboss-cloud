@@ -1,6 +1,6 @@
 Summary:        JOPR
 Name:           jopr
-Version:        2.3.0
+Version:        2.3.1
 Release:        1
 License:        LGPL
 BuildArch:      noarch
@@ -59,6 +59,9 @@ rm -Rf $RPM_BUILD_ROOT
 /
 
 %changelog
+* Thu Sep 24 2009 Marek Goldmann 2.3.1
+- Upgrade to version 2.3.1
+
 * Tue Sep 08 2009 Marek Goldmann 2.3.0
 - Upgrade to Jopr 2.3.0
 

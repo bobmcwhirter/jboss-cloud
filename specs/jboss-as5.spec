@@ -1,3 +1,5 @@
+%define jboss_cache_version 3.2.1.GA
+
 Summary:        JBoss Application Server
 Name:           jboss-as5
 Version:        5.1.0.GA
@@ -7,6 +9,7 @@ BuildArch:      noarch
 Group:          Applications/System
 Source0:        http://internap.dl.sourceforge.net/sourceforge/jboss/jboss-%{version}-jdk6.zip
 Source1:        jboss-as5.init
+Source2:        http://downloads.sourceforge.net/project/jboss/JBossCache/JBossCache%20%{jboss_cache_version}/jbosscache-core-%{jboss_cache_version}-bin.zip
 Requires:       shadow-utils
 Requires:       coreutils
 Requires:       java-1.6.0-openjdk
@@ -21,14 +24,20 @@ The JBoss Application Server
 
 %prep
 %setup -n jboss-%{version}
+%setup -T -b 2 -n jbosscache-core-%{jboss_cache_version}
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt
-cp -R . $RPM_BUILD_ROOT/opt/jboss-as5
+
+cd %{_topdir}/BUILD
+
+install -d -m 755 $RPM_BUILD_ROOT/opt/jboss-as5
+cp -R jboss-%{version}/* $RPM_BUILD_ROOT/opt/jboss-as5
 rm -Rf $RPM_BUILD_ROOT/opt/jboss-as5/server/*/deploy/ROOT.war
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}
+
+cp jbosscache-core-%{jboss_cache_version}/jbosscache-core.jar $RPM_BUILD_ROOT/opt/jboss-as5/server/all/lib/jbosscache-core.jar
 
 touch $RPM_BUILD_ROOT/etc/jboss-as5.conf
 echo 'JBOSS_GOSSIP_PORT=12001'    >> $RPM_BUILD_ROOT/etc/jboss-as5.conf

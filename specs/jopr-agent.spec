@@ -1,9 +1,9 @@
 %define agent_name rhq-enterprise-agent
-%define jopr_version 2.3.0
+%define jopr_version 2.3.1
 
 Summary:        JOPR Agent
 Name:           jopr-agent
-Version:        1.3.0
+Version:        1.3.1
 Release:        1
 License:        LGPL
 BuildArch:      noarch
@@ -37,5 +37,8 @@ rm -Rf $RPM_BUILD_ROOT
 /
 
 %changelog
+* Thu Sep 24 2009 Marek Goldmann 1.3.1
+- Upgrade to version 1.3.1
+
 * Sat Jul 25 2009 Marek Goldmann 1.2.1
 - Initial packaging

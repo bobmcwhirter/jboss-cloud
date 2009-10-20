@@ -1,6 +1,6 @@
 Summary:    TorqueBox
 Name:       torquebox
-Version:    1.0.0.Beta13
+Version:    1.0.0.Beta16
 Release:    1
 License:    LGPL
 BuildArch:  noarch
@@ -36,6 +36,9 @@ rm -Rf $RPM_BUILD_ROOT
 /
 
 %changelog
+* Tue Oct 20 2009 Marek Goldmann 1.0.0.Beta16
+- Upgrade to version 1.0.0.Beta16
+
 * Tue Jun 23 2009 Marek Goldmann 1.0.0.Beta13
 - Upgrade to version 1.0.0.Beta13
 
