@@ -1,0 +1,10 @@
+name: front-end
+summary: front-end appliance with httpd, mod_cluster and GossipRouter
+appliances:
+  - jboss-cloud
+packages:
+  includes:
+    - java-1.6.0-openjdk
+    - jboss-jgroups
+    - mod_cluster
+    - httpd

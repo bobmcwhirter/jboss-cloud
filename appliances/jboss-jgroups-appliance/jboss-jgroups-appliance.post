@@ -1,1 +1,0 @@
-/sbin/chkconfig --level 234 jgroups-gossip on

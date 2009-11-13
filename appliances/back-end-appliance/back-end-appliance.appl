@@ -1,9 +1,0 @@
-
-summary: JBoss Cloud back-end appliance
-
-appliances:
-  - jboss-as5-appliance
-
-packages:
-  - jboss-cloud-management
-  - jopr-agent

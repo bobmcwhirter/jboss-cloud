@@ -1,0 +1,10 @@
+name: cirras
+summary: Appliance template for CirrAS appliances
+hardware:
+  memory: 256
+appliances:
+  - jeos
+packages:
+  includes:
+    - jboss-cloud-management
+    - jopr-agent
